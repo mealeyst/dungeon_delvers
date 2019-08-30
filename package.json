@@ -1,0 +1,32 @@
+{
+  "name": "@dungeon_delvers/dungeon_delvers",
+  "private": true,
+  "devDependencies": {
+    "lerna": "^3.16.4"
+  },
+  "version": "0.0.1",
+  "description": "Javascript Dungeons & Dragons web application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mealeyst/dungeon_delvers.git"
+  },
+  "keywords": [
+    "Javascript",
+    "Web",
+    "Application",
+    "Dungeons",
+    "Dragons",
+    "Hapi",
+    "Node"
+  ],
+  "author": "Shawn Mealey",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mealeyst/dungeon_delvers/issues"
+  },
+  "homepage": "https://github.com/mealeyst/dungeon_delvers#readme"
+}
