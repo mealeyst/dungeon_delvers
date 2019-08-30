@@ -1,0 +1,9 @@
+[submodule "packages/dungeon_delvers_api"]
+	path = packages/dungeon_delvers_api
+	url = https://github.com/mealeyst/dungeon_delvers_api.git
+[submodule "packages/api"]
+	path = packages/api
+	url = https://github.com/mealeyst/dungeon_delvers_api.git
+[submodule "packages/ui"]
+	path = packages/ui
+	url = https://github.com/mealeyst/dungeon_delvers_ui.git
