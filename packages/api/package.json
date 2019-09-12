@@ -1,0 +1,53 @@
+{
+  "name": "@dungeon_delvers/api",
+  "version": "0.0.0",
+  "description": "Node backend for the Dungeon Delvers App",
+  "keywords": [
+    "Hapi",
+    "MySQL",
+    "Node",
+    "Web",
+    "App"
+  ],
+  "author": "Shawn Mealey <mealeyst@gmail.com>",
+  "homepage": "https://github.com/mealeyst/dungeon_delvers/tree/master/packages/api#readme",
+  "license": "ISC",
+  "main": "lib/api.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mealeyst/dungeon_delvers.git"
+  },
+  "scripts": {
+    "start": "node ./app/server",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/mealeyst/dungeon_delvers/issues"
+  },
+  "dependencies": {
+    "@hapi/hapi": "^18.3.2",
+    "@hapi/joi": "^15.1.1",
+    "bcrypt": "^3.0.6",
+    "dotenv": "^8.1.0",
+    "knex": "^0.19.3",
+    "module-alias": "^2.2.1",
+    "mysql": "^2.17.1",
+    "objection": "^1.6.9"
+  },
+  "devDependencies": {
+    "@types/node": "^12.7.2"
+  },
+  "_moduleAliases": {
+    "@lib": "lib/"
+  }
+}

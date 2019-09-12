@@ -1,0 +1,4 @@
+packages/api/node_modules
+packages/api/.env
+packages/ui/node_modules
+packages/ui/.env

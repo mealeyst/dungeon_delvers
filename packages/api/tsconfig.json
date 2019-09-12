@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "baseUrl": "src",
+    "paths": {
+      "@lib/*": ["lib/*"]
+    }
+  }
+}
