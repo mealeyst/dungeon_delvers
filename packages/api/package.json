@@ -48,6 +48,6 @@
     "@types/node": "^12.7.2"
   },
   "_moduleAliases": {
-    "@lib": "lib/"
+    "@app": "app/"
   }
 }

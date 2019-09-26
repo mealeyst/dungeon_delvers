@@ -1,5 +1,6 @@
 "use strict";
 const Hapi = require("@hapi/hapi");
+const { controller } = require("./user/controller");
 
 const server = Hapi.server({
   port: 8080,
@@ -18,6 +19,8 @@ server.route({
     return "Hello World!";
   }
 });
+
+controller(server);
 
 process.on("unhandledRejection", err => {
   console.log(err);
