@@ -1,24 +1,12 @@
-"use strict";
-import * as THREE from "three";
-import { Login } from "SRC/ui";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import * as serviceWorker from './serviceWorker';
 
-export default class DungeonDelver {
-  constructor(document, window) {
-    console.log("Creating UI");
-    this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(
-      75,
-      (window.innerWidth - 5) / (window.innerHeight - 4),
-      0.1,
-      1000
-    );
+ReactDOM.render(<App />, document.getElementById('root'));
 
-    this.renderer = new THREE.WebGLRenderer();
-    this.renderer.setSize(window.innerWidth - 5, window.innerHeight - 4);
-    document.body.appendChild(this.renderer.domElement);
-    const LoginScreen = new Login({ ...this });
-    LoginScreen.animate();
-  }
-}
-
-new DungeonDelver(document, window);
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://bit.ly/CRA-PWA
+serviceWorker.unregister();
