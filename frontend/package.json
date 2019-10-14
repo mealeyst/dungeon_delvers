@@ -7,13 +7,14 @@
     "react-dom": "^16.10.2",
     "react-scripts": "3.2.0",
     "styled-components": "^4.4.0"
+
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 9009 -s public",
+    "storybook": "start-storybook -p 9009 -s public --debug-webpack",
     "build-storybook": "build-storybook -s public"
   },
   "eslintConfig": {
