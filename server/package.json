@@ -37,7 +37,7 @@
   "dependencies": {
     "@hapi/hapi": "^18.3.2",
     "@hapi/joi": "^15.1.1",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "dotenv": "^8.1.0",
     "knex": "^0.19.3",
     "module-alias": "^2.2.1",
