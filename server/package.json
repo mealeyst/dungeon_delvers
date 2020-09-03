@@ -35,7 +35,7 @@
     "url": "https://github.com/mealeyst/dungeon_delvers/issues"
   },
   "dependencies": {
-    "@hapi/hapi": "^18.3.2",
+    "@hapi/hapi": "^19.1.1",
     "@hapi/joi": "^15.1.1",
     "bcrypt": "^3.0.6",
     "dotenv": "^8.1.0",
