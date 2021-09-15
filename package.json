@@ -7,6 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
+    "install": "npm --prefix ./app_package install && npm --prefix ./test_package install",
     "dev": "concurrently \"npm --prefix ./app_package run dev\" \"npm --prefix ./test_package run dev\"",
     "build": "npm --prefix ./app_package run build && npm --prefix ./test_package run build"
   },
