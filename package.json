@@ -1,0 +1,27 @@
+{
+  "name": "proving_ground",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm --prefix ./app_package run dev\" \"npm --prefix ./test_package run dev\"",
+    "build": "npm --prefix ./app_package run build && npm --prefix ./test_package run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/syntheticmagus/probable-barnacle.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/syntheticmagus/probable-barnacle/issues"
+  },
+  "homepage": "https://github.com/syntheticmagus/probable-barnacle#readme",
+  "devDependencies": {
+    "concurrently": "^6.2.1"
+  }
+}
