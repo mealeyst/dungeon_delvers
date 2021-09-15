@@ -13,6 +13,6 @@ module.exports = {
         filename: "bundle.js"
     },
     plugins: [
-        new HtmlWebpackPlugin()
+        new HtmlWebpackPlugin({ title: "Babylon.js Proving Ground" })
     ]
 };

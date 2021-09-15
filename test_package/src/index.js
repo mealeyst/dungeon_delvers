@@ -1,13 +1,27 @@
-import {helloProvingGround} from "app_package";
+import { initializeBabylonApp } from "app_package";
 
-function component() {
-    const element = document.createElement("p");
+document.body.style.width = "100%";
+document.body.style.height = "100%";
+document.body.style.margin = "0";
+document.body.style.padding = "0";
 
-    element.textContent = "Hello, WebPack.";
+const title = document.createElement("p");
+title.innerText = "Babylon.js Proving Ground";
+title.style.fontSize = "32pt";
+title.style.textAlign = "center";
+document.body.appendChild(title);
 
-    helloProvingGround();
+const div = document.createElement("div");
+div.style.width = "60%";
+div.style.margin = "0 auto";
+div.style.aspectRatio = "16 / 9";
+document.body.appendChild(div);
 
-    return element;
-}
+const canvas = document.createElement("canvas");
+canvas.id = "renderCanvas";
+canvas.style.width = "100%";
+canvas.style.height = "100%";
+canvas.style.display = "block";
+div.appendChild(canvas);
 
-document.body.appendChild(component());
+initializeBabylonApp({ canvas: canvas });
