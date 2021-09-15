@@ -5,7 +5,8 @@ module.exports = {
     entry: "./src/index.js",
     mode: "development",
     devServer: {
-        open: true
+        open: true,
+        watchFiles: ["./src/**/*", "../app_package/lib/**/*"]
     },
     output: {
         path: path.resolve(__dirname, "dist"),
