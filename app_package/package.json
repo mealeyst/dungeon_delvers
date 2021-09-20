@@ -16,6 +16,16 @@
     "typescript": "^4.4.3"
   },
   "dependencies": {
-    "@babylonjs/core": "^4.2.0"
+    "@babylonjs/core": "^4.2.0",
+    "@babylonjs/gui": "^4.2.0",
+    "@babylonjs/inspector": "^4.2.0",
+    "@babylonjs/loaders": "^4.2.0",
+    "@babylonjs/materials": "^4.2.0",
+    "@babylonjs/post-processes": "^4.2.0",
+    "@babylonjs/procedural-textures": "^4.2.0",
+    "@babylonjs/serializers": "^4.2.0",
+    "ammojs-typed": "^1.0.6",
+    "cannon-es": "^0.18.0",
+    "earcut": "^2.2.3"
   }
 }
