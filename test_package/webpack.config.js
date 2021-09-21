@@ -14,5 +14,15 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({ title: "Babylon.js Proving Ground" })
-    ]
+    ],
+    module: {
+        rules: [
+            {
+                test: /\.m?js/,
+                resolve: {
+                    fullySpecified: false
+                }
+            }
+        ],
+    }
 };
