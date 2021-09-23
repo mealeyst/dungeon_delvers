@@ -4,8 +4,8 @@
   "description": "",
   "private": true,
   "scripts": {
-    "build": "webpack",
-    "dev": "webpack-dev-server"
+    "build": "webpack --config webpack.build.config.js",
+    "dev": "webpack-dev-server --config webpack.dev.config.js"
   },
   "keywords": [],
   "author": "",

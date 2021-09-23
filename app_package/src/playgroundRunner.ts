@@ -3,10 +3,16 @@ import { CreatePlaygroundScene } from "./Playground/playground";
 
 export interface InitializeBabylonAppOptions {
     canvas: HTMLCanvasElement;
-    resourceManifest?: Map<string, string>;
+    assetsHostUrl?: string;
 }
 
 export function initializeBabylonApp(options: InitializeBabylonAppOptions) {
+    if (options.assetsHostUrl) {
+        console.log("Assets host URL: " + options.assetsHostUrl!);
+    } else {
+        console.log("No assets host URL provided");
+    }
+
     const canvas = options.canvas;
     const engine = new Engine(canvas);
     const scene = CreatePlaygroundScene(engine, canvas);

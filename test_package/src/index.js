@@ -24,4 +24,10 @@ canvas.style.height = "100%";
 canvas.style.display = "block";
 div.appendChild(canvas);
 
-initializeBabylonApp({ canvas: canvas });
+let assetsHostUrl;
+if (DEV_BUILD) {
+    assetsHostUrl = "http://127.0.0.1:8081/";
+} else {
+    assetsHostUrl = "https://nonlocal-assets-host-url/";
+}
+initializeBabylonApp({ canvas: canvas, assetsHostUrl: assetsHostUrl });
