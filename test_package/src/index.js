@@ -6,7 +6,7 @@ document.body.style.margin = "0";
 document.body.style.padding = "0";
 
 const title = document.createElement("p");
-title.innerText = "Babylon.js Proving Ground";
+title.innerText = "Babylon.js NPM Package Template";
 title.style.fontSize = "32pt";
 title.style.textAlign = "center";
 document.body.appendChild(title);
