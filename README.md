@@ -248,3 +248,11 @@ altogether.
 6. With these steps done, the code from our Playground-based exploration 
 has been neatly refactored into multiple clean TypeScript files, ready to
 continue maturing into a robust, maintainable, and sustainable codebase.
+
+## Licensing
+
+This template repository is intended to be used as a starting point for
+other projects, so its own license is not expected to persist into those
+projects. By default, NPM packages automatically adopt the ISC license,
+so that default choice is left intact in the three package.json files
+present in this template.
