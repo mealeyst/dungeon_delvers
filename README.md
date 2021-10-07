@@ -11,14 +11,7 @@ test page
 
 ## About This Repository
 
-This repository is part of Step 3 on the Babylon.js Golden Path:
-
-- Inspiration
-- Exploration
-- **Maturation**
-- Circulation
-
-In particular, this repo is intended to be a "jumping off point" for moving
+This repository is intended to be a "jumping off point" for moving
 ideas from prototyping into active development. The tools supplied and 
 practices established by this repository are focused on setting up 
 a simple, versatile, and reliable workflow for creating Babylon.js 
@@ -130,8 +123,8 @@ imported in playground.ts by default.
 ### Moving Beyond playground.ts
 
 Playground.ts exists to provide a familiar "landing site" for developers
-progressing the Babylon.js ideas along the Golden Path from Exploration in
-the TypeScript Playground to Maturation in the npm-package-template. 
+progressing their Babylon.js ideas from exploration in (for example) 
+the TypeScript Playground to maturation in the npm-package-template. 
 However, for these ideas to mature into a clean, robust, and maintainable
 codebase, the code should move beyond Playground-specific practices such
 as the use of the `BABYLON` namespace and `import "*"`. For this reason, it 
