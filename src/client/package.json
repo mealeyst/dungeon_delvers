@@ -1,0 +1,34 @@
+{
+  "name": "client",
+  "version": "0.0.0",
+  "description": "This is the front-end client that users will connect to when interacting with dungeon_delvers",
+  "keywords": [
+    "javascript",
+    "typescript",
+    "babylonjs",
+    "react",
+    "frontend",
+    "game"
+  ],
+  "author": "mealeyst <mealeyst@gmail.com>",
+  "homepage": "https://github.com/mealeyst/dungeon_delvers#readme",
+  "license": "ISC",
+  "main": "lib/client.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mealeyst/dungeon_delvers.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/mealeyst/dungeon_delvers/issues"
+  }
+}

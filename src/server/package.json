@@ -1,0 +1,32 @@
+{
+  "name": "server",
+  "version": "0.0.0",
+  "description": "The server backend for dungeon_delvers",
+  "keywords": [
+    "node",
+    "express",
+    "typescript",
+    "socket"
+  ],
+  "author": "mealeyst <mealeyst@gmail.com>",
+  "homepage": "https://github.com/mealeyst/dungeon_delvers#readme",
+  "license": "ISC",
+  "main": "lib/server.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mealeyst/dungeon_delvers.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/mealeyst/dungeon_delvers/issues"
+  }
+}
