@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "babel src --out-dir lib --extensions '.ts,.tsx'",
-    "start": "npm run start:server",
+    "start": "webpack serve --open & npm run start:server",
     "start:server": "./node_modules/.bin/ts-node -- ./src/server/lib/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc": "tsc",
