@@ -1,24 +1,13 @@
-"use strict";
-const express = require('express');
-const http = require('http');
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
+import { Server } from 'socket.io'
+const {
+  APP_SERVER_PORT = '3000'
+} = process.env
 
-/**
- * Our Proxy
- */
-var app = express();
-// proxy the request for static assets
-
-app.get('/', function(req:any, res: any) {
-  res.send('<h1>Hello world</h1>');
-});
-
-io.on('connection', (socket:any) => {
-  console.log('a user connected');
-});
-
-server.listen(3000, () => {
-  console.log('listening on *:3000');
+const port = parseInt(APP_SERVER_PORT)
+const io = new Server(port);
+console.log(`Starting server on port: ${port}`)
+console.log(io)
+io.on("connection", (socket:any) => {
+  console.log("user connected");
+  socket.emit("welcome", "welcome man");
 });

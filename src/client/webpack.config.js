@@ -1,10 +1,15 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+const dotenv = require('dotenv').config({
+  path: path.join(__dirname, '../../.env')
+});
+
 
 module.exports = {
   mode: 'development',
   entry: {
-    index: './src/client/lib/client.tsx'
+    index: path.join(__dirname, './lib/client.tsx')
   },
   devtool: 'inline-source-map',
   devServer: {
@@ -18,6 +23,9 @@ module.exports = {
     }]
 },
   plugins: [
+    new webpack.DefinePlugin({
+      "process.env": JSON.stringify(process.env)
+    }),
     new HtmlWebpackPlugin({
       title: 'Development',
     }),

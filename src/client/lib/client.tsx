@@ -2,7 +2,13 @@ import * as BABYLON from 'babylonjs'
 import React, { useEffect, useRef, FunctionComponent } from 'react';
 import ReactDOM from 'react-dom';
 import styled, { createGlobalStyle } from 'styled-components'
-
+import { io } from 'socket.io-client'
+const {
+    APP_BASE_URL,
+    APP_SERVER_PORT
+} = process.env;
+const server = `http://${APP_BASE_URL}:${APP_SERVER_PORT}`;
+console.log(server)
 type RootProps = {
   className?: string
 }
@@ -24,6 +30,13 @@ const StageStyles = createGlobalStyle`
 
 const RootView:FunctionComponent<RootProps> = ({className}) => {
   const canvasRef = useRef(undefined)
+  useEffect(() => {
+    var socket = io(server);
+    // use your socket
+    socket.on("welcome", (message) => {
+       console.log(message)
+    })
+  })
   useEffect(() => {
     if(canvasRef.current) {
       // Load the 3D engine
@@ -61,10 +74,6 @@ const RootView:FunctionComponent<RootProps> = ({className}) => {
     <>
       <StageStyles />
       <canvas ref={canvasRef} className={className} />
-      <form>
-          <input type="text" />
-          <button>Submit</button>
-        </form>
     </>
   )
 }
