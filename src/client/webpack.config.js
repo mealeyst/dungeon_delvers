@@ -18,7 +18,7 @@ module.exports = {
   module:{
     rules:[{
         loader: 'babel-loader',
-        test: /\.js|\.jsx|\.tsx$/,
+        test: /\.js|\.ts|\.jsx|\.tsx$/,
         exclude: /node_modules/
     }]
 },
@@ -34,5 +34,8 @@ module.exports = {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
+  },
+  resolve: {
+    extensions: ['.js', '.jsx', '.ts', '.tsx']
   }
 };

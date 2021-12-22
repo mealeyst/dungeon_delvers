@@ -1,5 +1,6 @@
 const path = require('path');
 var nodeExternals = require('webpack-node-externals');
+const webpack = require('webpack');
 const dotenv = require('dotenv').config({
   path: path.join(__dirname, '../../.env')
 });
@@ -25,6 +26,11 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     clean: true,
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      "process.env": JSON.stringify(process.env)
+    })
+  ],
   target: 'node',
   externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
     externalsPresets: {
