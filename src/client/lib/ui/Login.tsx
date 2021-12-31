@@ -12,17 +12,17 @@ const LoginView:FunctionComponent<LoginProps> = ({className}) => {
   return (
     <Overlay className={className}>
       <header>
-        <h1>Dungeon Delver</h1>
+        <span>Dungeon Delver</span>
       </header>
       <form>
         <Input type='text' name='login_username' label="Username" />
         <Input type='password' name='login_password' label="Password" />
         <button>Login</button>
-        <footer>
-          <a href="#">I forgot my password</a>
-          <button>Create Account</button>
-        </footer>
       </form>
+      <footer>
+        <a href="#forgot">Forgot Your Password?</a>
+        <a href="#create">Create Account</a>
+      </footer>
     </Overlay>
   )
 }
@@ -32,55 +32,44 @@ const Login = styled(LoginView)`
   height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   form {
     flex-direction: column;
-    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
   }
-  label {
-    position: relative;
-    height: 60px;
-    width: 400px;
+  header {
+    align-self: flex-start;
+    width: 100%;
     display: flex;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 20px;
+    justify-content: center;
     span {
-      color: #9e9085;
-      text-transform: uppercase;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      box-size: border-box;
-      justify-content: center;
-      align-items: center;
-      transition: opacity 0.25s ease-in-out;
+      font-size: 40px;
+      color: #8a7349;
+      padding-top: 60px;
     }
   }
-  input {
-    background: linear-gradient(90deg, rgba(29,41,41,1) 0%, rgba(28,29,31,1) 15%, rgba(28,29,31,1) 85%, rgba(29,41,41,1) 100%);
-    box-shadow: inset 0px 0px 1px 1px rgba(0,0,0,0.75), 0px 0px 1px 1px rgba(0,0,0,0.75);;
-    color: #9e9085;
-    border-style: ridge;
-    border-color: #8a7349;
-    border-width: 2px;
-    height: 50px;
-    width: 400px;
-    outline: none;
-    padding: 0px 10px;
-    font-family: 'Bellefair', serif;
-    font-size: 1rem;
-  }
-  input:focus ~ span, input:not(:placeholder-shown) ~ span {
-    opacity: 0;
-  }
   footer {
-
+    background-color: #131b1e;
+    align-self: flex-end;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top-style: ridge;
+    border-top-color: #8a7349;
+    a {
+      color: #cc9a3d;
+      text-decoration: none;
+      text-transform: uppercase;
+      margin: 0 15px;
+      transition: color 0.25s ease-in-out;
+      &:hover {
+        color: #34badd;
+      }
+    }
   }
 
 `

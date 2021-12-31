@@ -26,7 +26,7 @@ const Input = styled(InputView)`
   margin-right: auto;
   margin-bottom: 20px;
   span {
-    color: #9e9085;
+    color: #cc9a3d;
     text-transform: uppercase;
     position: absolute;
     top: 0;
@@ -42,7 +42,7 @@ const Input = styled(InputView)`
   input {
     background: linear-gradient(90deg, rgba(29,41,41,1) 0%, rgba(28,29,31,1) 15%, rgba(28,29,31,1) 85%, rgba(29,41,41,1) 100%);
     box-shadow: inset 0px 0px 1px 1px rgba(0,0,0,0.75), 0px 0px 1px 1px rgba(0,0,0,0.75);;
-    color: #9e9085;
+    color: #cc9a3d;
     border-style: ridge;
     border-color: #8a7349;
     border-width: 2px;
