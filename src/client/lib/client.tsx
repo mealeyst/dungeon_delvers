@@ -1,7 +1,9 @@
 import * as BABYLON from 'babylonjs'
 import React, { useEffect, useRef, FunctionComponent } from 'react';
+import { Helmet } from 'react-helmet'
 import ReactDOM from 'react-dom';
 import styled, { createGlobalStyle } from 'styled-components'
+import Login from "./ui/Login"
 import socket from "./socket";
 type RootProps = {
   className?: string
@@ -10,6 +12,7 @@ type RootProps = {
 const StageStyles = createGlobalStyle`
   html, body {
     height: 100%;
+    font-family: 'Bellefair', serif;
   }
   body {
     padding: 0;
@@ -37,7 +40,8 @@ const RootView:FunctionComponent<RootProps> = ({className}) => {
           // Create a basic BJS Scene object
           var scene = new BABYLON.Scene(engine);
           // Create a FreeCamera, and set its position to {x: 0, y: 5, z: -10}
-          var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
+          // var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
+          var camera = new BABYLON.ArcRotateCamera('camera1', 1, 0, 2, new BABYLON.Vector3(0, 5, -10), scene)
           // Target the camera to scene origin
           camera.setTarget(BABYLON.Vector3.Zero());
           // Attach the camera to the canvasRef.current
@@ -62,16 +66,27 @@ const RootView:FunctionComponent<RootProps> = ({className}) => {
     }
   }, [canvasRef.current])
   return (
-    <>
+    <main className={className}>
+      <Helmet>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
+        <link href="https://fonts.googleapis.com/css2?family=Bellefair&display=swap" rel="stylesheet" />
+      </Helmet>
       <StageStyles />
-      <canvas ref={canvasRef} className={className} />
-    </>
+      <canvas ref={canvasRef} />
+      <Login />
+    </main>
   )
 }
 
 const Root = styled(RootView)`
   width: 100%;
   height: 100%;
+  position: relative;
+  canvas {
+    height: 100%;
+    width: 100%;
+  }
 `
 
 const main = document.createElement('main')
