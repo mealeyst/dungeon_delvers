@@ -28,5 +28,14 @@
   },
   "bugs": {
     "url": "https://github.com/mealeyst/dungeon_delvers/issues"
+  },
+  "devDependencies": {
+    "dotenv": "^10.0.0",
+    "html-webpack-plugin": "^5.5.0",
+    "webpack": "^5.65.0",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "dependencies": {
+    "socket.io": "^4.4.0"
   }
 }
