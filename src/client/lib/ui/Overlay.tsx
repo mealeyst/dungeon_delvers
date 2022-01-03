@@ -1,8 +1,11 @@
-import React, { FunctionComponent, ReactElement } from 'react';
+import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 
-type OverlayProps = {
+type OverlayViewProps = {
   className?: string;
+};
+
+type OverlayProps = {
   dark?: boolean;
   position?: {
     bottom?: number;
@@ -10,14 +13,14 @@ type OverlayProps = {
     right?: number;
     top?: number;
   };
-};
+}
 
-export const OverlayView: FunctionComponent<OverlayProps> = ({
+export const OverlayView: FunctionComponent<OverlayViewProps> = ({
   className,
   children,
 }) => <main className={className}>{children}</main>;
 
-const Overlay = styled(OverlayView)`
+const Overlay = styled(OverlayView)<OverlayProps>`
   position: absolute;
   bottom: ${({ position }) => (position && position.bottom ? position.bottom : 0)};
   left: ${({ position }) => (position && position.left ? position.left : 0)};

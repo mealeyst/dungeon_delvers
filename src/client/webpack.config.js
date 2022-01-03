@@ -1,23 +1,23 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const webpack = require("webpack");
-const dotenv = require("dotenv").config({
-  path: path.join(__dirname, "../../.env"),
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+const dotenv = require('dotenv').config({
+  path: path.join(__dirname, '../../.env'),
 });
 
 module.exports = {
-  mode: "development",
+  mode: 'development',
   entry: {
-    index: path.join(__dirname, "./lib/client.tsx"),
+    index: path.join(__dirname, './lib/client.tsx'),
   },
-  devtool: "inline-source-map",
+  devtool: 'inline-source-map',
   devServer: {
-    static: "./dist",
+    static: './dist',
   },
   module: {
     rules: [
       {
-        loader: "babel-loader",
+        loader: 'babel-loader',
         test: /\.js|\.ts|\.jsx|\.tsx$/,
         exclude: /node_modules/,
       },
@@ -25,19 +25,19 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      "process.env": JSON.stringify(process.env),
+      'process.env': JSON.stringify(process.env),
     }),
     new HtmlWebpackPlugin({
-      title: "Development",
+      title: 'Development',
     }),
   ],
   output: {
-    filename: "[name].bundle.js",
-    path: path.resolve(__dirname, "dist"),
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist'),
     clean: true,
-    publicPath: "/public/",
+    publicPath: '/public/',
   },
   resolve: {
-    extensions: [".js", ".jsx", ".ts", ".tsx"],
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
 };

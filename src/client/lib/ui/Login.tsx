@@ -16,7 +16,7 @@ const LoginView: FunctionComponent<LoginProps> = ({ className }) => (
     <form>
       <Input type="text" name="login_username" label="Username" />
       <Input type="password" name="login_password" label="Password" />
-      <button>Login</button>
+      <button type="button">Login</button>
     </form>
     <footer>
       <a href="#forgot">Forgot Your Password?</a>

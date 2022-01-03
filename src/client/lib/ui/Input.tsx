@@ -15,7 +15,7 @@ export const InputView: FunctionComponent<InputProps> = ({
   name,
 }) => (
   <label className={className}>
-    <input type={type} name={name} placeholder=" " />
+    <input type={type} name={name} id={name} placeholder=" " />
     <span>{label}</span>
   </label>
 );

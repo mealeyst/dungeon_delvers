@@ -33,6 +33,26 @@
             "ignoreFunctionalComponents": true    
         }
     ],
+    "react/jsx-props-no-spreading": [
+        1,
+        {
+            "html": "ignore",
+            "custom": "enforce",
+            "explicitSpread":"enforce"
+        }
+    ],
+    "jsx-a11y/label-has-associated-control": ["error", {
+        "required": {
+          "some": ["nesting", "id"]
+        }
+    }],
+    "jsx-a11y/label-has-for": ["error", {
+        "required": {
+          "some": ["nesting", "id"]
+        }
+    }],
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": ["error"],
     "import/extensions": [
       "error",
       "ignorePackages",
