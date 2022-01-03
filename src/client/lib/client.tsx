@@ -38,10 +38,10 @@ const onSceneReady = (scene: any) => {
   // camera = new FreeCamera("camera1", new Vector3(0, 5, -10), scene);
   camera = new ArcRotateCamera(
     'camera1',
-    1,
     0,
-    2,
-    new Vector3(0, 5, -10),
+    0,
+    150,
+    new Vector3(0, 0, -10),
     scene,
   );
 
@@ -60,13 +60,19 @@ const onSceneReady = (scene: any) => {
   light.intensity = 0.7;
 
   // Our built-in 'box' shape.
-  const box = MeshBuilder.CreateBox('box', { size: 2 }, scene);
+  // const box = MeshBuilder.CreateBox('box', { size: 2 }, scene);
 
   // Move the box upward 1/2 its height
-  box.position.y = 1;
+  // box.position.y = 1;
 
   // Our built-in 'ground' shape.
-  MeshBuilder.CreateGround('ground', { width: 250, height: 250 }, scene);
+  // MeshBuilder.CreateGround('ground', { width: 250, height: 250 }, scene);
+  MeshBuilder.CreateGroundFromHeightMap('gdhm', 'public/heightMap.png', {
+    width: 150,
+    height: 150,
+    subdivisions: 500,
+    maxHeight: 50,
+  });
 };
 
 /**

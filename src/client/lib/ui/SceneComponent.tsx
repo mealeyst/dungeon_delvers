@@ -27,7 +27,7 @@ const SceneComponentView: FunctionComponent<
   ...rest
 }) => {
   const reactCanvas = useRef(null);
-
+  /* eslint-disable consistent-return */
   useEffect(() => {
     if (reactCanvas.current) {
       const engine = new (Engine as any)(

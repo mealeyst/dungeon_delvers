@@ -12,7 +12,10 @@ module.exports = {
   },
   devtool: 'inline-source-map',
   devServer: {
-    static: './dist',
+    static: {
+      directory: path.join(__dirname, './'),
+      watch: true,
+    },
   },
   module: {
     rules: [
@@ -35,7 +38,6 @@ module.exports = {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
-    publicPath: '/public/',
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
