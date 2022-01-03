@@ -1,0 +1,3 @@
+./node_modules
+./src/client/node_modules
+.src/sever/node_modules

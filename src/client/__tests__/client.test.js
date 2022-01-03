@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const client = require('../lib/client');
+const client = require("../lib/client");
 
-describe('client', () => {
-    it('needs tests');
+describe("client", () => {
+  it("needs tests");
 });

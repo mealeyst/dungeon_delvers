@@ -30,5 +30,20 @@
   },
   "bugs": {
     "url": "https://github.com/mealeyst/dungeon_delvers/issues"
+  },
+  "dependencies": {
+    "@babylonjs/core": "^4.2.0",
+    "babylonjs-gui": "^4.2.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-helmet": "^6.1.0",
+    "socket.io-client": "^4.4.0",
+    "styled-components": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.38",
+    "@types/react-dom": "^17.0.11",
+    "@types/react-helmet": "^6.1.5",
+    "@types/styled-components": "^5.1.19"
   }
 }

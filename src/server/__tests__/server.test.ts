@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const testServer = require('../lib/server');
+const testServer = require("../lib/server");
 
-describe('testServer', () => {
-    it('needs tests');
+describe("testServer", () => {
+  it("needs tests");
 });

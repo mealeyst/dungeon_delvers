@@ -1,31 +1,29 @@
 import React, { FunctionComponent } from 'react';
-import styled from 'styled-components'
+import styled from 'styled-components';
 
-import Overlay from './Overlay'
-import Input from './Input'
+import Overlay from './Overlay';
+import Input from './Input';
 
 type LoginProps = {
-  className?: string
-}
+  className?: string;
+};
 
-const LoginView:FunctionComponent<LoginProps> = ({className}) => {
-  return (
-    <Overlay className={className}>
-      <header>
-        <span>Dungeon Delver</span>
-      </header>
-      <form>
-        <Input type='text' name='login_username' label="Username" />
-        <Input type='password' name='login_password' label="Password" />
-        <button>Login</button>
-      </form>
-      <footer>
-        <a href="#forgot">Forgot Your Password?</a>
-        <a href="#create">Create Account</a>
-      </footer>
-    </Overlay>
-  )
-}
+const LoginView: FunctionComponent<LoginProps> = ({ className }) => (
+  <Overlay className={className}>
+    <header>
+      <span>Dungeon Delver</span>
+    </header>
+    <form>
+      <Input type="text" name="login_username" label="Username" />
+      <Input type="password" name="login_password" label="Password" />
+      <button>Login</button>
+    </form>
+    <footer>
+      <a href="#forgot">Forgot Your Password?</a>
+      <a href="#create">Create Account</a>
+    </footer>
+  </Overlay>
+);
 
 const Login = styled(LoginView)`
   width: 100%;
@@ -71,7 +69,6 @@ const Login = styled(LoginView)`
       }
     }
   }
+`;
 
-`
-
-export default Login
+export default Login;

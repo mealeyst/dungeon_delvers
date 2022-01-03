@@ -1,13 +1,19 @@
-import * as BABYLON from 'babylonjs'
-import React, { useEffect, useRef, FunctionComponent } from 'react';
-import { Helmet } from 'react-helmet'
+import {
+  Vector3,
+  HemisphericLight,
+  MeshBuilder,
+  ArcRotateCamera,
+} from '@babylonjs/core';
+import React, { useEffect, FunctionComponent } from 'react';
+import { Helmet } from 'react-helmet';
 import ReactDOM from 'react-dom';
-import styled, { createGlobalStyle } from 'styled-components'
-import Login from "./ui/Login"
-import socket from "./socket";
+import styled, { createGlobalStyle } from 'styled-components';
+import SceneComponent from './ui/SceneComponent';
+import socket from './socket';
+
 type RootProps = {
-  className?: string
-}
+  className?: string;
+};
 
 const StageStyles = createGlobalStyle`
   html, body {
@@ -23,78 +29,97 @@ const StageStyles = createGlobalStyle`
     height: 100%;
     box-sizing: border-box;
   }
-`
+`;
 
-const RootView:FunctionComponent<RootProps> = ({className}) => {
-  const canvasRef = useRef(undefined)
+let camera: any;
+
+const onSceneReady = (scene: any) => {
+  // This creates and positions a free camera (non-mesh)
+  // camera = new FreeCamera("camera1", new Vector3(0, 5, -10), scene);
+  camera = new ArcRotateCamera(
+    'camera1',
+    1,
+    0,
+    2,
+    new Vector3(0, 5, -10),
+    scene,
+  );
+
+  // This targets the camera to scene origin
+  camera.setTarget(Vector3.Zero());
+
+  const canvas = scene.getEngine().getRenderingCanvas();
+
+  // This attaches the camera to the canvas
+  camera.attachControl(canvas, true);
+
+  // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+  const light = new HemisphericLight('light', new Vector3(0, 1, 0), scene);
+
+  // Default intensity is 1. Let's dim the light a small amount
+  light.intensity = 0.7;
+
+  // Our built-in 'box' shape.
+  const box = MeshBuilder.CreateBox('box', { size: 2 }, scene);
+
+  // Move the box upward 1/2 its height
+  box.position.y = 1;
+
+  // Our built-in 'ground' shape.
+  MeshBuilder.CreateGround('ground', { width: 250, height: 250 }, scene);
+};
+
+/**
+ * Will run on every frame render.  We are spinning the box on y-axis.
+ */
+const onRender = (scene: any) => {
+  if (camera !== undefined) {
+    const deltaTimeInMillis = scene.getEngine().getDeltaTime();
+
+    const rpm = 10;
+    camera.rotation.y += (rpm / 60) * Math.PI * 2 * (deltaTimeInMillis / 1000);
+  }
+};
+
+const RootView: FunctionComponent<RootProps> = ({ className }) => {
   useEffect(() => {
     socket.connect();
-    console.log(socket)
-  })
-  useEffect(() => {
-    if(canvasRef.current) {
-      // Load the 3D engine
-      var engine = new BABYLON.Engine(canvasRef.current, true, {preserveDrawingBuffer: true, stencil: true});
-      // CreateScene function that creates and return the scene
-      var createScene = function(){
-          // Create a basic BJS Scene object
-          var scene = new BABYLON.Scene(engine);
-          // Create a FreeCamera, and set its position to {x: 0, y: 5, z: -10}
-          // var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
-          var camera = new BABYLON.ArcRotateCamera('camera1', 1, 0, 2, new BABYLON.Vector3(0, 5, -10), scene)
-          // Target the camera to scene origin
-          camera.setTarget(BABYLON.Vector3.Zero());
-          // Attach the camera to the canvasRef.current
-          camera.attachControl(canvasRef.current, false);
-          // Create a basic light, aiming 0, 1, 0 - meaning, to the sky
-          var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
-          // Create a built-in "sphere" shape; its constructor takes 6 params: name, segment, diameter, scene, updatable, sideOrientation
-          var sphere = BABYLON.Mesh.CreateSphere('sphere1', 16, 2, scene, false, BABYLON.Mesh.FRONTSIDE);
-          // Move the sphere upward 1/2 of its height
-          sphere.position.y = 1;
-          // Create a built-in "ground" shape; its constructor takes 6 params : name, width, height, subdivision, scene, updatable
-          var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene, false);
-          // Return the created scene
-          return scene;
-      }
-      // call the createScene function
-      var scene = createScene();
-      // run the render loop
-      engine.runRenderLoop(function(){
-          scene.render();
-      });
-    }
-  }, [canvasRef.current])
+    console.log(socket);
+  });
   return (
     <main className={className}>
       <Helmet>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-        <link href="https://fonts.googleapis.com/css2?family=Bellefair&display=swap" rel="stylesheet" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="true"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Bellefair&display=swap"
+          rel="stylesheet"
+        />
       </Helmet>
       <StageStyles />
-      <canvas ref={canvasRef} />
-      <Login />
+      <SceneComponent
+        antialias
+        onSceneReady={onSceneReady}
+        onRender={onRender}
+        id="my-canvas"
+      />
     </main>
-  )
-}
+  );
+};
 
 const Root = styled(RootView)`
   width: 100%;
   height: 100%;
   position: relative;
-  canvas {
-    height: 100%;
-    width: 100%;
-  }
-`
+`;
 
-const main = document.createElement('main')
-main.classList.add('main-stage')
+const main = document.createElement('main');
+main.classList.add('main-stage');
 
-ReactDOM.render(
-  <Root />,
-  document.body.appendChild(main)
-)
+ReactDOM.render(<Root />, document.body.appendChild(main));
 
-console.log('Here we go!')
+console.log('Here we go!');

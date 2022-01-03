@@ -17,8 +17,5 @@
   "include": [
     "src" // <-- change this to where your source files are
   ],
-  "types": [
-    "babylonjs",
-    "babylonjs-gui"
-  ],
+  "types": ["babylonjs", "babylonjs-gui"]
 }
