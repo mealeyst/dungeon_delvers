@@ -33,10 +33,14 @@
   },
   "dependencies": {
     "@babylonjs/core": "^4.2.0",
+    "@babylonjs/inspector": "^4.2.0",
+    "@leodeslf/perlin-noise": "^1.1.2",
     "babylonjs-gui": "^4.2.0",
+    "dat.gui": "^0.7.7",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-helmet": "^6.1.0",
+    "simplex-noise": "^3.0.1",
     "socket.io-client": "^4.4.0",
     "styled-components": "^5.3.3"
   },

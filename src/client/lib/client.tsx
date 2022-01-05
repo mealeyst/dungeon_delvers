@@ -1,8 +1,14 @@
+import '@babylonjs/inspector';
+import * as dat from 'dat.gui';
 import {
   Vector3,
   HemisphericLight,
   MeshBuilder,
-  ArcRotateCamera,
+  FreeCamera,
+  StandardMaterial,
+  CubeTexture,
+  Texture,
+  Color3
 } from '@babylonjs/core';
 import React, { useEffect, FunctionComponent } from 'react';
 import { Helmet } from 'react-helmet';
@@ -10,6 +16,7 @@ import ReactDOM from 'react-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 import SceneComponent from './ui/SceneComponent';
 import socket from './socket';
+import NoiseGenerator from './engine/noise';
 
 type RootProps = {
   className?: string;
@@ -35,15 +42,15 @@ let camera: any;
 
 const onSceneReady = (scene: any) => {
   // This creates and positions a free camera (non-mesh)
-  // camera = new FreeCamera("camera1", new Vector3(0, 5, -10), scene);
-  camera = new ArcRotateCamera(
-    'camera1',
-    0,
-    0,
-    150,
-    new Vector3(0, 0, -10),
-    scene,
-  );
+  camera = new FreeCamera('camera1', new Vector3(0, 5, -10), scene);
+  // camera = new ArcRotateCamera(
+  //   'camera1',
+  //   1,
+  //   0,
+  //   2,
+  //   new Vector3(0, 5, -10),
+  //   scene,
+  // );
 
   // This targets the camera to scene origin
   camera.setTarget(Vector3.Zero());
@@ -54,7 +61,7 @@ const onSceneReady = (scene: any) => {
   camera.attachControl(canvas, true);
 
   // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-  const light = new HemisphericLight('light', new Vector3(0, 1, 0), scene);
+  const light = new HemisphericLight('light', new Vector3(0, 1, 1), scene);
 
   // Default intensity is 1. Let's dim the light a small amount
   light.intensity = 0.7;
@@ -66,25 +73,83 @@ const onSceneReady = (scene: any) => {
   // box.position.y = 1;
 
   // Our built-in 'ground' shape.
-  // MeshBuilder.CreateGround('ground', { width: 250, height: 250 }, scene);
-  MeshBuilder.CreateGroundFromHeightMap('gdhm', 'public/heightMap.png', {
-    width: 150,
-    height: 150,
-    subdivisions: 500,
-    maxHeight: 50,
-  });
+  const skybox = MeshBuilder.CreateBox('skyBox', { size: 1000.0 }, scene);
+  const skyboxMaterial = new StandardMaterial('skyBox', scene);
+  skyboxMaterial.backFaceCulling = false;
+  skyboxMaterial.reflectionTexture = new CubeTexture('public/skybox', scene);
+  skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+  skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
+  skyboxMaterial.specularColor = new Color3(0, 0, 0);
+  skybox.material = skyboxMaterial;
+  const ground = MeshBuilder.CreateGround('ground', {
+    width: 50,
+    height: 50,
+    subdivisions: 50,
+    updatable: true,
+  }, scene);
+  const materialforground = new StandardMaterial('texture1', scene);
+  ground.material = materialforground;
+  // materialforground.wireframe = true;
+  const oldgui = document.getElementById('datGUI');
+  if (oldgui != null) {
+    oldgui.remove();
+  }
+
+  const gui = new dat.GUI();
+  gui.domElement.style.marginTop = '100px';
+  gui.domElement.id = 'datGUI';
+  const onNoiseChanged = () => {
+  };
+  const noiseOptions = {
+    octaves: 10,
+    persistence: 0.5,
+    lacunarity: 2.0,
+    exponentiation: 3.9,
+    height: 64,
+    scale: 256.0,
+    seed: 1,
+    noiseType: 'simplex',
+  };
+
+  const noiseRollup = gui.addFolder('Terrain.Noise');
+  noiseRollup.add(noiseOptions, 'noiseType', ['simplex', 'perlin', 'rand']).onChange(onNoiseChanged);
+  noiseRollup.add(noiseOptions, 'scale', 64.0, 1024.0).onChange(onNoiseChanged);
+  noiseRollup.add(noiseOptions, 'octaves', 1, 20, 1).onChange(onNoiseChanged);
+  noiseRollup.add(noiseOptions, 'persistence', 0.01, 1.0).onChange(onNoiseChanged);
+  noiseRollup.add(noiseOptions, 'lacunarity', 0.01, 4.0).onChange(onNoiseChanged);
+  noiseRollup.add(noiseOptions, 'exponentiation', 0.1, 10.0).onChange(onNoiseChanged);
+  noiseRollup.add(noiseOptions, 'height', 0, 256).onChange(onNoiseChanged);
+
+  const noise = new NoiseGenerator(noiseOptions);
+  const heightmapOptions = {
+    height: 16,
+  };
+
+  const heightmapRollup = gui.addFolder('Terrain.Heightmap');
+  heightmapRollup.add(heightmapOptions, 'height', 0, 128).onChange(onNoiseChanged);
+  // const positions = ground.getVerticesData(VertexBuffer.PositionKind);
+  // if (positions != null) {
+  //   const numberOfVertices = positions.length / 3;
+  //   for (let i = 0; i < numberOfVertices; i += 1) {
+  //   //   // positions[i*3] *= 1.1;
+  //     positions[i * 3 + 1] += Math.random();
+  //   //   // positions[i*3+2] *= 2.5;
+  //   }
+  //   ground.updateVerticesData(VertexBuffer.PositionKind, positions);
+  // }
 };
 
 /**
  * Will run on every frame render.  We are spinning the box on y-axis.
  */
 const onRender = (scene: any) => {
-  if (camera !== undefined) {
-    const deltaTimeInMillis = scene.getEngine().getDeltaTime();
+  // if (camera !== undefined) {
+  //   const deltaTimeInMillis = scene.getEngine().getDeltaTime();
 
-    const rpm = 10;
-    camera.rotation.y += (rpm / 60) * Math.PI * 2 * (deltaTimeInMillis / 1000);
-  }
+  //   const rpm = 10;
+  //   camera.rotation;
+  //   // camera.rotation.y += (rpm / 60) * Math.PI * 2 * (deltaTimeInMillis / 1000);
+  // }
 };
 
 const RootView: FunctionComponent<RootProps> = ({ className }) => {
