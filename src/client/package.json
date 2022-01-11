@@ -34,6 +34,7 @@
   "dependencies": {
     "@babylonjs/core": "^4.2.0",
     "@babylonjs/inspector": "^4.2.0",
+    "@babylonjs/materials": "^4.2.1",
     "@leodeslf/perlin-noise": "^1.1.2",
     "babylonjs-gui": "^4.2.0",
     "dat.gui": "^0.7.7",

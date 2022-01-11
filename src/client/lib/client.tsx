@@ -6,11 +6,10 @@ import {
   MeshBuilder,
   FreeCamera,
   StandardMaterial,
-  CubeTexture,
-  Texture,
-  Color3,
-  VertexBuffer
+  Mesh,
+  VertexBuffer,
 } from '@babylonjs/core';
+import { SkyMaterial } from '@babylonjs/materials'
 import React, { useEffect, FunctionComponent } from 'react';
 import { Helmet } from 'react-helmet';
 import ReactDOM from 'react-dom';
@@ -75,14 +74,25 @@ const onSceneReady = (scene: any) => {
   // box.position.y = 1;
 
   // Our built-in 'ground' shape.
-  const skybox = MeshBuilder.CreateBox('skyBox', { size: 1000.0 }, scene);
-  const skyboxMaterial = new StandardMaterial('skyBox', scene);
-  skyboxMaterial.backFaceCulling = false;
-  skyboxMaterial.reflectionTexture = new CubeTexture('public/skybox', scene);
-  skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
-  skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
-  skyboxMaterial.specularColor = new Color3(0, 0, 0);
-  skybox.material = skyboxMaterial;
+  // const skybox = MeshBuilder.CreateBox('skyBox', { size: 1000.0 }, scene);
+  // const skyboxMaterial = new StandardMaterial('skyBox', scene);
+  // skyboxMaterial.backFaceCulling = false;
+  // skyboxMaterial.reflectionTexture = new CubeTexture('public/skybox', scene);
+  // skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+  // skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
+  // skyboxMaterial.specularColor = new Color3(0, 0, 0);
+  // skybox.material = skyboxMaterial;
+  const skyMaterial = new SkyMaterial('skyMaterial', scene);
+  skyMaterial.backFaceCulling = false;
+
+  const skybox = Mesh.CreateBox('skyBox', 1000.0, scene);
+  skyMaterial.turbidity = 1;
+  skyMaterial.inclination = 0.5;
+  skyMaterial.useSunPosition = true; // Do not set sun position from azimuth and inclination
+  skyMaterial.sunPosition = new Vector3(-50, 100, 0);
+  skyMaterial.rayleigh = 2;
+  skyMaterial.luminance = 1;
+  skybox.material = skyMaterial;
   const ground = MeshBuilder.CreateGround('ground', {
     width: 50,
     height: 50,
@@ -144,7 +154,7 @@ const RootView: FunctionComponent<RootProps> = ({ className }) => {
         onRender={onRender}
         id="my-canvas"
       />
-      <Login />
+      {/* <Login /> */}
     </main>
   );
 };
