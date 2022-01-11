@@ -8,7 +8,8 @@ import {
   StandardMaterial,
   CubeTexture,
   Texture,
-  Color3
+  Color3,
+  VertexBuffer
 } from '@babylonjs/core';
 import React, { useEffect, FunctionComponent } from 'react';
 import { Helmet } from 'react-helmet';
@@ -17,6 +18,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 import SceneComponent from './ui/SceneComponent';
 import socket from './socket';
 import NoiseGenerator from './engine/noise';
+import Login from './ui/Login';
 
 type RootProps = {
   className?: string;
@@ -90,53 +92,17 @@ const onSceneReady = (scene: any) => {
   const materialforground = new StandardMaterial('texture1', scene);
   ground.material = materialforground;
   // materialforground.wireframe = true;
-  const oldgui = document.getElementById('datGUI');
-  if (oldgui != null) {
-    oldgui.remove();
+
+  const positions = ground.getVerticesData(VertexBuffer.PositionKind);
+  if (positions != null) {
+    const numberOfVertices = positions.length / 3;
+    for (let i = 0; i < numberOfVertices; i += 1) {
+    //   // positions[i*3] *= 1.1;
+      positions[i * 3 + 1] += Math.random();
+    //   // positions[i*3+2] *= 2.5;
+    }
+    ground.updateVerticesData(VertexBuffer.PositionKind, positions);
   }
-
-  const gui = new dat.GUI();
-  gui.domElement.style.marginTop = '100px';
-  gui.domElement.id = 'datGUI';
-  const onNoiseChanged = () => {
-  };
-  const noiseOptions = {
-    octaves: 10,
-    persistence: 0.5,
-    lacunarity: 2.0,
-    exponentiation: 3.9,
-    height: 64,
-    scale: 256.0,
-    seed: 1,
-    noiseType: 'simplex',
-  };
-
-  const noiseRollup = gui.addFolder('Terrain.Noise');
-  noiseRollup.add(noiseOptions, 'noiseType', ['simplex', 'perlin', 'rand']).onChange(onNoiseChanged);
-  noiseRollup.add(noiseOptions, 'scale', 64.0, 1024.0).onChange(onNoiseChanged);
-  noiseRollup.add(noiseOptions, 'octaves', 1, 20, 1).onChange(onNoiseChanged);
-  noiseRollup.add(noiseOptions, 'persistence', 0.01, 1.0).onChange(onNoiseChanged);
-  noiseRollup.add(noiseOptions, 'lacunarity', 0.01, 4.0).onChange(onNoiseChanged);
-  noiseRollup.add(noiseOptions, 'exponentiation', 0.1, 10.0).onChange(onNoiseChanged);
-  noiseRollup.add(noiseOptions, 'height', 0, 256).onChange(onNoiseChanged);
-
-  const noise = new NoiseGenerator(noiseOptions);
-  const heightmapOptions = {
-    height: 16,
-  };
-
-  const heightmapRollup = gui.addFolder('Terrain.Heightmap');
-  heightmapRollup.add(heightmapOptions, 'height', 0, 128).onChange(onNoiseChanged);
-  // const positions = ground.getVerticesData(VertexBuffer.PositionKind);
-  // if (positions != null) {
-  //   const numberOfVertices = positions.length / 3;
-  //   for (let i = 0; i < numberOfVertices; i += 1) {
-  //   //   // positions[i*3] *= 1.1;
-  //     positions[i * 3 + 1] += Math.random();
-  //   //   // positions[i*3+2] *= 2.5;
-  //   }
-  //   ground.updateVerticesData(VertexBuffer.PositionKind, positions);
-  // }
 };
 
 /**
@@ -178,6 +144,7 @@ const RootView: FunctionComponent<RootProps> = ({ className }) => {
         onRender={onRender}
         id="my-canvas"
       />
+      <Login />
     </main>
   );
 };

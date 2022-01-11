@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 import Overlay from './Overlay';
 import Input from './Input';
+import Button from './Button';
+import Checkbox from './Checkbox';
 
 type LoginProps = {
   className?: string;
@@ -11,12 +13,13 @@ type LoginProps = {
 const LoginView: FunctionComponent<LoginProps> = ({ className }) => (
   <Overlay className={className}>
     <header>
-      <span>Dungeon Delver</span>
+      <img src="./public/Game_Title.png" alt="Atla Weathermoor" />
     </header>
     <form>
       <Input type="text" name="login_username" label="Username" />
       <Input type="password" name="login_password" label="Password" />
-      <button type="button">Login</button>
+      <Checkbox>Remember me</Checkbox>
+      <Button>Login</Button>
     </form>
     <footer>
       <a href="#forgot">Forgot Your Password?</a>
