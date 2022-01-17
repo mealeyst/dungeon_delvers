@@ -51,6 +51,7 @@
           "some": ["nesting", "id"]
         }
     }],
+    "arrow-body-style": 0,
     "no-shadow": "off",
     "@typescript-eslint/no-shadow": ["off"],
     "import/extensions": [

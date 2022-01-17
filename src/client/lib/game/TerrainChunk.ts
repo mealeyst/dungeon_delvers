@@ -1,15 +1,28 @@
-import { spline } from './spline';
+import { Color3, Vector3, Mesh } from '@babylonjs/core';
+import LinearSpline from './Spline/LinearSpline';
+
+const WHITE = new Color3(128, 128, 128); // rgb(128, 128, 128)
+const OCEAN = new Color3(217, 213, 146); // rgb(217, 213, 146)
+const BEACH = new Color3(217, 213, 146); // rgb(217, 213, 146)
+const SNOW = new Color3(255, 255, 255); // rgb(255, 255, 255)
+const FOREST_TROPICAL = new Color3(79, 159, 15); // rgb(79, 159, 15)
+const FOREST_TEMPERATE = new Color3(43, 150, 14); // rgb(43, 150, 14)
+const FOREST_BOREAL = new Color3(41, 193, 0); // rgb(41, 193, 0)
 
 class TerrainChunk {
+  plan: Mes
   constructor(params) {
     this.params = params;
     this.Init(params);
   }
 
   Init(params) {
-    const size = new THREE.Vector3(
-        params.width * params.scale, 0, params.width * params.scale);
-
+    const size = new Vector3(
+      params.width * params.scale,
+      0,
+      params.width * params.scale,
+    );
+    
     this.plane = new THREE.Mesh(
         new THREE.PlaneGeometry(size.x, size.z, 128, 128),
         new THREE.MeshStandardMaterial({
@@ -29,17 +42,20 @@ class TerrainChunk {
       return c.lerpHSL(p1, t);
     };
     this.colourSpline = [
-      new spline.LinearSpline(colourLerp),
-      new spline.LinearSpline(colourLerp)
+      new LinearSpline(colourLerp),
+      new LinearSpline(colourLerp),
     ];
     // Arid
-    this.colourSpline[0].AddPoint(0.0, new THREE.Color(0xb7a67d));
-    this.colourSpline[0].AddPoint(0.5, new THREE.Color(0xf1e1bc));
+    // rgb(183, 166, 125)
+    this.colourSpline[0].AddPoint(0.0, new Color3(183, 166, 125));
+    // rgb(241, 225, 188)
+    this.colourSpline[0].AddPoint(0.5, new Color3(241, 225, 188));
     this.colourSpline[0].AddPoint(1.0, SNOW);
 
     // Humid
     this.colourSpline[1].AddPoint(0.0, FORESTBOREAL);
-    this.colourSpline[1].AddPoint(0.5, new THREE.Color(0xcee59c));
+    // rgb(206, 229, 156)
+    this.colourSpline[1].AddPoint(0.5, new Color3(206, 229, 156));
     this.colourSpline[1].AddPoint(1.0, SNOW);
 
     this.Rebuild();

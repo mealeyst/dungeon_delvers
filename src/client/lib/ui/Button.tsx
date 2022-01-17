@@ -1,4 +1,10 @@
-import React, { FunctionComponent, ButtonHTMLAttributes, ReactNode, useEffect } from 'react';
+import React,
+{
+  FunctionComponent,
+  ButtonHTMLAttributes,
+  ReactNode,
+  useEffect,
+} from 'react';
 import styled from 'styled-components';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>{

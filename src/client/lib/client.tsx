@@ -9,14 +9,14 @@ import {
   Mesh,
   VertexBuffer,
 } from '@babylonjs/core';
-import { SkyMaterial } from '@babylonjs/materials'
+// import { SkyMaterial } from '@babylonjs/materials';
 import React, { useEffect, FunctionComponent } from 'react';
 import { Helmet } from 'react-helmet';
 import ReactDOM from 'react-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 import SceneComponent from './ui/SceneComponent';
 import socket from './socket';
-import NoiseGenerator from './engine/noise';
+import ProceduralTerrainDemo from './game/ProceduralTerrainDemo';
 import Login from './ui/Login';
 
 type RootProps = {
@@ -42,8 +42,9 @@ const StageStyles = createGlobalStyle`
 let camera: any;
 
 const onSceneReady = (scene: any) => {
+  ProceduralTerrainDemo(scene);
   // This creates and positions a free camera (non-mesh)
-  camera = new FreeCamera('camera1', new Vector3(0, 5, -10), scene);
+  // camera = new FreeCamera('camera1', new Vector3(0, 5, -10), scene);
   // camera = new ArcRotateCamera(
   //   'camera1',
   //   1,
@@ -54,18 +55,18 @@ const onSceneReady = (scene: any) => {
   // );
 
   // This targets the camera to scene origin
-  camera.setTarget(Vector3.Zero());
+  // camera.setTarget(Vector3.Zero());
 
-  const canvas = scene.getEngine().getRenderingCanvas();
+  // const canvas = scene.getEngine().getRenderingCanvas();
 
   // This attaches the camera to the canvas
-  camera.attachControl(canvas, true);
+  // camera.attachControl(canvas, true);
 
   // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-  const light = new HemisphericLight('light', new Vector3(0, 1, 1), scene);
+  // const light = new HemisphericLight('light', new Vector3(0, 1, 1), scene);
 
   // Default intensity is 1. Let's dim the light a small amount
-  light.intensity = 0.7;
+  // light.intensity = 0.7;
 
   // Our built-in 'box' shape.
   // const box = MeshBuilder.CreateBox('box', { size: 2 }, scene);
@@ -82,37 +83,37 @@ const onSceneReady = (scene: any) => {
   // skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
   // skyboxMaterial.specularColor = new Color3(0, 0, 0);
   // skybox.material = skyboxMaterial;
-  const skyMaterial = new SkyMaterial('skyMaterial', scene);
-  skyMaterial.backFaceCulling = false;
+  // const skyMaterial = new SkyMaterial('skyMaterial', scene);
+  // skyMaterial.backFaceCulling = false;
 
-  const skybox = Mesh.CreateBox('skyBox', 1000.0, scene);
-  skyMaterial.turbidity = 1;
-  skyMaterial.inclination = 0.5;
-  skyMaterial.useSunPosition = true; // Do not set sun position from azimuth and inclination
-  skyMaterial.sunPosition = new Vector3(-50, 100, 0);
-  skyMaterial.rayleigh = 2;
-  skyMaterial.luminance = 1;
-  skybox.material = skyMaterial;
-  const ground = MeshBuilder.CreateGround('ground', {
-    width: 50,
-    height: 50,
-    subdivisions: 50,
-    updatable: true,
-  }, scene);
-  const materialforground = new StandardMaterial('texture1', scene);
-  ground.material = materialforground;
+  // const skybox = Mesh.CreateBox('skyBox', 1000.0, scene);
+  // skyMaterial.turbidity = 1;
+  // skyMaterial.inclination = 0.5;
+  // skyMaterial.useSunPosition = true; // Do not set sun position from azimuth and inclination
+  // skyMaterial.sunPosition = new Vector3(-50, 100, 0);
+  // skyMaterial.rayleigh = 2;
+  // skyMaterial.luminance = 1;
+  // skybox.material = skyMaterial;
+  // const ground = MeshBuilder.CreateGround('ground', {
+  //   width: 50,
+  //   height: 50,
+  //   subdivisions: 50,
+  //   updatable: true,
+  // }, scene);
+  // const materialforground = new StandardMaterial('texture1', scene);
+  // ground.material = materialforground;
   // materialforground.wireframe = true;
 
-  const positions = ground.getVerticesData(VertexBuffer.PositionKind);
-  if (positions != null) {
-    const numberOfVertices = positions.length / 3;
-    for (let i = 0; i < numberOfVertices; i += 1) {
-    //   // positions[i*3] *= 1.1;
-      positions[i * 3 + 1] += Math.random();
-    //   // positions[i*3+2] *= 2.5;
-    }
-    ground.updateVerticesData(VertexBuffer.PositionKind, positions);
-  }
+  // const positions = ground.getVerticesData(VertexBuffer.PositionKind);
+  // if (positions != null) {
+  //   const numberOfVertices = positions.length / 3;
+  //   for (let i = 0; i < numberOfVertices; i += 1) {
+  //   //   // positions[i*3] *= 1.1;
+  //     positions[i * 3 + 1] += Math.random();
+  //   //   // positions[i*3+2] *= 2.5;
+  //   }
+  //   ground.updateVerticesData(VertexBuffer.PositionKind, positions);
+  // }
 };
 
 /**
