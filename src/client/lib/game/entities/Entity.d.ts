@@ -3,6 +3,5 @@ import { GUI } from 'dat.gui';
 
 export interface Entity {
   scene: Scene
-  gui: GUI,
-  guiParams: any
+  gui: GUI
 }

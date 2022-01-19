@@ -39,10 +39,15 @@ const StageStyles = createGlobalStyle`
   }
 `;
 
-let camera: any;
+let box: any;
 
 const onSceneReady = (scene: any) => {
   ProceduralTerrainDemo(scene);
+  // Our built-in 'box' shape.
+  box = MeshBuilder.CreateBox('box', { size: 2 }, scene);
+
+  // Move the box upward 1/2 its height
+  box.position.y = 10;
   // This creates and positions a free camera (non-mesh)
   // camera = new FreeCamera('camera1', new Vector3(0, 5, -10), scene);
   // camera = new ArcRotateCamera(
@@ -67,12 +72,6 @@ const onSceneReady = (scene: any) => {
 
   // Default intensity is 1. Let's dim the light a small amount
   // light.intensity = 0.7;
-
-  // Our built-in 'box' shape.
-  // const box = MeshBuilder.CreateBox('box', { size: 2 }, scene);
-
-  // Move the box upward 1/2 its height
-  // box.position.y = 1;
 
   // Our built-in 'ground' shape.
   // const skybox = MeshBuilder.CreateBox('skyBox', { size: 1000.0 }, scene);
@@ -120,13 +119,12 @@ const onSceneReady = (scene: any) => {
  * Will run on every frame render.  We are spinning the box on y-axis.
  */
 const onRender = (scene: any) => {
-  // if (camera !== undefined) {
-  //   const deltaTimeInMillis = scene.getEngine().getDeltaTime();
+  if (box !== undefined) {
+    const deltaTimeInMillis = scene.getEngine().getDeltaTime();
 
-  //   const rpm = 10;
-  //   camera.rotation;
-  //   // camera.rotation.y += (rpm / 60) * Math.PI * 2 * (deltaTimeInMillis / 1000);
-  // }
+    const rpm = 10;
+    box.rotation.y += (rpm / 60) * Math.PI * 2 * (deltaTimeInMillis / 1000);
+  }
 };
 
 const RootView: FunctionComponent<RootProps> = ({ className }) => {

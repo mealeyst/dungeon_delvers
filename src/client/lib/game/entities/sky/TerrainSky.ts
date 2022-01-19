@@ -6,27 +6,26 @@ import {
 } from '@babylonjs/core';
 import { SkyMaterial } from '@babylonjs/materials';
 import { GUI } from 'dat.gui';
-import { Entity } from './Entity.d';
+import { Entity } from '../Entity.d';
 
-interface TerrainGuiInterface {
-       sky: {
-          luminance: number;
-          turbidity: number;
-          rayleigh: number;
-          mieCoefficient: number;
-          mieDirectionalG: number;
-       }
-       sun: {
-          inclination: number;
-          azimuth: number;
-       }
-
+interface TerrainSkyGuiInterface {
+  sky: {
+    luminance: number;
+    turbidity: number;
+    rayleigh: number;
+    mieCoefficient: number;
+    mieDirectionalG: number;
+  }
+  sun: {
+    inclination: number;
+    azimuth: number;
+  }
 }
 
 class TerrainSky implements Entity {
   gui: GUI;
 
-  guiParams: TerrainGuiInterface;
+  guiParams: TerrainSkyGuiInterface;
 
   light: HemisphericLight;
 
@@ -38,16 +37,15 @@ class TerrainSky implements Entity {
 
   sunPosition: Vector3;
 
-  constructor(scene: Scene, gui: GUI, guiParams: any) {
+  constructor(gui: GUI, scene: Scene) {
     this.scene = scene;
     this.gui = gui;
-    this.guiParams = guiParams;
     this.guiParams = {
       sky: {
         luminance: 0.2,
         mieCoefficient: 0.005,
         mieDirectionalG: 0.8,
-        rayleigh: 2,
+        rayleigh: 0.4,
         turbidity: 1,
       },
       sun: {
@@ -61,6 +59,24 @@ class TerrainSky implements Entity {
 
     // Default intensity is 1. Let's dim the light a small amount
     this.light.intensity = 0.7;
+
+    // this.light = new DirectionalLight('*dir00', new Vector3(0, -1, -1), scene);
+    // this.light.position = this.sunPosition;
+    // this.light = new SpotLight(
+    //   'spot01',
+    //   new Vector3(30, 40, 30),
+    //   new Vector3(-1, -2, -1),
+    //   1.1,
+    //   16,
+    //   scene,
+    // );
+    // this.light.setDirectionToTarget(Vector3.Zero());
+    // this.light.intensity = 1.5;
+    // this.shadowGenerator = new ShadowGenerator(1024, this.light);
+    // const ground = this.scene.getMeshByID('ground');
+    // if (ground) {
+    //   this.shadowGenerator.addShadowCaster(ground);
+    // }
 
     this.skyMaterial = new SkyMaterial('skyMaterial', this.scene);
     this.skyMaterial.backFaceCulling = false;

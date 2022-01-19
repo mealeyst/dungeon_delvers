@@ -1,4 +1,4 @@
-import { lerp } from './math';
+import { lerp } from '../math';
 
 class RandomWrapper {
   values: any;
