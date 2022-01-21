@@ -1,6 +1,7 @@
 import '@babylonjs/inspector';
 import * as dat from 'dat.gui';
 import {
+  AxesViewer,
   Vector3,
   HemisphericLight,
   MeshBuilder,
@@ -43,76 +44,7 @@ let box: any;
 
 const onSceneReady = (scene: any) => {
   ProceduralTerrainDemo(scene);
-  // Our built-in 'box' shape.
-  box = MeshBuilder.CreateBox('box', { size: 2 }, scene);
-
-  // Move the box upward 1/2 its height
-  box.position.y = 10;
-  // This creates and positions a free camera (non-mesh)
-  // camera = new FreeCamera('camera1', new Vector3(0, 5, -10), scene);
-  // camera = new ArcRotateCamera(
-  //   'camera1',
-  //   1,
-  //   0,
-  //   2,
-  //   new Vector3(0, 5, -10),
-  //   scene,
-  // );
-
-  // This targets the camera to scene origin
-  // camera.setTarget(Vector3.Zero());
-
-  // const canvas = scene.getEngine().getRenderingCanvas();
-
-  // This attaches the camera to the canvas
-  // camera.attachControl(canvas, true);
-
-  // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-  // const light = new HemisphericLight('light', new Vector3(0, 1, 1), scene);
-
-  // Default intensity is 1. Let's dim the light a small amount
-  // light.intensity = 0.7;
-
-  // Our built-in 'ground' shape.
-  // const skybox = MeshBuilder.CreateBox('skyBox', { size: 1000.0 }, scene);
-  // const skyboxMaterial = new StandardMaterial('skyBox', scene);
-  // skyboxMaterial.backFaceCulling = false;
-  // skyboxMaterial.reflectionTexture = new CubeTexture('public/skybox', scene);
-  // skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
-  // skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
-  // skyboxMaterial.specularColor = new Color3(0, 0, 0);
-  // skybox.material = skyboxMaterial;
-  // const skyMaterial = new SkyMaterial('skyMaterial', scene);
-  // skyMaterial.backFaceCulling = false;
-
-  // const skybox = Mesh.CreateBox('skyBox', 1000.0, scene);
-  // skyMaterial.turbidity = 1;
-  // skyMaterial.inclination = 0.5;
-  // skyMaterial.useSunPosition = true; // Do not set sun position from azimuth and inclination
-  // skyMaterial.sunPosition = new Vector3(-50, 100, 0);
-  // skyMaterial.rayleigh = 2;
-  // skyMaterial.luminance = 1;
-  // skybox.material = skyMaterial;
-  // const ground = MeshBuilder.CreateGround('ground', {
-  //   width: 50,
-  //   height: 50,
-  //   subdivisions: 50,
-  //   updatable: true,
-  // }, scene);
-  // const materialforground = new StandardMaterial('texture1', scene);
-  // ground.material = materialforground;
-  // materialforground.wireframe = true;
-
-  // const positions = ground.getVerticesData(VertexBuffer.PositionKind);
-  // if (positions != null) {
-  //   const numberOfVertices = positions.length / 3;
-  //   for (let i = 0; i < numberOfVertices; i += 1) {
-  //   //   // positions[i*3] *= 1.1;
-  //     positions[i * 3 + 1] += Math.random();
-  //   //   // positions[i*3+2] *= 2.5;
-  //   }
-  //   ground.updateVerticesData(VertexBuffer.PositionKind, positions);
-  // }
+  scene.debugLayer.show();
 };
 
 /**

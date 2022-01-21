@@ -1,5 +1,6 @@
 import { perlin2D } from '@leodeslf/perlin-noise';
 import SimplexNoise from 'simplex-noise';
+import RandomWrapper from './Random';
 
 type NoiseParams = {
   noiseType: string,
@@ -27,9 +28,10 @@ class NoiseGenerator {
       simplex: new SimplexNoise(this.params.seed),
       perlin: {
         noise2D: (x:number, y:number) => {
-          return perlin2D(x, y) * 2.0 - 1.0;
+          return perlin2D(x, y);
         },
       },
+      random: new RandomWrapper(),
     };
   }
 
