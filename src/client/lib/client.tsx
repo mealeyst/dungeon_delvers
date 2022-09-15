@@ -1,14 +1,8 @@
 import '@babylonjs/inspector';
+import 'babylonjs-loaders';
 import * as dat from 'dat.gui';
 import {
-  AxesViewer,
-  Vector3,
-  HemisphericLight,
-  MeshBuilder,
-  FreeCamera,
-  StandardMaterial,
-  Mesh,
-  VertexBuffer,
+  SceneLoader,
 } from '@babylonjs/core';
 // import { SkyMaterial } from '@babylonjs/materials';
 import React, { useEffect, FunctionComponent } from 'react';
@@ -45,6 +39,9 @@ let box: any;
 const onSceneReady = (scene: any) => {
   ProceduralTerrainDemo(scene);
   scene.debugLayer.show();
+  SceneLoader.Append('./public/', 'Warrior.glb', scene, () => {
+    console.log('We have loaded');
+  });
 };
 
 /**
