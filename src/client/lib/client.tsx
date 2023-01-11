@@ -39,7 +39,7 @@ let box: any;
 const onSceneReady = (scene: any) => {
   ProceduralTerrainDemo(scene);
   scene.debugLayer.show();
-  SceneLoader.Append('./public/', 'Warrior.glb', scene, () => {
+  SceneLoader.Append('./public/', 'PlaceHolderChar.glb', scene, () => {
     console.log('We have loaded');
   });
 };
