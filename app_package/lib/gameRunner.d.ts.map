@@ -1,0 +1,1 @@
+{"version":3,"file":"gameRunner.d.ts","sourceRoot":"","sources":["../src/gameRunner.ts"],"names":[],"mappings":"AAMA,OAAO,yBAAyB,CAAC;AAGjC,eAAO,MAAM,SAAS,QAAQ,CAAC;AAC/B,eAAO,IAAI,SAAS,SAAQ,CAAC;AAG7B,MAAM,WAAW,2BAA2B;IAC1C,MAAM,EAAE,iBAAiB,CAAC;IAC1B,aAAa,CAAC,EAAE,MAAM,CAAC;CACxB;AAED,wBAAsB,oBAAoB,CACxC,OAAO,EAAE,2BAA2B,iBAoFrC"}

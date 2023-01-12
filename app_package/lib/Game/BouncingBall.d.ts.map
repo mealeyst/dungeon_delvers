@@ -1,0 +1,1 @@
+{"version":3,"file":"BouncingBall.d.ts","sourceRoot":"","sources":["../../src/Game/BouncingBall.ts"],"names":[],"mappings":"AAAA,OAAO,EAAQ,KAAK,EAAE,aAAa,EAAE,MAAM,iBAAiB,CAAC;AAE7D,qBAAa,YAAa,SAAQ,aAAa;IAC7C,OAAO,CAAC,OAAO,CAAO;gBACV,KAAK,EAAE,KAAK;IAUxB,OAAO,CAAE,gBAAgB;CAM1B"}
