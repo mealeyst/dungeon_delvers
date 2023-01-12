@@ -22,8 +22,6 @@ function initializeBabylonApp(options) {
             options.assetsHostUrl = "app://";
         }
         else {
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
             options.assetsHostUrl = window.location.href.split("?")[0];
             if (!options.assetsHostUrl) {
                 options.assetsHostUrl = "";
