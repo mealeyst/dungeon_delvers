@@ -10,7 +10,8 @@ import {
 import "@babylonjs/inspector";
 import { GUI, GUIController } from "dat.gui";
 import { Assets } from "./Assets";
-import Sky from "./Entities/Sky";
+import Sky from "./entities/Sky";
+import TerrainChunkManager from "./entities/ground/TerrainChunkManager";
 
 class Game {
   gui: GUI;
@@ -50,6 +51,7 @@ class Game {
       assetsHostUrl,
       (assets) => {
         new Sky(this.gui, this.scene);
+        new TerrainChunkManager(this.gui, this.scene, assets);
         console.log("onReady", assets);
       },
       (assets) => {

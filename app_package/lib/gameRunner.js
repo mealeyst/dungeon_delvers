@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeBabylonApp = exports.useNative = exports.useWebGPU = void 0;
 const core_1 = require("@babylonjs/core");
 require("@babylonjs/loaders/glTF");
-const Game_1 = require("./Game/Game");
+const Game_1 = require("./game/Game");
 exports.useWebGPU = false;
 exports.useNative = false;
 function initializeBabylonApp(options) {

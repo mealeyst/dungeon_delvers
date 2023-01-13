@@ -1,5 +1,8 @@
 "use strict";
-/**
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.perlin4D = exports.perlin3D = exports.perlin2D = exports.perlin1D = void 0;
+const math_1 = require("../math");
+/*
  * A Perlin Noise library for JavaScript.
  *
  * Based on implementations by Ken Perlin (Java, C) & Stefan Gustavson (C).
@@ -8,8 +11,6 @@
  * Copyright (c) 2018 Leonardo de S.L.F.
  * http://leodeslf.com/
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.perlin4D = exports.perlin3D = exports.perlin2D = exports.perlin1D = void 0;
 // Permutation table.
 const p = [
     151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140,
@@ -33,9 +34,6 @@ const P = [...p, ...p];
 // Utility functions.
 function fade(t) {
     return t * t * t * (t * (t * 6 - 15) + 10);
-}
-function lerp(t, a, b) {
-    return a + t * (b - a);
 }
 // Helper functions to find gradients for each vertex.
 function gradient1D(hash, x) {
@@ -62,7 +60,7 @@ function gradient4D(hash, x, y, z, t) {
 const perlin1D = (x) => {
     const FX = Math.floor(x), X = FX & 255;
     x = x - FX;
-    return lerp(fade(x), gradient1D(P[P[X]], x), gradient1D(P[P[X + 1]], x - 1));
+    return (0, math_1.lerp)(fade(x), gradient1D(P[P[X]], x), gradient1D(P[P[X + 1]], x - 1));
 };
 exports.perlin1D = perlin1D;
 /**
@@ -76,7 +74,7 @@ const perlin2D = (x, y) => {
     x = x - FX;
     y = y - FY;
     const FDX = fade(x), x1 = x - 1, y1 = y - 1;
-    return lerp(fade(y), lerp(FDX, gradient2D(P[A], x, y), gradient2D(P[B], x1, y)), lerp(FDX, gradient2D(P[A + 1], x, y1), gradient2D(P[B + 1], x1, y1)));
+    return (0, math_1.lerp)(fade(y), (0, math_1.lerp)(FDX, gradient2D(P[A], x, y), gradient2D(P[B], x1, y)), (0, math_1.lerp)(FDX, gradient2D(P[A + 1], x, y1), gradient2D(P[B + 1], x1, y1)));
 };
 exports.perlin2D = perlin2D;
 /**
@@ -92,7 +90,7 @@ const perlin3D = (x, y, z) => {
     y = y - FY;
     z = z - FZ;
     const FDX = fade(x), FDY = fade(y), x1 = x - 1, y1 = y - 1, z1 = z - 1;
-    return lerp(fade(z), lerp(FDY, lerp(FDX, gradient3D(P[AA], x, y, z), gradient3D(P[BA], x1, y, z)), lerp(FDX, gradient3D(P[AB], x, y1, z), gradient3D(P[BB], x1, y1, z))), lerp(FDY, lerp(FDX, gradient3D(P[AA + 1], x, y, z1), gradient3D(P[BA + 1], x1, y, z1)), lerp(FDX, gradient3D(P[AB + 1], x, y1, z1), gradient3D(P[BB + 1], x1, y1, z1))));
+    return (0, math_1.lerp)(fade(z), (0, math_1.lerp)(FDY, (0, math_1.lerp)(FDX, gradient3D(P[AA], x, y, z), gradient3D(P[BA], x1, y, z)), (0, math_1.lerp)(FDX, gradient3D(P[AB], x, y1, z), gradient3D(P[BB], x1, y1, z))), (0, math_1.lerp)(FDY, (0, math_1.lerp)(FDX, gradient3D(P[AA + 1], x, y, z1), gradient3D(P[BA + 1], x1, y, z1)), (0, math_1.lerp)(FDX, gradient3D(P[AB + 1], x, y1, z1), gradient3D(P[BB + 1], x1, y1, z1))));
 };
 exports.perlin3D = perlin3D;
 /**
@@ -110,7 +108,7 @@ const perlin4D = (x, y, z, t) => {
     z = z - FZ;
     t = t - FT;
     const FDX = fade(x), FDY = fade(y), FDZ = fade(z), x1 = x - 1, y1 = y - 1, z1 = z - 1, t1 = t - 1;
-    return lerp(fade(t), lerp(FDZ, lerp(FDY, lerp(FDX, gradient4D(P[AAA], x, y, z, t), gradient4D(P[BAA], x1, y, z, t)), lerp(FDX, gradient4D(P[ABA], x, y1, z, t), gradient4D(P[BBA], x1, y1, z, t))), lerp(FDY, lerp(FDX, gradient4D(P[AAB], x, y, z1, t), gradient4D(P[BAB], x1, y, z1, t)), lerp(FDX, gradient4D(P[ABB], x, y1, z1, t), gradient4D(P[BBB], x1, y1, z1, t)))), lerp(FDZ, lerp(FDY, lerp(FDX, gradient4D(P[AAA + 1], x, y, z, t1), gradient4D(P[BAA + 1], x1, y, z, t1)), lerp(FDX, gradient4D(P[ABA + 1], x, y1, z, t1), gradient4D(P[BBA + 1], x1, y1, z, t1))), lerp(FDY, lerp(FDX, gradient4D(P[AAB + 1], x, y, z1, t1), gradient4D(P[BAB + 1], x1, y, z1, t1)), lerp(FDX, gradient4D(P[ABB + 1], x, y1, z1, t1), gradient4D(P[BBB + 1], x1, y1, z1, t1)))));
+    return (0, math_1.lerp)(fade(t), (0, math_1.lerp)(FDZ, (0, math_1.lerp)(FDY, (0, math_1.lerp)(FDX, gradient4D(P[AAA], x, y, z, t), gradient4D(P[BAA], x1, y, z, t)), (0, math_1.lerp)(FDX, gradient4D(P[ABA], x, y1, z, t), gradient4D(P[BBA], x1, y1, z, t))), (0, math_1.lerp)(FDY, (0, math_1.lerp)(FDX, gradient4D(P[AAB], x, y, z1, t), gradient4D(P[BAB], x1, y, z1, t)), (0, math_1.lerp)(FDX, gradient4D(P[ABB], x, y1, z1, t), gradient4D(P[BBB], x1, y1, z1, t)))), (0, math_1.lerp)(FDZ, (0, math_1.lerp)(FDY, (0, math_1.lerp)(FDX, gradient4D(P[AAA + 1], x, y, z, t1), gradient4D(P[BAA + 1], x1, y, z, t1)), (0, math_1.lerp)(FDX, gradient4D(P[ABA + 1], x, y1, z, t1), gradient4D(P[BBA + 1], x1, y1, z, t1))), (0, math_1.lerp)(FDY, (0, math_1.lerp)(FDX, gradient4D(P[AAB + 1], x, y, z1, t1), gradient4D(P[BAB + 1], x1, y, z1, t1)), (0, math_1.lerp)(FDX, gradient4D(P[ABB + 1], x, y1, z1, t1), gradient4D(P[BBB + 1], x1, y1, z1, t1)))));
 };
 exports.perlin4D = perlin4D;
 class PerlinWrapper {

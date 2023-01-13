@@ -6,9 +6,9 @@ import {
   VertexBuffer,
   StandardMaterial,
   Color3,
-  Texture,
   VertexData,
 } from "@babylonjs/core";
+import { Assets } from "../../Assets";
 import HeightGenerator from "./HeightGenerator";
 
 interface TerrainChunkInterface {
@@ -22,15 +22,22 @@ interface TerrainChunkInterface {
 }
 
 class TerrainChunk {
+  assets: Assets;
+
   chunk: Mesh;
 
   chunkParams: TerrainChunkInterface;
 
-  scene: Scene;
+  private scene: Scene;
 
-  constructor(scene: Scene, chunkParams: TerrainChunkInterface) {
+  constructor(
+    scene: Scene,
+    chunkParams: TerrainChunkInterface,
+    assets: Assets
+  ) {
     this.scene = scene;
     this.chunkParams = chunkParams;
+    this.assets = assets;
     this.chunk = MeshBuilder.CreateGround(
       "ground",
       {
@@ -45,7 +52,7 @@ class TerrainChunk {
     this.rebuild();
   }
 
-  private rebuild = () => {
+  public rebuild = () => {
     const pos = this.chunk.getVerticesData(VertexBuffer.PositionKind);
 
     if (pos !== null) {
@@ -85,11 +92,8 @@ class TerrainChunk {
         pos[verticesIndex * 3 + 1] = z;
       }
       const groundMaterial = new StandardMaterial("ground", this.scene);
-      groundMaterial.diffuseTexture = new Texture(
-        "public/ground.jpg",
-        this.scene
-      );
-      groundMaterial.diffuseTexture.scale(6);
+      groundMaterial.diffuseTexture = this.assets.groundTexture;
+      groundMaterial.diffuseTexture?.scale(6);
       groundMaterial.specularColor = new Color3(0, 0, 0);
       this.chunk.material = groundMaterial;
       VertexData.ComputeNormals(pos, indices, normals);

@@ -1,6 +1,7 @@
 import { Scene, Vector2, Vector3 } from "@babylonjs/core";
 import { GUI } from "dat.gui";
 import NoiseGenerator from "../../../utils/noise";
+import { Assets } from "../../Assets";
 import HeightGenerator from "./HeightGenerator";
 
 import TerrainChunk from "./TerrainChunk";
@@ -31,7 +32,9 @@ interface Chunk {
 }
 
 class TerrainChunkManager {
-  chunks: Chunk;
+  assets: Assets;
+
+  chunks: Record<string, Chunk> | {};
 
   chunkSize: number;
 
@@ -43,10 +46,11 @@ class TerrainChunkManager {
 
   scene: Scene;
 
-  constructor(gui: GUI, scene: Scene) {
+  constructor(gui: GUI, scene: Scene, assets: Assets) {
     this.gui = gui;
     this.scene = scene;
     this.chunkSize = 200;
+    this.chunks = {};
     this.guiParams = {
       noise: {
         exponentiation: 3.9,
@@ -65,6 +69,7 @@ class TerrainChunkManager {
         wireframe: false,
       },
     };
+    this.assets = assets;
 
     this.noise = new NoiseGenerator(this.guiParams.noise);
     this.setNoise();
@@ -84,7 +89,8 @@ class TerrainChunkManager {
     const noiseRollup = this.gui.addFolder("Terrain.Noise");
     noiseRollup
       .add(this.guiParams.noise, "noiseType", ["simplex", "perlin", "random"])
-      .onChange(this.setNoise);
+      .onChange(this.setNoise)
+      .setValue("random");
     noiseRollup
       .add(this.guiParams.noise, "scale", 64.0, 1024.0)
       .onChange(this.setNoise);
@@ -125,17 +131,21 @@ class TerrainChunkManager {
 
   private addChunk = (x: number, z: number) => {
     const offset = new Vector2(x * this.chunkSize, z * this.chunkSize);
-    const chunk = new TerrainChunk(this.scene, {
-      offset: new Vector3(offset.x, 0, offset.y),
-      scale: 1,
-      width: this.chunkSize,
-      height: this.chunkSize,
-      subdivisions: 100,
-      heightGenerators: [
-        new HeightGenerator(this.noise, offset, 100000, 100000 + 1),
-      ],
-      minHeight: 0,
-    });
+    const chunk = new TerrainChunk(
+      this.scene,
+      {
+        offset: new Vector3(offset.x, 0, offset.y),
+        scale: 1,
+        width: this.chunkSize,
+        height: this.chunkSize,
+        subdivisions: 100,
+        heightGenerators: [
+          new HeightGenerator(this.noise, offset, 100000, 100000 + 1),
+        ],
+        minHeight: 0,
+      },
+      this.assets
+    );
     const k = TerrainChunkManager.key(x, z);
     const edges = [];
     for (let xi = -1; xi <= 1; xi += 1) {
@@ -146,10 +156,15 @@ class TerrainChunkManager {
       }
     }
 
-    this.chunks[k] = {
-      chunk,
-      edges,
-    };
+    this.chunks = Object.assign(
+      {
+        [k]: {
+          chunk,
+          edges,
+        },
+      },
+      this.chunks
+    );
   };
 
   private initializeTerrain = () => {

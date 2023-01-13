@@ -8,7 +8,8 @@ const core_1 = require("@babylonjs/core");
 require("@babylonjs/inspector");
 const dat_gui_1 = require("dat.gui");
 const Assets_1 = require("./Assets");
-const Sky_1 = __importDefault(require("./Sky"));
+const Sky_1 = __importDefault(require("./entities/Sky"));
+const TerrainChunkManager_1 = __importDefault(require("./entities/ground/TerrainChunkManager"));
 class Game {
     constructor(engine, assetsHostUrl, canvas) {
         this.initializeGui = () => {
@@ -32,6 +33,7 @@ class Game {
         this.gui = this.initializeGui();
         new Assets_1.Assets(this.scene, assetsHostUrl, (assets) => {
             new Sky_1.default(this.gui, this.scene);
+            new TerrainChunkManager_1.default(this.gui, this.scene, assets);
             console.log("onReady", assets);
         }, (assets) => {
             console.log("onReady", assets);

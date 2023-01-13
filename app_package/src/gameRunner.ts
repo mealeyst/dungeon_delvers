@@ -5,7 +5,7 @@ import {
   WebGPUEngine,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
-import { CreateGameScene } from "./Game/Game";
+import { CreateGameScene } from "./game/Game";
 
 export const useWebGPU = false;
 export var useNative = false;

@@ -5,21 +5,18 @@ const core_1 = require("@babylonjs/core");
 class Assets {
     constructor(scene, assetsHostUrl, onReady, onLoadComplete) {
         this.assetsHostUrl = assetsHostUrl;
-        this.PlaceHolderChar = null;
-        console.log("Hitting Constructor");
-        // add in IBL with linked environment
-        this.envCube = core_1.CubeTexture.CreateFromPrefilteredData(`${assetsHostUrl}/assets/env/environment.env`, scene);
-        this.envCube.name = "environment";
-        this.envCube.gammaSpace = false;
-        this.envCube.rotationY = 1.977;
-        scene.environmentTexture = this.envCube;
-        scene.environmentIntensity = 1.25;
+        this.placeHolderChar = null;
+        this.groundTexture = null;
         //Minimal loading
         const assetsManagerMinimal = new core_1.AssetsManager(scene);
         const placeHolderCharTask = assetsManagerMinimal.addMeshTask("PlaceHolderChar", "", `${assetsHostUrl}assets/gltf/`, "YBot_With_Locomotion.glb");
         placeHolderCharTask.onSuccess = (task) => {
-            this.PlaceHolderChar = task.loadedMeshes[0];
-            this.PlaceHolderChar;
+            this.placeHolderChar = task.loadedMeshes[0];
+            this.placeHolderChar;
+        };
+        const groundTextureTask = assetsManagerMinimal.addTextureTask("GroundTexture", `${assetsHostUrl}assets/textures/ground.jpg`);
+        groundTextureTask.onSuccess = (task) => {
+            this.groundTexture = task.texture;
         };
         assetsManagerMinimal.load();
         onReady(this);

@@ -1,13 +1,4 @@
 /**
- * A Perlin Noise library for JavaScript.
- *
- * Based on implementations by Ken Perlin (Java, C) & Stefan Gustavson (C).
- *
- * MIT License.
- * Copyright (c) 2018 Leonardo de S.L.F.
- * http://leodeslf.com/
- */
-/**
  * Returns a one-dimensional noise value between -1 and 1.
  * @param {number} x A numeric expression.
  * @returns {number} Perlin Noise value.
