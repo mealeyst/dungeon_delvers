@@ -1,0 +1,1 @@
+{"version":3,"file":"PlayerManager.d.ts","sourceRoot":"","sources":["../../../src/game/entities/PlayerManager.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,eAAe,EAAE,KAAK,EAAW,MAAM,iBAAiB,CAAC;AAClE,OAAO,EAAE,MAAM,EAAE,MAAM,WAAW,CAAC;AACnC,OAAO,EAAE,YAAY,EAAE,MAAM,wBAAwB,CAAC;AAEtD,qBAAa,aAAa;gBAEtB,MAAM,EAAE,MAAM,EACd,MAAM,EAAE,eAAe,EACvB,YAAY,EAAE,YAAY,EAC1B,KAAK,EAAE,KAAK;CA2Ef"}

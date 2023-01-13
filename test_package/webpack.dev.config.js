@@ -1,10 +1,11 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { DefinePlugin } = require("webpack");
+const { DefinePlugin, SourceMapDevToolPlugin } = require("webpack");
 
 module.exports = {
   entry: "./src/index.js",
   mode: "development",
+  devtool: false,
   devServer: {
     open: true,
     watchFiles: ["./src/**/*", "../app_package/lib/**/*"],
@@ -18,6 +19,9 @@ module.exports = {
       DEV_BUILD: JSON.stringify(true),
     }),
     new HtmlWebpackPlugin({ title: "Dungeon Delvers" }),
+    new SourceMapDevToolPlugin({
+      filename: "[file].map",
+    }),
   ],
   module: {
     rules: [
@@ -26,6 +30,8 @@ module.exports = {
         resolve: {
           fullySpecified: false,
         },
+        enforce: "pre",
+        use: ["source-map-loader"],
       },
     ],
   },

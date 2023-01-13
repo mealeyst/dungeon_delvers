@@ -5,6 +5,7 @@ import {
   WebGPUEngine,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
+import * as CANNON from "cannon-es";
 import { CreateGameScene } from "./game/Game";
 
 export const useWebGPU = false;
@@ -19,6 +20,7 @@ export interface InitializeBabylonAppOptions {
 export async function initializeBabylonApp(
   options: InitializeBabylonAppOptions
 ) {
+  window.CANNON = CANNON;
   useNative = !!_native;
 
   if (useNative) {
@@ -90,7 +92,7 @@ export async function initializeBabylonApp(
 
   (window as any).engine = engine;
 
-  const scene = CreateGameScene(engine, options.assetsHostUrl!, canvas);
+  const scene = CreateGameScene(engine, options.assetsHostUrl!);
   engine.runRenderLoop(() => {
     scene.render();
   });

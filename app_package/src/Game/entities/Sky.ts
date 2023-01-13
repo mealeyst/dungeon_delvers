@@ -32,7 +32,6 @@ class Sky {
   sunPosition: Vector3;
 
   constructor(gui: GUI, scene: Scene) {
-    console.log("In Sky Constructor");
     this.scene = scene;
     this.gui = gui;
     this.guiParams = {

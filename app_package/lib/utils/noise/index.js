@@ -4,7 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Perlin_1 = require("./Perlin");
-const simplex_noise_1 = __importDefault(require("simplex-noise"));
+const simplex_noise_1 = require("simplex-noise");
+const alea_1 = __importDefault(require("alea"));
 const Random_1 = __importDefault(require("./Random"));
 class NoiseGenerator {
     constructor(params) {
@@ -13,7 +14,12 @@ class NoiseGenerator {
     }
     Init() {
         this.noise = {
-            simplex: new simplex_noise_1.default(this.params.seed),
+            simplex: {
+                noise2D: (x, y) => {
+                    const noise2D = (0, simplex_noise_1.createNoise2D)((0, alea_1.default)(this.params.seed));
+                    return noise2D(x, y);
+                },
+            },
             perlin: {
                 noise2D: (x, y) => {
                     return (0, Perlin_1.perlin2D)(x, y);

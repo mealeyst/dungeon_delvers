@@ -1,0 +1,1 @@
+{"version":3,"file":"InputManager.d.ts","sourceRoot":"","sources":["../../../src/game/Inputs/InputManager.ts"],"names":[],"mappings":"AAAA,OAAO,EAAoC,KAAK,EAAE,MAAM,iBAAiB,CAAC;AAC1E,OAAO,EAAE,MAAM,EAAE,MAAM,WAAW,CAAC;AAEnC,MAAM,MAAM,QAAQ,GAAG,MAAM,CAAC,MAAM,EAAE,OAAO,CAAC,CAAC;AAE/C,qBAAa,YAAY;IAChB,QAAQ,EAAE,QAAQ,CAAC;gBACd,KAAK,EAAE,KAAK,EAAE,MAAM,EAAE,MAAM;CAgBzC"}

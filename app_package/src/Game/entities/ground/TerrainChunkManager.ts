@@ -95,13 +95,7 @@ class TerrainChunkManager {
       .add(this.guiParams.noise, "scale", 64.0, 1024.0)
       .onChange(this.setNoise);
     noiseRollup
-      .add(
-        this.guiParams.noise,
-        "octaves",
-        1,
-
-        20
-      )
+      .add(this.guiParams.noise, "octaves", 1, 20)
       .onChange(this.setNoise);
     noiseRollup
       .add(this.guiParams.noise, "persistence", 0.01, 2.0)

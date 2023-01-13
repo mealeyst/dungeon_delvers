@@ -1,26 +1,26 @@
 import {
+  CannonJSPlugin,
   Color3,
-  Color4,
   DirectionalLight,
   Engine,
   Scene,
-  UniversalCamera,
+  ArcRotateCamera,
   Vector3,
 } from "@babylonjs/core";
 import "@babylonjs/inspector";
-import { GUI, GUIController } from "dat.gui";
+import { GUI } from "dat.gui";
 import { Assets } from "./Assets";
 import Sky from "./entities/Sky";
 import TerrainChunkManager from "./entities/ground/TerrainChunkManager";
+import { InputManager } from "./Inputs/InputManager";
+import { PlayerManager } from "./entities/PlayerManager";
 
 class Game {
   gui: GUI;
   scene: Scene;
-  constructor(
-    engine: Engine,
-    assetsHostUrl: string,
-    canvas: HTMLCanvasElement
-  ) {
+  private _inputManager: InputManager | null;
+  constructor(engine: Engine, assetsHostUrl: string) {
+    this._inputManager = null;
     this.scene = new Scene(engine);
     this.scene.debugLayer.show();
     // scene.clearColor = new Color4(0, 0, 0, 1);
@@ -40,24 +40,25 @@ class Game {
     dirLight.intensity = 1.5;
 
     // This creates and positions a free camera (non-mesh)
-    var camera = new UniversalCamera(
-      "camera1",
+    var camera = new ArcRotateCamera(
+      "playerCamera",
+      Math.PI / 2,
+      Math.PI / 4,
+      10,
       new Vector3(0, 2, -5),
       this.scene
     );
+    const gravityVector = new Vector3(0, -9.81, 0);
+    const physicsPlugin = new CannonJSPlugin();
+    this.scene.enablePhysics(gravityVector, physicsPlugin);
     this.gui = this.initializeGui();
-    new Assets(
-      this.scene,
-      assetsHostUrl,
-      (assets) => {
-        new Sky(this.gui, this.scene);
-        new TerrainChunkManager(this.gui, this.scene, assets);
-        console.log("onReady", assets);
-      },
-      (assets) => {
-        console.log("onReady", assets);
-      }
-    );
+    new Assets(this.scene, assetsHostUrl, (assets) => {
+      new Sky(this.gui, this.scene);
+      new TerrainChunkManager(this.gui, this.scene, assets);
+      this._inputManager = new InputManager(this.scene, assets);
+      console.log(this._inputManager);
+      new PlayerManager(assets, camera, this._inputManager, this.scene);
+    });
   }
   private initializeGui = () => {
     const gui = new GUI();
@@ -69,11 +70,7 @@ class Game {
   }
 }
 
-export function CreateGameScene(
-  engine: Engine,
-  assetsHostUrl: string,
-  canvas: HTMLCanvasElement
-): Scene {
-  const game = new Game(engine, assetsHostUrl, canvas);
+export function CreateGameScene(engine: Engine, assetsHostUrl: string): Scene {
+  const game = new Game(engine, assetsHostUrl);
   return game.getScene();
 }

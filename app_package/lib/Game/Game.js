@@ -10,12 +10,15 @@ const dat_gui_1 = require("dat.gui");
 const Assets_1 = require("./Assets");
 const Sky_1 = __importDefault(require("./entities/Sky"));
 const TerrainChunkManager_1 = __importDefault(require("./entities/ground/TerrainChunkManager"));
+const InputManager_1 = require("./Inputs/InputManager");
+const PlayerManager_1 = require("./entities/PlayerManager");
 class Game {
-    constructor(engine, assetsHostUrl, canvas) {
+    constructor(engine, assetsHostUrl) {
         this.initializeGui = () => {
             const gui = new dat_gui_1.GUI();
             return gui;
         };
+        this._inputManager = null;
         this.scene = new core_1.Scene(engine);
         this.scene.debugLayer.show();
         // scene.clearColor = new Color4(0, 0, 0, 1);
@@ -29,22 +32,25 @@ class Game {
         dirLight.diffuse = core_1.Color3.FromInts(255, 251, 199);
         dirLight.intensity = 1.5;
         // This creates and positions a free camera (non-mesh)
-        var camera = new core_1.UniversalCamera("camera1", new core_1.Vector3(0, 2, -5), this.scene);
+        var camera = new core_1.ArcRotateCamera("playerCamera", Math.PI / 2, Math.PI / 4, 10, new core_1.Vector3(0, 2, -5), this.scene);
+        const gravityVector = new core_1.Vector3(0, -9.81, 0);
+        const physicsPlugin = new core_1.CannonJSPlugin();
+        this.scene.enablePhysics(gravityVector, physicsPlugin);
         this.gui = this.initializeGui();
         new Assets_1.Assets(this.scene, assetsHostUrl, (assets) => {
             new Sky_1.default(this.gui, this.scene);
             new TerrainChunkManager_1.default(this.gui, this.scene, assets);
-            console.log("onReady", assets);
-        }, (assets) => {
-            console.log("onReady", assets);
+            this._inputManager = new InputManager_1.InputManager(this.scene, assets);
+            console.log(this._inputManager);
+            new PlayerManager_1.PlayerManager(assets, camera, this._inputManager, this.scene);
         });
     }
     getScene() {
         return this.scene;
     }
 }
-function CreateGameScene(engine, assetsHostUrl, canvas) {
-    const game = new Game(engine, assetsHostUrl, canvas);
+function CreateGameScene(engine, assetsHostUrl) {
+    const game = new Game(engine, assetsHostUrl);
     return game.getScene();
 }
 exports.CreateGameScene = CreateGameScene;

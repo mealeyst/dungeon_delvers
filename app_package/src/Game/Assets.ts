@@ -1,7 +1,6 @@
 import {
   AbstractMesh,
   AssetsManager,
-  CubeTexture,
   MeshAssetTask,
   Nullable,
   Scene,
@@ -16,9 +15,9 @@ export class Assets {
   constructor(
     scene: Scene,
     assetsHostUrl: string,
-    onReady: (assets: Assets) => void,
-    onLoadComplete: (assets: Assets) => void
+    onReady: (assets: Assets) => void
   ) {
+    const _this = this;
     this.assetsHostUrl = assetsHostUrl;
     this.placeHolderChar = null;
     this.groundTexture = null;
@@ -31,17 +30,19 @@ export class Assets {
       "YBot_With_Locomotion.glb"
     );
     placeHolderCharTask.onSuccess = (task: MeshAssetTask) => {
-      this.placeHolderChar = task.loadedMeshes[0];
-      this.placeHolderChar;
+      _this.placeHolderChar = task.loadedMeshes[0];
+      _this.placeHolderChar;
     };
     const groundTextureTask = assetsManagerMinimal.addTextureTask(
       "GroundTexture",
       `${assetsHostUrl}assets/textures/ground.jpg`
     );
     groundTextureTask.onSuccess = (task: TextureAssetTask) => {
-      this.groundTexture = task.texture;
+      _this.groundTexture = task.texture;
     };
     assetsManagerMinimal.load();
-    onReady(this);
+    assetsManagerMinimal.onFinish = () => {
+      onReady(_this);
+    };
   }
 }

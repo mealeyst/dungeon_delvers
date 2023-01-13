@@ -29,7 +29,6 @@ class Sky {
                 .onChange(this.setSun);
             sunRollup.add(this.guiParams.sun, "azimuth", 0.0, 1).onChange(this.setSun);
         };
-        console.log("In Sky Constructor");
         this.scene = scene;
         this.gui = gui;
         this.guiParams = {

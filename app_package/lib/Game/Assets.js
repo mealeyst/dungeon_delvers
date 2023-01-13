@@ -3,7 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Assets = void 0;
 const core_1 = require("@babylonjs/core");
 class Assets {
-    constructor(scene, assetsHostUrl, onReady, onLoadComplete) {
+    constructor(scene, assetsHostUrl, onReady) {
+        const _this = this;
         this.assetsHostUrl = assetsHostUrl;
         this.placeHolderChar = null;
         this.groundTexture = null;
@@ -11,15 +12,17 @@ class Assets {
         const assetsManagerMinimal = new core_1.AssetsManager(scene);
         const placeHolderCharTask = assetsManagerMinimal.addMeshTask("PlaceHolderChar", "", `${assetsHostUrl}assets/gltf/`, "YBot_With_Locomotion.glb");
         placeHolderCharTask.onSuccess = (task) => {
-            this.placeHolderChar = task.loadedMeshes[0];
-            this.placeHolderChar;
+            _this.placeHolderChar = task.loadedMeshes[0];
+            _this.placeHolderChar;
         };
         const groundTextureTask = assetsManagerMinimal.addTextureTask("GroundTexture", `${assetsHostUrl}assets/textures/ground.jpg`);
         groundTextureTask.onSuccess = (task) => {
-            this.groundTexture = task.texture;
+            _this.groundTexture = task.texture;
         };
         assetsManagerMinimal.load();
-        onReady(this);
+        assetsManagerMinimal.onFinish = () => {
+            onReady(_this);
+        };
     }
 }
 exports.Assets = Assets;

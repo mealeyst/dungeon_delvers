@@ -24,10 +24,11 @@
     "@babylonjs/post-processes": "^5.42.0",
     "@babylonjs/procedural-textures": "^5.42.0",
     "@babylonjs/serializers": "^5.42.0",
+    "alea": "^1.0.1",
     "ammojs-typed": "^1.0.6",
     "cannon-es": "^0.18.0",
     "dat.gui": "^0.7.9",
     "earcut": "^2.2.3",
-    "simplex-noise": "^3.0.1"
+    "simplex-noise": "^4.0.1"
   }
 }
