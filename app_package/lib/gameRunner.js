@@ -110,7 +110,7 @@ function initializeBabylonApp(options) {
             engine = new core_1.Engine(canvas, !badOS);
         }
         window.engine = engine;
-        const scene = (0, Game_1.CreateGameScene)(engine, options.assetsHostUrl);
+        const scene = (0, Game_1.CreateGameScene)(engine, options.assetsHostUrl, canvas);
         engine.runRenderLoop(() => {
             scene.render();
         });

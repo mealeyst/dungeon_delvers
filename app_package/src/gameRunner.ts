@@ -92,7 +92,7 @@ export async function initializeBabylonApp(
 
   (window as any).engine = engine;
 
-  const scene = CreateGameScene(engine, options.assetsHostUrl!);
+  const scene = CreateGameScene(engine, options.assetsHostUrl!, canvas);
   engine.runRenderLoop(() => {
     scene.render();
   });

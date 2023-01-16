@@ -19,7 +19,11 @@ class Game {
   gui: GUI;
   scene: Scene;
   private _inputManager: InputManager | null;
-  constructor(engine: Engine, assetsHostUrl: string) {
+  constructor(
+    engine: Engine,
+    assetsHostUrl: string,
+    canvas: HTMLCanvasElement
+  ) {
     this._inputManager = null;
     this.scene = new Scene(engine);
     this.scene.debugLayer.show();
@@ -43,11 +47,16 @@ class Game {
     var camera = new ArcRotateCamera(
       "playerCamera",
       Math.PI / 2,
-      Math.PI / 4,
-      10,
+      Math.PI / 2,
+      5,
       new Vector3(0, 2, -5),
       this.scene
     );
+    this.scene.activeCamera = camera;
+    this.scene.activeCamera.attachControl(canvas, true);
+    camera.lowerRadiusLimit = 2;
+    camera.upperRadiusLimit = 10;
+    camera.wheelDeltaPercentage = 0.01;
     const gravityVector = new Vector3(0, -9.81, 0);
     const physicsPlugin = new CannonJSPlugin();
     this.scene.enablePhysics(gravityVector, physicsPlugin);
@@ -70,7 +79,11 @@ class Game {
   }
 }
 
-export function CreateGameScene(engine: Engine, assetsHostUrl: string): Scene {
-  const game = new Game(engine, assetsHostUrl);
+export function CreateGameScene(
+  engine: Engine,
+  assetsHostUrl: string,
+  canvas: HTMLCanvasElement
+): Scene {
+  const game = new Game(engine, assetsHostUrl, canvas);
   return game.getScene();
 }

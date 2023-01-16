@@ -13,7 +13,7 @@ const TerrainChunkManager_1 = __importDefault(require("./entities/ground/Terrain
 const InputManager_1 = require("./Inputs/InputManager");
 const PlayerManager_1 = require("./entities/PlayerManager");
 class Game {
-    constructor(engine, assetsHostUrl) {
+    constructor(engine, assetsHostUrl, canvas) {
         this.initializeGui = () => {
             const gui = new dat_gui_1.GUI();
             return gui;
@@ -32,7 +32,12 @@ class Game {
         dirLight.diffuse = core_1.Color3.FromInts(255, 251, 199);
         dirLight.intensity = 1.5;
         // This creates and positions a free camera (non-mesh)
-        var camera = new core_1.ArcRotateCamera("playerCamera", Math.PI / 2, Math.PI / 4, 10, new core_1.Vector3(0, 2, -5), this.scene);
+        var camera = new core_1.ArcRotateCamera("playerCamera", Math.PI / 2, Math.PI / 2, 5, new core_1.Vector3(0, 2, -5), this.scene);
+        this.scene.activeCamera = camera;
+        this.scene.activeCamera.attachControl(canvas, true);
+        camera.lowerRadiusLimit = 2;
+        camera.upperRadiusLimit = 10;
+        camera.wheelDeltaPercentage = 0.01;
         const gravityVector = new core_1.Vector3(0, -9.81, 0);
         const physicsPlugin = new core_1.CannonJSPlugin();
         this.scene.enablePhysics(gravityVector, physicsPlugin);
@@ -49,8 +54,8 @@ class Game {
         return this.scene;
     }
 }
-function CreateGameScene(engine, assetsHostUrl) {
-    const game = new Game(engine, assetsHostUrl);
+function CreateGameScene(engine, assetsHostUrl, canvas) {
+    const game = new Game(engine, assetsHostUrl, canvas);
     return game.getScene();
 }
 exports.CreateGameScene = CreateGameScene;
