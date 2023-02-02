@@ -52,11 +52,12 @@ class Game {
       new Vector3(0, 2, -5),
       this.scene
     );
-    this.scene.activeCamera = camera;
-    this.scene.activeCamera.attachControl(canvas, true);
-    camera.lowerRadiusLimit = 2;
-    camera.upperRadiusLimit = 10;
-    camera.wheelDeltaPercentage = 0.01;
+    this.scene.addCamera(camera)
+    // this.scene.activeCamera = camera;
+    // this.scene.activeCamera.attachControl(canvas, true);
+    // camera.lowerRadiusLimit = 2;
+    // camera.upperRadiusLimit = 10;
+    // camera.wheelDeltaPercentage = 0.01;
     const gravityVector = new Vector3(0, -9.81, 0);
     const physicsPlugin = new CannonJSPlugin();
     this.scene.enablePhysics(gravityVector, physicsPlugin);
@@ -66,7 +67,7 @@ class Game {
       new TerrainChunkManager(this.gui, this.scene, assets);
       this._inputManager = new InputManager(this.scene, assets);
       console.log(this._inputManager);
-      new PlayerManager(assets, camera, this._inputManager, this.scene);
+      new PlayerManager( assets, this._inputManager, this.scene);
     });
   }
   private initializeGui = () => {

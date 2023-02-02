@@ -33,11 +33,12 @@ class Game {
         dirLight.intensity = 1.5;
         // This creates and positions a free camera (non-mesh)
         var camera = new core_1.ArcRotateCamera("playerCamera", Math.PI / 2, Math.PI / 2, 5, new core_1.Vector3(0, 2, -5), this.scene);
-        this.scene.activeCamera = camera;
-        this.scene.activeCamera.attachControl(canvas, true);
-        camera.lowerRadiusLimit = 2;
-        camera.upperRadiusLimit = 10;
-        camera.wheelDeltaPercentage = 0.01;
+        this.scene.addCamera(camera);
+        // this.scene.activeCamera = camera;
+        // this.scene.activeCamera.attachControl(canvas, true);
+        // camera.lowerRadiusLimit = 2;
+        // camera.upperRadiusLimit = 10;
+        // camera.wheelDeltaPercentage = 0.01;
         const gravityVector = new core_1.Vector3(0, -9.81, 0);
         const physicsPlugin = new core_1.CannonJSPlugin();
         this.scene.enablePhysics(gravityVector, physicsPlugin);
@@ -47,7 +48,7 @@ class Game {
             new TerrainChunkManager_1.default(this.gui, this.scene, assets);
             this._inputManager = new InputManager_1.InputManager(this.scene, assets);
             console.log(this._inputManager);
-            new PlayerManager_1.PlayerManager(assets, camera, this._inputManager, this.scene);
+            new PlayerManager_1.PlayerManager(assets, this._inputManager, this.scene);
         });
     }
     getScene() {
