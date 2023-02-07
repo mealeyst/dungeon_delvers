@@ -1,14 +1,10 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateGameScene = void 0;
 const core_1 = require("@babylonjs/core");
 require("@babylonjs/inspector");
 const Assets_1 = require("./Assets");
-const Sky_1 = __importDefault(require("./entities/Sky"));
-const InputManager_1 = require("./Inputs/InputManager");
+const DungeonGenerator_1 = require("./entities/ground/DungeonGenerator");
 class Game {
     constructor(engine, assetsHostUrl, canvas) {
         this._inputManager = null;
@@ -21,9 +17,15 @@ class Game {
         // scene.pointerDownPredicate = () => false;
         // scene.pointerMovePredicate = () => false;
         // lighting
-        const dirLight = new core_1.DirectionalLight("dirLight", new core_1.Vector3(0.47, -0.19, -0.86), this.scene);
-        dirLight.diffuse = core_1.Color3.FromInts(255, 251, 199);
-        dirLight.intensity = 1.5;
+        // const dirLight = new DirectionalLight(
+        //   "dirLight",
+        //   new Vector3(10, 10, -0.86),
+        //   this.scene
+        // );
+        // dirLight.diffuse = Color3.FromInts(255, 251, 199);
+        // dirLight.intensity = 1.5;
+        const sunPosition = new core_1.Vector3(0, 100, 0);
+        const light = new core_1.HemisphericLight("light", sunPosition, this.scene);
         // This creates and positions a free camera (non-mesh)
         var camera = new core_1.ArcRotateCamera("playerCamera", Math.PI / 2, Math.PI / 2, 5, new core_1.Vector3(0, 2, -5), this.scene);
         this.scene.addCamera(camera);
@@ -37,10 +39,11 @@ class Game {
         const physicsPlugin = new core_1.CannonJSPlugin();
         this.scene.enablePhysics(gravityVector, physicsPlugin);
         new Assets_1.Assets(this.scene, assetsHostUrl, (assets) => {
-            new Sky_1.default('sky', this.scene);
+            // new Sky("sky", this.scene, assets);
             // new TerrainChunkManager(this.gui, this.scene, assets);
-            this._inputManager = new InputManager_1.InputManager(this.scene, assets);
-            // new PlayerManager( assets, this._inputManager, this.scene);
+            // this._inputManager = new InputManager(this.scene, assets);
+            // new PlayerManager(assets, this._inputManager, this.scene);
+            new DungeonGenerator_1.DungeonGenerator("dungeon", this.scene);
         });
     }
     getScene() {

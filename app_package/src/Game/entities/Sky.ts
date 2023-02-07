@@ -1,5 +1,20 @@
-import { HemisphericLight, InspectableType, Mesh, MeshBuilder, Scene, TransformNode, Vector3 } from "@babylonjs/core";
+import {
+  Color3,
+  CubeTexture,
+  HemisphericLight,
+  InspectableType,
+  Mesh,
+  MeshBuilder,
+  Nullable,
+  Scene,
+  Texture,
+  TransformNode,
+  Vector3,
+} from "@babylonjs/core";
+import { MultiMaterial } from "@babylonjs/core/Materials/multiMaterial";
+import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
 import { SkyMaterial } from "@babylonjs/materials";
+import { Assets } from "../Assets";
 
 type SkyMaterialOptions = {
   sky: {
@@ -11,7 +26,7 @@ type SkyMaterialOptions = {
     inclination?: number;
     azimuth?: number;
   };
-}
+};
 
 class Sky extends TransformNode {
   _azimuth: number;
@@ -20,11 +35,18 @@ class Sky extends TransformNode {
   _luminance: number;
   _rayleigh: number;
   _skybox: Mesh;
+  _starbox: Mesh;
   _skyMaterial: SkyMaterial;
+  _starMaterial: Nullable<StandardMaterial>;
   _sunPosition: Vector3;
   _turbidity: number;
 
-  constructor(name: string, scene: Scene, options?: SkyMaterialOptions,) {
+  constructor(
+    name: string,
+    scene: Scene,
+    assets: Assets,
+    options?: SkyMaterialOptions
+  ) {
     super(name, scene);
     const defualtSkyOptions = {
       sky: {
@@ -43,16 +65,35 @@ class Sky extends TransformNode {
     this._light = new HemisphericLight("light", this._sunPosition, scene);
 
     this._azimuth = options?.sun?.azimuth || defualtSkyOptions?.sun.azimuth;
-    this._inclination = options?.sun?.inclination || defualtSkyOptions?.sun.inclination;
-    this._luminance = options?.sky?.luminance || defualtSkyOptions?.sky.luminance;
+    this._inclination =
+      options?.sun?.inclination || defualtSkyOptions?.sun.inclination;
+    this._luminance =
+      options?.sky?.luminance || defualtSkyOptions?.sky.luminance;
     this._rayleigh = options?.sky?.rayleigh || defualtSkyOptions?.sky.rayleigh;
-    this._turbidity = options?.sky?.turbidity || defualtSkyOptions?.sky.turbidity;
+    this._turbidity =
+      options?.sky?.turbidity || defualtSkyOptions?.sky.turbidity;
     // Default intensity is 1. Let's dim the light a small amount
     this._light.intensity = 0.7;
 
     this._skyMaterial = new SkyMaterial("skyMaterial", scene);
     this._skyMaterial.backFaceCulling = false;
-    this._skybox = MeshBuilder.CreateBox("skyBox", {size: 1000.0}, scene);
+    this._skyMaterial.alpha = 0.9;
+    this._skyMaterial.alphaMode = 1;
+    this._starbox = MeshBuilder.CreateBox("starBox", { size: 1000.0 }, scene);
+    this._starbox.parent = this;
+    this._starMaterial = null;
+    if (assets.starboxTexture !== null) {
+      this._starMaterial = new StandardMaterial("starMaterial", scene);
+      this._starMaterial.reflectionTexture = assets.starboxTexture;
+      this._starMaterial.reflectionTexture.coordinatesMode =
+        Texture.SKYBOX_MODE;
+      this._starMaterial.backFaceCulling = false;
+      this._starMaterial.diffuseColor = new Color3(0, 0, 0);
+      this._starMaterial.specularColor = new Color3(0, 0, 0);
+      this._starMaterial.disableLighting = false;
+      this._starbox.material = this._starMaterial;
+    }
+    this._skybox = MeshBuilder.CreateBox("skyBox", { size: 999.9 }, scene);
     this._skybox.parent = this;
     this._skybox.material = this._skyMaterial;
     // Custom inspector properties.
@@ -60,7 +101,7 @@ class Sky extends TransformNode {
       {
         label: "Sky Options",
         propertyName: "sky",
-        type: InspectableType.Tab
+        type: InspectableType.Tab,
       },
       {
         label: "Luminance",
@@ -89,7 +130,7 @@ class Sky extends TransformNode {
       {
         label: "Sun Options",
         propertyName: "sun",
-        type: InspectableType.Tab
+        type: InspectableType.Tab,
       },
       {
         label: "azimuth",
@@ -106,14 +147,16 @@ class Sky extends TransformNode {
         min: -1.0,
         max: 1.0,
         step: 0.1,
-      }
+      },
     ];
     let alpha = 1;
     scene.onBeforeRenderObservable.add(() => {
-      this._inclination = Math.cos(alpha) ;
+      this._inclination = Math.cos(alpha);
       this._skyMaterial.inclination = Math.cos(alpha);
-      alpha = (alpha < 3) ? (alpha + 0.0001) : 0;
-    })
+      this._starbox.visibility = Math.min(Math.max(Math.sin(alpha), 0), 1);
+      console.log();
+      alpha = alpha < 3 ? alpha + 0.0001 : 0;
+    });
   }
 
   set azimuth(value: number) {

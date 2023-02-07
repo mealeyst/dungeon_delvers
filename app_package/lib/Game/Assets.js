@@ -8,6 +8,7 @@ class Assets {
         this.assetsHostUrl = assetsHostUrl;
         this.placeHolderChar = null;
         this.groundTexture = null;
+        this.starboxTexture = null;
         //Minimal loading
         const assetsManagerMinimal = new core_1.AssetsManager(scene);
         const placeHolderCharTask = assetsManagerMinimal.addMeshTask("PlaceHolderChar", "", `${assetsHostUrl}assets/gltf/`, "YBot_With_Locomotion.glb");
@@ -18,6 +19,17 @@ class Assets {
         const groundTextureTask = assetsManagerMinimal.addTextureTask("GroundTexture", `${assetsHostUrl}assets/textures/ground.jpg`);
         groundTextureTask.onSuccess = (task) => {
             _this.groundTexture = task.texture;
+        };
+        const starboxTask = assetsManagerMinimal.addCubeTextureTask("StarboxTextureTask", `${assetsHostUrl}assets/textures/`, [
+            "Starbox_right1.jpg",
+            "Starbox_top3.jpg",
+            "Starbox_front5.jpg",
+            "Starbox_left2.jpg",
+            "Starbox_bottom4.jpg",
+            "Starbox_back6.jpg",
+        ]);
+        starboxTask.onSuccess = (task) => {
+            _this.starboxTexture = task.texture;
         };
         assetsManagerMinimal.load();
         assetsManagerMinimal.onFinish = () => {

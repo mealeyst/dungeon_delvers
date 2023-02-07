@@ -1,6 +1,8 @@
 import {
   AbstractMesh,
   AssetsManager,
+  CubeTexture,
+  CubeTextureAssetTask,
   MeshAssetTask,
   Nullable,
   Scene,
@@ -12,6 +14,7 @@ export class Assets {
   public assetsHostUrl: string;
   public placeHolderChar: Nullable<AbstractMesh>;
   public groundTexture: Nullable<Texture>;
+  public starboxTexture: Nullable<CubeTexture>;
   constructor(
     scene: Scene,
     assetsHostUrl: string,
@@ -21,6 +24,7 @@ export class Assets {
     this.assetsHostUrl = assetsHostUrl;
     this.placeHolderChar = null;
     this.groundTexture = null;
+    this.starboxTexture = null;
     //Minimal loading
     const assetsManagerMinimal = new AssetsManager(scene);
     const placeHolderCharTask = assetsManagerMinimal.addMeshTask(
@@ -39,6 +43,21 @@ export class Assets {
     );
     groundTextureTask.onSuccess = (task: TextureAssetTask) => {
       _this.groundTexture = task.texture;
+    };
+    const starboxTask = assetsManagerMinimal.addCubeTextureTask(
+      "StarboxTextureTask",
+      `${assetsHostUrl}assets/textures/`,
+      [
+        "Starbox_right1.jpg",
+        "Starbox_top3.jpg",
+        "Starbox_front5.jpg",
+        "Starbox_left2.jpg",
+        "Starbox_bottom4.jpg",
+        "Starbox_back6.jpg",
+      ]
+    );
+    starboxTask.onSuccess = (task: CubeTextureAssetTask) => {
+      _this.starboxTexture = task.texture;
     };
     assetsManagerMinimal.load();
     assetsManagerMinimal.onFinish = () => {
