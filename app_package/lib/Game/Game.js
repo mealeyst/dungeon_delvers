@@ -6,18 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateGameScene = void 0;
 const core_1 = require("@babylonjs/core");
 require("@babylonjs/inspector");
-const dat_gui_1 = require("dat.gui");
 const Assets_1 = require("./Assets");
 const Sky_1 = __importDefault(require("./entities/Sky"));
-const TerrainChunkManager_1 = __importDefault(require("./entities/ground/TerrainChunkManager"));
 const InputManager_1 = require("./Inputs/InputManager");
-const PlayerManager_1 = require("./entities/PlayerManager");
 class Game {
     constructor(engine, assetsHostUrl, canvas) {
-        this.initializeGui = () => {
-            const gui = new dat_gui_1.GUI();
-            return gui;
-        };
         this._inputManager = null;
         this.scene = new core_1.Scene(engine);
         this.scene.debugLayer.show();
@@ -34,21 +27,20 @@ class Game {
         // This creates and positions a free camera (non-mesh)
         var camera = new core_1.ArcRotateCamera("playerCamera", Math.PI / 2, Math.PI / 2, 5, new core_1.Vector3(0, 2, -5), this.scene);
         this.scene.addCamera(camera);
-        // this.scene.activeCamera = camera;
-        // this.scene.activeCamera.attachControl(canvas, true);
+        this.scene.activeCamera = camera;
+        this.scene.activeCamera.attachControl(canvas, true);
         // camera.lowerRadiusLimit = 2;
         // camera.upperRadiusLimit = 10;
         // camera.wheelDeltaPercentage = 0.01;
         const gravityVector = new core_1.Vector3(0, -9.81, 0);
+        this.scene.collisionsEnabled = true;
         const physicsPlugin = new core_1.CannonJSPlugin();
         this.scene.enablePhysics(gravityVector, physicsPlugin);
-        this.gui = this.initializeGui();
         new Assets_1.Assets(this.scene, assetsHostUrl, (assets) => {
-            new Sky_1.default(this.gui, this.scene);
-            new TerrainChunkManager_1.default(this.gui, this.scene, assets);
+            new Sky_1.default('sky', this.scene);
+            // new TerrainChunkManager(this.gui, this.scene, assets);
             this._inputManager = new InputManager_1.InputManager(this.scene, assets);
-            console.log(this._inputManager);
-            new PlayerManager_1.PlayerManager(assets, this._inputManager, this.scene);
+            // new PlayerManager( assets, this._inputManager, this.scene);
         });
     }
     getScene() {

@@ -1,94 +1,165 @@
-import { HemisphericLight, Mesh, Scene, Vector3 } from "@babylonjs/core";
+import { HemisphericLight, InspectableType, Mesh, MeshBuilder, Scene, TransformNode, Vector3 } from "@babylonjs/core";
 import { SkyMaterial } from "@babylonjs/materials";
-import { GUI } from "dat.gui";
 
-interface SkyGuiInterface {
+type SkyMaterialOptions = {
   sky: {
-    luminance: number;
-    turbidity: number;
-    rayleigh: number;
-    mieCoefficient: number;
-    mieDirectionalG: number;
+    luminance?: number;
+    turbidity?: number;
+    rayleigh?: number;
   };
   sun: {
-    inclination: number;
-    azimuth: number;
+    inclination?: number;
+    azimuth?: number;
   };
 }
 
-class Sky {
-  gui: GUI;
+class Sky extends TransformNode {
+  _azimuth: number;
+  _inclination: number;
+  _light: HemisphericLight;
+  _luminance: number;
+  _rayleigh: number;
+  _skybox: Mesh;
+  _skyMaterial: SkyMaterial;
+  _sunPosition: Vector3;
+  _turbidity: number;
 
-  guiParams: SkyGuiInterface;
-
-  light: HemisphericLight;
-
-  scene: Scene;
-
-  skybox: any;
-
-  skyMaterial: SkyMaterial;
-
-  sunPosition: Vector3;
-
-  constructor(gui: GUI, scene: Scene) {
-    this.scene = scene;
-    this.gui = gui;
-    this.guiParams = {
+  constructor(name: string, scene: Scene, options?: SkyMaterialOptions,) {
+    super(name, scene);
+    const defualtSkyOptions = {
       sky: {
         luminance: 0.2,
-        mieCoefficient: 0.005,
-        mieDirectionalG: 0.8,
         rayleigh: 0.4,
         turbidity: 1,
       },
       sun: {
-        inclination: 0.2,
+        inclination: 0.0,
         azimuth: 0.25,
       },
     };
+
     // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-    this.sunPosition = new Vector3(0, 100, 0);
-    this.light = new HemisphericLight("light", this.sunPosition, this.scene);
+    this._sunPosition = new Vector3(0, 100, 0);
+    this._light = new HemisphericLight("light", this._sunPosition, scene);
 
+    this._azimuth = options?.sun?.azimuth || defualtSkyOptions?.sun.azimuth;
+    this._inclination = options?.sun?.inclination || defualtSkyOptions?.sun.inclination;
+    this._luminance = options?.sky?.luminance || defualtSkyOptions?.sky.luminance;
+    this._rayleigh = options?.sky?.rayleigh || defualtSkyOptions?.sky.rayleigh;
+    this._turbidity = options?.sky?.turbidity || defualtSkyOptions?.sky.turbidity;
     // Default intensity is 1. Let's dim the light a small amount
-    this.light.intensity = 0.7;
+    this._light.intensity = 0.7;
 
-    this.skyMaterial = new SkyMaterial("skyMaterial", this.scene);
-    this.skyMaterial.backFaceCulling = false;
-    this.skybox = Mesh.CreateBox("skyBox", 1000.0, this.scene);
-    this.setSky();
-    this.setSun();
-    this.initializeGui();
+    this._skyMaterial = new SkyMaterial("skyMaterial", scene);
+    this._skyMaterial.backFaceCulling = false;
+    this._skybox = MeshBuilder.CreateBox("skyBox", {size: 1000.0}, scene);
+    this._skybox.parent = this;
+    this._skybox.material = this._skyMaterial;
+    // Custom inspector properties.
+    this.inspectableCustomProperties = [
+      {
+        label: "Sky Options",
+        propertyName: "sky",
+        type: InspectableType.Tab
+      },
+      {
+        label: "Luminance",
+        propertyName: "luminence",
+        type: InspectableType.Slider,
+        min: 0.0,
+        max: 1.0,
+        step: 0.1,
+      },
+      {
+        label: "Rayleigh",
+        propertyName: "rayleigh",
+        type: InspectableType.Slider,
+        min: 0.0,
+        max: 2.0,
+        step: 0.1,
+      },
+      {
+        label: "Turbidity",
+        propertyName: "turbidity",
+        type: InspectableType.Slider,
+        min: 0,
+        max: 20,
+        step: 1,
+      },
+      {
+        label: "Sun Options",
+        propertyName: "sun",
+        type: InspectableType.Tab
+      },
+      {
+        label: "azimuth",
+        propertyName: "azimuth",
+        type: InspectableType.Slider,
+        min: 0.0,
+        max: 1.0,
+        step: 0.1,
+      },
+      {
+        label: "Inclination",
+        propertyName: "inclination",
+        type: InspectableType.Slider,
+        min: -1.0,
+        max: 1.0,
+        step: 0.1,
+      }
+    ];
+    let alpha = 1;
+    scene.onBeforeRenderObservable.add(() => {
+      this._inclination = Math.cos(alpha) ;
+      this._skyMaterial.inclination = Math.cos(alpha);
+      alpha = (alpha < 3) ? (alpha + 0.0001) : 0;
+    })
   }
 
-  private setSky = () => {
-    this.skyMaterial.turbidity = this.guiParams.sky.turbidity;
-    this.skyMaterial.rayleigh = this.guiParams.sky.rayleigh;
-    this.skyMaterial.luminance = this.guiParams.sky.luminance;
-    this.skybox.material = this.skyMaterial;
-  };
+  set azimuth(value: number) {
+    this._azimuth = value;
+    this._skyMaterial.azimuth = value;
+  }
 
-  private setSun = () => {
-    this.skyMaterial.inclination = this.guiParams.sun.inclination;
-    this.skyMaterial.azimuth = this.guiParams.sun.azimuth;
-  };
+  get azimuth() {
+    return this._azimuth;
+  }
 
-  private initializeGui = () => {
-    const skyRollup = this.gui.addFolder("Sky");
-    skyRollup.add(this.guiParams.sky, "turbidity", 0, 20).onChange(this.setSky);
-    skyRollup
-      .add(this.guiParams.sky, "rayleigh", 0.0, 2.0)
-      .onChange(this.setSky);
-    skyRollup
-      .add(this.guiParams.sky, "luminance", 0.0, 1.0)
-      .onChange(this.setSky);
-    const sunRollup = this.gui.addFolder("Sun");
-    sunRollup
-      .add(this.guiParams.sun, "inclination", 0.0, 1.0)
-      .onChange(this.setSun);
-    sunRollup.add(this.guiParams.sun, "azimuth", 0.0, 1).onChange(this.setSun);
-  };
+  set inclination(value: number) {
+    this._inclination = value;
+    this._skyMaterial.inclination = value;
+  }
+
+  get inclination() {
+    return this._inclination;
+  }
+
+  set rayleigh(value: number) {
+    this._rayleigh = value;
+    this._skyMaterial.rayleigh = value;
+  }
+
+  get rayleigh() {
+    return this._rayleigh;
+  }
+
+  set turbidity(value: number) {
+    this._turbidity = value;
+    this._skyMaterial.turbidity = value;
+  }
+
+  get turbidity() {
+    return this._turbidity;
+  }
+
+  set luminance(value: number) {
+    this._luminance = value;
+    this._skyMaterial.luminance = value;
+  }
+
+  get luminance() {
+    return this._luminance;
+  }
 }
 
 export default Sky;

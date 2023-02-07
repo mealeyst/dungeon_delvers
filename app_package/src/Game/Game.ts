@@ -8,7 +8,6 @@ import {
   Vector3,
 } from "@babylonjs/core";
 import "@babylonjs/inspector";
-import { GUI } from "dat.gui";
 import { Assets } from "./Assets";
 import Sky from "./entities/Sky";
 import TerrainChunkManager from "./entities/ground/TerrainChunkManager";
@@ -16,7 +15,6 @@ import { InputManager } from "./Inputs/InputManager";
 import { PlayerManager } from "./entities/PlayerManager";
 
 class Game {
-  gui: GUI;
   scene: Scene;
   private _inputManager: InputManager | null;
   constructor(
@@ -53,27 +51,22 @@ class Game {
       this.scene
     );
     this.scene.addCamera(camera)
-    // this.scene.activeCamera = camera;
-    // this.scene.activeCamera.attachControl(canvas, true);
+    this.scene.activeCamera = camera;
+    this.scene.activeCamera.attachControl(canvas, true);
     // camera.lowerRadiusLimit = 2;
     // camera.upperRadiusLimit = 10;
     // camera.wheelDeltaPercentage = 0.01;
     const gravityVector = new Vector3(0, -9.81, 0);
+    this.scene.collisionsEnabled = true;
     const physicsPlugin = new CannonJSPlugin();
     this.scene.enablePhysics(gravityVector, physicsPlugin);
-    this.gui = this.initializeGui();
     new Assets(this.scene, assetsHostUrl, (assets) => {
-      new Sky(this.gui, this.scene);
-      new TerrainChunkManager(this.gui, this.scene, assets);
+      new Sky('sky', this.scene);
+      // new TerrainChunkManager(this.gui, this.scene, assets);
       this._inputManager = new InputManager(this.scene, assets);
-      console.log(this._inputManager);
-      new PlayerManager( assets, this._inputManager, this.scene);
+      // new PlayerManager( assets, this._inputManager, this.scene);
     });
   }
-  private initializeGui = () => {
-    const gui = new GUI();
-    return gui;
-  };
 
   public getScene() {
     return this.scene;

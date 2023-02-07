@@ -7,7 +7,7 @@ class PlayerManager {
         this.scene = scene;
         this.camera = null;
         this.player = assets.placeHolderChar;
-        console.log("We hitting constructor?", this.player);
+        this.player.checkCollisions = true;
         this._setupPlayerCamera();
         //Hero character variables
         var heroSpeed = 0.03;
@@ -40,10 +40,6 @@ class PlayerManager {
                 (_f = this.player) === null || _f === void 0 ? void 0 : _f.rotate(core_1.Vector3.Up(), heroRotationSpeed);
                 keydown = true;
             }
-            // if (inputManager.inputMap[" "]) {
-            //   this.player?.rotate(Vector3.Up(), heroRotationSpeed);
-            //   keydown = true;
-            // }
             //Manage animations to be played
             if (keydown) {
                 if (!animating) {
@@ -69,6 +65,7 @@ class PlayerManager {
                     animating = false;
                 }
             }
+            // this.player?.moveWithCollisions(this.scene.gravity)
         });
     }
     _setupPlayerCamera() {
@@ -79,7 +76,6 @@ class PlayerManager {
         this.camera.lowerHeightOffsetLimit = 0.5;
         this.camera.upperHeightOffsetLimit = 0.5;
         this.camera.inertia = 0.01;
-        // this.camera.
         // //The goal distance of camera from target
         this.camera.radius = -5;
         // // The goal height of camera above local oriin (centre) of target
@@ -96,7 +92,6 @@ class PlayerManager {
         this.scene.addCamera(this.camera);
         this.scene.activeCamera = this.camera;
         this.camera.lockedTarget = this.player;
-        console.log('We are hitting');
         return this.camera;
     }
 }
