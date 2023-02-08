@@ -14,7 +14,10 @@ import Sky from "./entities/Sky";
 import TerrainChunkManager from "./entities/ground/TerrainChunkManager";
 import { InputManager } from "./Inputs/InputManager";
 import { PlayerManager } from "./entities/PlayerManager";
-import { DungeonGenerator } from "./entities/ground/DungeonGenerator";
+import { DungeonGenerator } from "./entities/ground/DungeonGenerator/index";
+import { binarySpacePartition } from "./entities/ground/DungeonGenerator/BinarySpacePartition";
+
+console.log(typeof binarySpacePartition);
 
 class Game {
   scene: Scene;
@@ -69,7 +72,8 @@ class Game {
       // new TerrainChunkManager(this.gui, this.scene, assets);
       // this._inputManager = new InputManager(this.scene, assets);
       // new PlayerManager(assets, this._inputManager, this.scene);
-      new DungeonGenerator("dungeon", this.scene);
+      // new DungeonGenerator("dungeon", this.scene);
+      binarySpacePartition(1000, 1000);
     });
   }
 

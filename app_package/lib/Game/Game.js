@@ -4,7 +4,8 @@ exports.CreateGameScene = void 0;
 const core_1 = require("@babylonjs/core");
 require("@babylonjs/inspector");
 const Assets_1 = require("./Assets");
-const DungeonGenerator_1 = require("./entities/ground/DungeonGenerator");
+const BinarySpacePartition_1 = require("./entities/ground/DungeonGenerator/BinarySpacePartition");
+console.log(typeof BinarySpacePartition_1.binarySpacePartition);
 class Game {
     constructor(engine, assetsHostUrl, canvas) {
         this._inputManager = null;
@@ -43,7 +44,8 @@ class Game {
             // new TerrainChunkManager(this.gui, this.scene, assets);
             // this._inputManager = new InputManager(this.scene, assets);
             // new PlayerManager(assets, this._inputManager, this.scene);
-            new DungeonGenerator_1.DungeonGenerator("dungeon", this.scene);
+            // new DungeonGenerator("dungeon", this.scene);
+            (0, BinarySpacePartition_1.binarySpacePartition)(1000, 1000);
         });
     }
     getScene() {

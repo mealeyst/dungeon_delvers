@@ -10,8 +10,8 @@ class DungeonGenerator extends transformNode_1.TransformNode {
         this._meshes = [];
         for (let i = 0; i < Math.floor(Math.random() * 10 + 10); i++) {
             const floor = core_1.MeshBuilder.CreateGround(`room_${i}_floor`, {
-                height: Math.floor(Math.random() * 6) + 1,
-                width: Math.floor(Math.random() * 6) + 1,
+                height: Math.floor(Math.random() * 30) + 20,
+                width: Math.floor(Math.random() * 30) + 20,
                 subdivisions: 4,
             });
             floor.parent = this;
@@ -20,6 +20,21 @@ class DungeonGenerator extends transformNode_1.TransformNode {
             this._meshes.push(floor);
         }
     }
+    getRandomPointInCircle(radius) {
+        const t = 2 * Math.PI * Math.random();
+        const u = Math.random() + Math.random();
+        let r = null;
+        if (u > 1) {
+            r = 2 - u;
+        }
+        else {
+            r = u;
+        }
+        return {
+            x: radius * r * Math.cos(t),
+            z: radius * r * Math.sin(t),
+        };
+    }
 }
 exports.DungeonGenerator = DungeonGenerator;
-//# sourceMappingURL=DungeonGenerator.js.map
+//# sourceMappingURL=index.js.map
