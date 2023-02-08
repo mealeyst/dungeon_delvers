@@ -2,7 +2,6 @@ import {
   AbstractMesh,
   Nullable,
   Scene,
-  TransformNode,
   FollowCamera,
   Vector3,
 } from "@babylonjs/core";
