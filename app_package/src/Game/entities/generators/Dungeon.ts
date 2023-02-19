@@ -6,9 +6,9 @@ import {
   Vector3,
 } from "@babylonjs/core";
 import { InspectableType } from "@babylonjs/core/Misc/iInspectable";
-import { Material } from "material/Material";
+import RoomsJSON from './Rooms.json'
 import { random, randomChoice } from "../../../utils/random";
-import { Container, Direction, TreeNode } from "./types";
+import { Container, Direction, RoomTemplate, RoomTemplates, TreeNode } from "./types";
 
 type DungeonArgs = {
   corridorWidth?: number;
@@ -20,6 +20,8 @@ type DungeonArgs = {
   tileWidth?: number;
   width?: number;
 };
+
+const ROOMS_DEFAULT: RoomTemplates = RoomsJSON as RoomTemplates;
 
 export class Dungeon extends TransformNode {
   _corridorWidth: number;
@@ -75,8 +77,8 @@ export class Dungeon extends TransformNode {
         step: 1,
       },
       {
-        label: "Height",
-        propertyName: "height",
+        label: "Length",
+        propertyName: "length",
         type: InspectableType.Slider,
         min: 30,
         max: 500,
@@ -151,12 +153,12 @@ export class Dungeon extends TransformNode {
     return this._iterations;
   }
 
-  set height(value: number) {
+  set length(value: number) {
     this._length = value;
   }
 
-  get height() {
-    return this._width;
+  get length() {
+    return this._length;
   }
 
   set ratio(value: number) {
@@ -225,14 +227,14 @@ export class Dungeon extends TransformNode {
     if (direction === "vertical") {
       // Vertical
       left = new Container(
-        container.x - container.width / 2,
-        container.y + container.length / 2,
+        container.x,
+        container.y,
         random(1, container.width),
         container.length
       );
       right = new Container(
-        container.x - container.width / 2 + left.width,
-        container.y + container.length / 2,
+        container.x + container.width,
+        container.y,
         container.width - left.width,
         container.length
       );
@@ -247,14 +249,14 @@ export class Dungeon extends TransformNode {
     } else {
       // Horizontal
       left = new Container(
-        container.x - container.width / 2,
-        container.y + container.length / 2,
+        container.x,
+        container.y,
         container.width,
         random(1, container.length)
       );
       right = new Container(
-        container.x - container.width / 2,
-        container.y + container.length / 2 + left.length,
+        container.x,
+        container.y + left.length,
         container.width,
         container.length - left.length
       );
@@ -267,13 +269,6 @@ export class Dungeon extends TransformNode {
         return this.splitContainer(container, retries - 1);
       }
     }
-    const containerPlane = MeshBuilder.CreatePlane(`plane_${retries}`, {
-      width: container.width,
-      height: container.length,
-    });
-    containerPlane.rotation.x = Math.PI / 2;
-    containerPlane.position = new Vector3(container.x, 0, container.y);
-    containerPlane.material = this._transparentMaterial;
 
     return [left, right];
   }
@@ -281,16 +276,18 @@ export class Dungeon extends TransformNode {
   generateRooms() {
     const iterations = this._iterations;
     this._tree = this.createTree(iterations);
-    console.log(this._tree);
-    console.log(this._tree.leaves);
     this._tree.leaves.forEach((leaf, index) => {
-      const ground = MeshBuilder.CreateGround(`room_${index}_floor`, {
-        width: leaf.width,
-        height: leaf.length,
+      const roomIds = Object.keys(ROOMS_DEFAULT);
+      const roomId = randomChoice(roomIds);
+      const randomRoom = ROOMS_DEFAULT[roomId]
+      console.log('RandomRoom', randomRoom)
+      const ground = MeshBuilder.CreateGround(roomId, {
+        width: randomRoom.width,
+        height: randomRoom.length,
       });
       ground.parent = this;
       // ground.setPivotPoint(new Vector3(leaf.width / 2, 0, leaf.length));
-      ground.position = new Vector3(leaf.x, 0, leaf.y);
+      ground.position = new Vector3((leaf.center.x - randomRoom.width / 2), 0, (leaf.center.y - randomRoom.length / 2));
     });
   }
 }

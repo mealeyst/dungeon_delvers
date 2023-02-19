@@ -1,10 +1,15 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Dungeon = void 0;
 const core_1 = require("@babylonjs/core");
 const iInspectable_1 = require("@babylonjs/core/Misc/iInspectable");
+const Rooms_json_1 = __importDefault(require("./Rooms.json"));
 const random_1 = require("../../../utils/random");
 const types_1 = require("./types");
+const ROOMS_DEFAULT = Rooms_json_1.default;
 class Dungeon extends core_1.TransformNode {
     constructor(name, scene, options) {
         super(name, scene);
@@ -44,8 +49,8 @@ class Dungeon extends core_1.TransformNode {
                 step: 1,
             },
             {
-                label: "Height",
-                propertyName: "height",
+                label: "Length",
+                propertyName: "length",
                 type: iInspectable_1.InspectableType.Slider,
                 min: 30,
                 max: 500,
@@ -115,11 +120,11 @@ class Dungeon extends core_1.TransformNode {
     get iterations() {
         return this._iterations;
     }
-    set height(value) {
+    set length(value) {
         this._length = value;
     }
-    get height() {
-        return this._width;
+    get length() {
+        return this._length;
     }
     set ratio(value) {
         this._ratio = value;
@@ -169,8 +174,8 @@ class Dungeon extends core_1.TransformNode {
         const direction = (0, random_1.randomChoice)(["horizontal", "vertical"]);
         if (direction === "vertical") {
             // Vertical
-            left = new types_1.Container(container.x - container.width / 2, container.y + container.length / 2, (0, random_1.random)(1, container.width), container.length);
-            right = new types_1.Container(container.x - container.width / 2 + left.width, container.y + container.length / 2, container.width - left.width, container.length);
+            left = new types_1.Container(container.x, container.y, (0, random_1.random)(1, container.width), container.length);
+            right = new types_1.Container(container.x + container.width, container.y, container.width - left.width, container.length);
             // Retry splitting the container if it's not large enough
             const leftWidthRatio = left.width / left.length;
             const rightWidthRatio = right.width / right.length;
@@ -181,8 +186,8 @@ class Dungeon extends core_1.TransformNode {
         }
         else {
             // Horizontal
-            left = new types_1.Container(container.x - container.width / 2, container.y + container.length / 2, container.width, (0, random_1.random)(1, container.length));
-            right = new types_1.Container(container.x - container.width / 2, container.y + container.length / 2 + left.length, container.width, container.length - left.length);
+            left = new types_1.Container(container.x, container.y, container.width, (0, random_1.random)(1, container.length));
+            right = new types_1.Container(container.x, container.y + left.length, container.width, container.length - left.length);
             // Retry splitting the container if it's not high enough
             const leftLengthRatio = left.length / left.width;
             const rightLengthRatio = right.length / right.width;
@@ -191,28 +196,23 @@ class Dungeon extends core_1.TransformNode {
                 return this.splitContainer(container, retries - 1);
             }
         }
-        const containerPlane = core_1.MeshBuilder.CreatePlane(`plane_${retries}`, {
-            width: container.width,
-            height: container.length,
-        });
-        containerPlane.rotation.x = Math.PI / 2;
-        containerPlane.position = new core_1.Vector3(container.x, 0, container.y);
-        containerPlane.material = this._transparentMaterial;
         return [left, right];
     }
     generateRooms() {
         const iterations = this._iterations;
         this._tree = this.createTree(iterations);
-        console.log(this._tree);
-        console.log(this._tree.leaves);
         this._tree.leaves.forEach((leaf, index) => {
-            const ground = core_1.MeshBuilder.CreateGround(`room_${index}_floor`, {
-                width: leaf.width,
-                height: leaf.length,
+            const roomIds = Object.keys(ROOMS_DEFAULT);
+            const roomId = (0, random_1.randomChoice)(roomIds);
+            const randomRoom = ROOMS_DEFAULT[roomId];
+            console.log('RandomRoom', randomRoom);
+            const ground = core_1.MeshBuilder.CreateGround(roomId, {
+                width: randomRoom.width,
+                height: randomRoom.length,
             });
             ground.parent = this;
             // ground.setPivotPoint(new Vector3(leaf.width / 2, 0, leaf.length));
-            ground.position = new core_1.Vector3(leaf.x, 0, leaf.y);
+            ground.position = new core_1.Vector3((leaf.center.x - randomRoom.width / 2), 0, (leaf.center.y - randomRoom.length / 2));
         });
     }
 }

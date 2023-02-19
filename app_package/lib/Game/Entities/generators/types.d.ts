@@ -44,9 +44,9 @@ export declare class Corridor extends Rectangle {
 export declare const RoomTypes: readonly ["entrance", "monsters", "heal", "treasure", "boss"];
 export type RoomType = typeof RoomTypes[number];
 export interface RoomTemplate {
-    id: string;
     type: RoomType;
     width: number;
     length: number;
 }
+export type RoomTemplates = Record<string, RoomTemplate>;
 //# sourceMappingURL=types.d.ts.map

@@ -26,8 +26,8 @@ export declare class Dungeon extends TransformNode {
     get corridorWidth(): number;
     set iterations(value: number);
     get iterations(): number;
-    set height(value: number);
-    get height(): number;
+    set length(value: number);
+    get length(): number;
     set ratio(value: number);
     get ratio(): number;
     get tileWidth(): number;

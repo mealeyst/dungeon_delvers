@@ -1,0 +1,122 @@
+{
+  "boss_001": {
+    "width": 14,
+    "length": 14,
+    "type": "boss"
+  },
+  "boss_002": {
+    "width": 12,
+    "length": 12,
+    "type": "boss"
+  },
+  "boss_004": {
+    "width": 14,
+    "length": 14,
+    "type": "boss"
+  },
+  "entrance_001": {
+    "width": 5,
+    "length": 5,
+    "type": "entrance"
+  },
+  "entrance_002": {
+    "width": 5,
+    "length": 5,
+    "type": "entrance"
+  },
+  "entrance_003": {
+    "width": 6,
+    "length": 6,
+    "type": "entrance"
+  },
+  "heal_001": {
+    "width": 6,
+    "length": 6,
+    "type": "heal"
+  },
+  "heal_002": {
+    "width": 6,
+    "length": 6,
+    "type": "heal"
+  },
+  "monster_h_001": {
+    "width": 12,
+    "length": 8,
+    "type": "monsters"
+  },
+  "monster_h_002": {
+    "width": 14,
+    "length": 10,
+    "type": "monsters"
+  },
+  "monster_h_003": {
+    "width": 10,
+    "length": 6,
+    "type": "monsters"
+  },
+  "monster_h_004": {
+    "width": 16,
+    "length": 14,
+    "type": "monsters"
+  },
+  "monster_s_001": {
+    "width": 6,
+    "length": 6,
+    "type": "monsters"
+  },
+  "monster_s_002": {
+    "width": 8,
+    "length": 8,
+    "type": "monsters"
+  },
+  "monster_s_003": {
+    "width": 10,
+    "length": 10,
+    "type": "monsters"
+  },
+  "monster_s_004": {
+    "width": 12,
+    "length": 12,
+    "type": "monsters"
+  },
+  "monster_s_005": {
+    "width": 7,
+    "length": 7,
+    "type": "monsters"
+  },
+  "monster_v_001": {
+    "width": 8,
+    "length": 12,
+    "type": "monsters"
+  },
+  "monster_v_002": {
+    "width": 10,
+    "length": 14,
+    "type": "monsters"
+  },
+  "monster_v_003": {
+    "width": 6,
+    "length": 8,
+    "type": "monsters"
+  },
+  "monster_v_004": {
+    "width": 6,
+    "length": 8,
+    "type": "monsters"
+  },
+  "treasure_h_001": {
+    "width": 6,
+    "length": 4,
+    "type": "treasure"
+  },
+  "treasure_s_001": {
+    "width": 5,
+    "length": 5,
+    "type": "treasure"
+  },
+  "treasure_s_002": {
+    "width": 8,
+    "length": 8,
+    "type": "treasure"
+  }
+}
