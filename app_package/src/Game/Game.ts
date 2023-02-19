@@ -7,6 +7,7 @@ import {
   ArcRotateCamera,
   Vector3,
   HemisphericLight,
+  MeshBuilder,
 } from "@babylonjs/core";
 import "@babylonjs/inspector";
 import { Assets } from "./Assets";
@@ -14,10 +15,7 @@ import Sky from "./entities/Sky";
 import TerrainChunkManager from "./entities/ground/TerrainChunkManager";
 import { InputManager } from "./Inputs/InputManager";
 import { PlayerManager } from "./entities/PlayerManager";
-import { DungeonGenerator } from "./entities/ground/DungeonGenerator/index";
-import { binarySpacePartition } from "./entities/ground/DungeonGenerator/BinarySpacePartition";
-
-console.log(typeof binarySpacePartition);
+import { Dungeon } from "./entities/generators/Dungeon";
 
 class Game {
   scene: Scene;
@@ -30,21 +28,6 @@ class Game {
     this._inputManager = null;
     this.scene = new Scene(engine);
     this.scene.debugLayer.show();
-    // scene.clearColor = new Color4(0, 0, 0, 1);
-    // scene.autoClearDepthAndStencil = false;
-    // scene.skipPointerMovePicking = true;
-    // scene.pointerUpPredicate = () => false;
-    // scene.pointerDownPredicate = () => false;
-    // scene.pointerMovePredicate = () => false;
-
-    // lighting
-    // const dirLight = new DirectionalLight(
-    //   "dirLight",
-    //   new Vector3(10, 10, -0.86),
-    //   this.scene
-    // );
-    // dirLight.diffuse = Color3.FromInts(255, 251, 199);
-    // dirLight.intensity = 1.5;
     const sunPosition = new Vector3(0, 100, 0);
     const light = new HemisphericLight("light", sunPosition, this.scene);
 
@@ -68,12 +51,17 @@ class Game {
     const physicsPlugin = new CannonJSPlugin();
     this.scene.enablePhysics(gravityVector, physicsPlugin);
     new Assets(this.scene, assetsHostUrl, (assets) => {
+      new Dungeon("dungeon", this.scene);
       // new Sky("sky", this.scene, assets);
       // new TerrainChunkManager(this.gui, this.scene, assets);
       // this._inputManager = new InputManager(this.scene, assets);
       // new PlayerManager(assets, this._inputManager, this.scene);
-      // new DungeonGenerator("dungeon", this.scene);
-      binarySpacePartition(1000, 1000);
+      // const floor = MeshBuilder.CreateGround("floor", {
+      //   height: Math.floor(Math.random() * 30) + 20,
+      //   width: Math.floor(Math.random() * 30) + 20,
+      //   subdivisions: 4,
+      // });
+      // floor.setPivotPoint(new Vector3(floor._width / 2, 0, floor._height / 2));
     });
   }
 

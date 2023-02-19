@@ -10,7 +10,7 @@ class Room {
             height,
             width,
         });
-        this.radius = Math.sqrt(Math.pow(height, 2) + Math.pow(width, 2));
+        this.radius = Math.sqrt(height ** 2 + width ** 2);
         this._floor.parent = parent;
         this.position = this.getRandomPointInCircle(20);
         this._floor.position = this.position;

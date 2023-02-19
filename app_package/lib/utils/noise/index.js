@@ -32,7 +32,7 @@ class NoiseGenerator {
         const xs = x / this.params.scale;
         const ys = y / this.params.scale;
         const noiseFunc = this.noise[this.params.noiseType];
-        const G = Math.pow(2.0, -this.params.persistence);
+        const G = 2.0 ** -this.params.persistence;
         let amplitude = 1.0;
         let frequency = 1.0;
         let normalization = 0;
@@ -45,7 +45,7 @@ class NoiseGenerator {
             frequency *= this.params.lacunarity;
         }
         total /= normalization;
-        return Math.pow(total, this.params.exponentiation) * this.params.height;
+        return total ** this.params.exponentiation * this.params.height;
     }
 }
 exports.default = NoiseGenerator;
