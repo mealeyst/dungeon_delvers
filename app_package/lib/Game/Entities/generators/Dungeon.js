@@ -205,14 +205,15 @@ class Dungeon extends core_1.TransformNode {
             const roomIds = Object.keys(ROOMS_DEFAULT);
             const roomId = (0, random_1.randomChoice)(roomIds);
             const randomRoom = ROOMS_DEFAULT[roomId];
-            console.log('RandomRoom', randomRoom);
-            const ground = core_1.MeshBuilder.CreateGround(roomId, {
+            const roomTransform = new core_1.TransformNode(roomId);
+            const ground = core_1.MeshBuilder.CreateGround(`${roomId}_floor`, {
                 width: randomRoom.width,
                 height: randomRoom.length,
             });
-            ground.parent = this;
+            roomTransform.parent = this;
+            ground.parent = roomTransform;
             // ground.setPivotPoint(new Vector3(leaf.width / 2, 0, leaf.length));
-            ground.position = new core_1.Vector3((leaf.center.x - randomRoom.width / 2), 0, (leaf.center.y - randomRoom.length / 2));
+            roomTransform.position = new core_1.Vector3((leaf.center.x - randomRoom.width / 2), 0, (leaf.center.y - randomRoom.length / 2));
         });
     }
 }

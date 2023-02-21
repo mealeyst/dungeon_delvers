@@ -104,9 +104,10 @@ export const RoomTypes = [
 export type RoomType = typeof RoomTypes[number];
 
 export interface RoomTemplate {
+  length: number;
+  points?: Record<string, number>[];
   type: RoomType;
   width: number;
-  length: number;
 }
 
 export type RoomTemplates = Record<string, RoomTemplate>
