@@ -1,136 +1,137 @@
 {
     "boss_001": {
-        "width": 14,
-        "length": 14,
+        "width": 28,
+        "length": 28,
         "points": [
-            { "x": 7, "y": -4 },
-            { "x": 7, "y": 4 },
-            { "x": 4, "y": 4 },
-            { "x": 4, "y": 7 },
-            { "x": -4, "y": 7 },
-            { "x": -4, "y": 4 },
-            { "x": -7, "y": 4 },
-            { "x": -7, "y": -4 },
-            { "x": -4, "y": -4 },
-            { "x": -4, "y": -7 },
-            { "x": 4, "y": -7 },
-            { "x": 4, "y": 4 }
+            { "x": 14, "y": -8 },
+            { "x": 14, "y": 8 },
+            { "x": 8, "y": 8 },
+            { "x": 8, "y": 14 },
+            { "x": -8, "y": 14 },
+            { "x": -8, "y": 8 },
+            { "x": -14, "y": 8 },
+            { "x": -14, "y": -8 },
+            { "x": -8, "y": -8 },
+            { "x": -8, "y": -14 },
+            { "x": 8, "y": -14 },
+            { "x": 8, "y": -8 },
+            { "x": 14, "y": -8 }
         ],
         "type": "boss"
     },
     "boss_002": {
-        "width": 12,
-        "length": 12,
+        "width": 24,
+        "length": 24,
         "type": "boss"
     },
     "boss_004": {
-        "width": 14,
-        "length": 14,
+        "width": 28,
+        "length": 28,
         "type": "boss"
     },
     "entrance_001": {
-        "width": 5,
-        "length": 5,
+        "width": 10,
+        "length": 10,
         "type": "entrance"
     },
     "entrance_002": {
-        "width": 5,
-        "length": 5,
+        "width": 14,
+        "length": 14,
         "type": "entrance"
     },
     "entrance_003": {
-        "width": 6,
-        "length": 6,
+        "width": 12,
+        "length": 12,
         "type": "entrance"
     },
     "heal_001": {
-        "width": 6,
-        "length": 6,
+        "width": 12,
+        "length": 12,
         "type": "heal"
     },
     "heal_002": {
-        "width": 6,
-        "length": 6,
+        "width": 12,
+        "length": 12,
         "type": "heal"
     },
     "monster_h_001": {
-        "width": 12,
-        "length": 8,
+        "width": 24,
+        "length": 12,
         "type": "monsters"
     },
     "monster_h_002": {
-        "width": 14,
-        "length": 10,
+        "width": 28,
+        "length": 20,
         "type": "monsters"
     },
     "monster_h_003": {
-        "width": 10,
-        "length": 6,
+        "width": 20,
+        "length": 12,
         "type": "monsters"
     },
     "monster_h_004": {
-        "width": 16,
-        "length": 14,
+        "width": 32,
+        "length": 28,
         "type": "monsters"
     },
     "monster_s_001": {
-        "width": 6,
-        "length": 6,
-        "type": "monsters"
-    },
-    "monster_s_002": {
-        "width": 8,
-        "length": 8,
-        "type": "monsters"
-    },
-    "monster_s_003": {
-        "width": 10,
-        "length": 10,
-        "type": "monsters"
-    },
-    "monster_s_004": {
         "width": 12,
         "length": 12,
         "type": "monsters"
     },
+    "monster_s_002": {
+        "width": 16,
+        "length": 16,
+        "type": "monsters"
+    },
+    "monster_s_003": {
+        "width": 20,
+        "length": 20,
+        "type": "monsters"
+    },
+    "monster_s_004": {
+        "width": 24,
+        "length": 24,
+        "type": "monsters"
+    },
     "monster_s_005": {
-        "width": 7,
-        "length": 7,
-        "type": "monsters"
-    },
-    "monster_v_001": {
-        "width": 8,
-        "length": 12,
-        "type": "monsters"
-    },
-    "monster_v_002": {
-        "width": 10,
+        "width": 14,
         "length": 14,
         "type": "monsters"
     },
+    "monster_v_001": {
+        "width": 16,
+        "length": 24,
+        "type": "monsters"
+    },
+    "monster_v_002": {
+        "width": 20,
+        "length": 28,
+        "type": "monsters"
+    },
     "monster_v_003": {
-        "width": 6,
-        "length": 8,
+        "width": 12,
+        "length": 16,
         "type": "monsters"
     },
     "monster_v_004": {
-        "width": 6,
-        "length": 8,
+        "width": 12,
+        "length": 16,
         "type": "monsters"
     },
     "treasure_h_001": {
-        "width": 6,
-        "length": 4,
+        "width": 12,
+        "length": 8,
         "type": "treasure"
     },
     "treasure_s_001": {
-        "width": 5,
-        "length": 5,
+        "width": 10,
+        "length": 10,
         "type": "treasure"
     },
     "treasure_s_002": {
-        "width": 8,
-        "length": 8,
+        "width": 16,
+        "length": 16,
         "type": "treasure"
     }
 }

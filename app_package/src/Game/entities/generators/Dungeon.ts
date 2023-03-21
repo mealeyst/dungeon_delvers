@@ -1,10 +1,14 @@
 import {
+  Mesh,
   MeshBuilder,
+  PolygonMeshBuilder,
   Scene,
   StandardMaterial,
   TransformNode,
+  Vector2,
   Vector3,
 } from "@babylonjs/core";
+import earcut from 'earcut';
 import { InspectableType } from "@babylonjs/core/Misc/iInspectable";
 import RoomsJSON from './Rooms.json'
 import { random, randomChoice } from "../../../utils/random";
@@ -30,6 +34,7 @@ export class Dungeon extends TransformNode {
   _minSize: number;
   _ratio: number;
   _retries: number;
+  _scene: Scene;
   _tileWidth: number;
   _tree?: TreeNode<Container>;
   _width: number;
@@ -39,14 +44,15 @@ export class Dungeon extends TransformNode {
     super(name, scene);
     const defaultArgs = {
       corridorWidth: 2,
-      length: 48,
+      length: 140,
       iterations: 3,
-      minSize: 4,
+      minSize: 8,
       ratio: 0.45,
       retries: 30,
       tileWidth: 16,
-      width: 64,
+      width: 128,
     };
+    this._scene = scene;
     this._corridorWidth = options?.corridorWidth || defaultArgs.corridorWidth;
     this._length = options?.length || defaultArgs.length;
     this._iterations = options?.iterations || defaultArgs.iterations;
@@ -278,17 +284,25 @@ export class Dungeon extends TransformNode {
     this._tree = this.createTree(iterations);
     this._tree.leaves.forEach((leaf, index) => {
       const roomIds = Object.keys(ROOMS_DEFAULT);
-      const roomId = randomChoice(roomIds);
+      const roomId = (index === 0) ? 'boss_001' : randomChoice(roomIds);
       const randomRoom = ROOMS_DEFAULT[roomId]
       const roomTransform = new TransformNode(roomId)
-      const ground = MeshBuilder.CreateGround(`${roomId}_floor`, {
-        width: randomRoom.width,
-        height: randomRoom.length,
-      });
       roomTransform.parent = this;
-      ground.parent = roomTransform
+      if (randomRoom.points) {
+        const corners = randomRoom.points.map((point) => new Vector3(point.x, 0, point.y));
+        const ground = MeshBuilder.ExtrudePolygon(`${roomId}_floor`, {shape: corners, depth: 4, sideOrientation: Mesh.DOUBLESIDE}, this._scene, earcut);
+        ground.position.y = 4;
+        ground.parent = roomTransform;
+      } else {
+        const ground = MeshBuilder.CreateGround(`${roomId}_floor`, {
+          width: randomRoom.width,
+          height: randomRoom.length,
+        });
+        ground.parent = roomTransform;
+      }
       // ground.setPivotPoint(new Vector3(leaf.width / 2, 0, leaf.length));
       roomTransform.position = new Vector3((leaf.center.x - randomRoom.width / 2), 0, (leaf.center.y - randomRoom.length / 2));
+      
     });
   }
 }

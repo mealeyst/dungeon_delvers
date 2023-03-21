@@ -17,6 +17,7 @@ export declare class Dungeon extends TransformNode {
     _minSize: number;
     _ratio: number;
     _retries: number;
+    _scene: Scene;
     _tileWidth: number;
     _tree?: TreeNode<Container>;
     _width: number;

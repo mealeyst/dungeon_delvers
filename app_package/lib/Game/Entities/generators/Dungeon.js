@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Dungeon = void 0;
 const core_1 = require("@babylonjs/core");
+const earcut_1 = __importDefault(require("earcut"));
 const iInspectable_1 = require("@babylonjs/core/Misc/iInspectable");
 const Rooms_json_1 = __importDefault(require("./Rooms.json"));
 const random_1 = require("../../../utils/random");
@@ -15,14 +16,15 @@ class Dungeon extends core_1.TransformNode {
         super(name, scene);
         const defaultArgs = {
             corridorWidth: 2,
-            length: 48,
+            length: 140,
             iterations: 3,
-            minSize: 4,
+            minSize: 8,
             ratio: 0.45,
             retries: 30,
             tileWidth: 16,
-            width: 64,
+            width: 128,
         };
+        this._scene = scene;
         this._corridorWidth = (options === null || options === void 0 ? void 0 : options.corridorWidth) || defaultArgs.corridorWidth;
         this._length = (options === null || options === void 0 ? void 0 : options.length) || defaultArgs.length;
         this._iterations = (options === null || options === void 0 ? void 0 : options.iterations) || defaultArgs.iterations;
@@ -203,15 +205,23 @@ class Dungeon extends core_1.TransformNode {
         this._tree = this.createTree(iterations);
         this._tree.leaves.forEach((leaf, index) => {
             const roomIds = Object.keys(ROOMS_DEFAULT);
-            const roomId = (0, random_1.randomChoice)(roomIds);
+            const roomId = (index === 0) ? 'boss_001' : (0, random_1.randomChoice)(roomIds);
             const randomRoom = ROOMS_DEFAULT[roomId];
             const roomTransform = new core_1.TransformNode(roomId);
-            const ground = core_1.MeshBuilder.CreateGround(`${roomId}_floor`, {
-                width: randomRoom.width,
-                height: randomRoom.length,
-            });
             roomTransform.parent = this;
-            ground.parent = roomTransform;
+            if (randomRoom.points) {
+                const corners = randomRoom.points.map((point) => new core_1.Vector3(point.x, 0, point.y));
+                const ground = core_1.MeshBuilder.ExtrudePolygon(`${roomId}_floor`, { shape: corners, depth: 4, sideOrientation: core_1.Mesh.DOUBLESIDE }, this._scene, earcut_1.default);
+                ground.position.y = 4;
+                ground.parent = roomTransform;
+            }
+            else {
+                const ground = core_1.MeshBuilder.CreateGround(`${roomId}_floor`, {
+                    width: randomRoom.width,
+                    height: randomRoom.length,
+                });
+                ground.parent = roomTransform;
+            }
             // ground.setPivotPoint(new Vector3(leaf.width / 2, 0, leaf.length));
             roomTransform.position = new core_1.Vector3((leaf.center.x - randomRoom.width / 2), 0, (leaf.center.y - randomRoom.length / 2));
         });

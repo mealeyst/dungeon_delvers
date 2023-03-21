@@ -12,7 +12,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/earcut": "^2.1.1",
     "concurrently": "^6.2.1",
     "recursive-install": "^1.4.0"
+  },
+  "dependencies": {
+    "earcut": "^2.2.4"
   }
 }
