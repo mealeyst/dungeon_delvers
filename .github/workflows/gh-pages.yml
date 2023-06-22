@@ -20,12 +20,12 @@ jobs:
           submodules: true  # TODO remove this if not using submodules in Hexo
 
       - name: Install 🔧
-        run: yarn install
+        run: npm install
 
       - name: Build 🏗️
         run: |
-          yarn clean
-          yarn build
+          npm run clean
+          npm run build
       - name: Deploy to GH Pages 🚀
         uses: peaceiris/actions-gh-pages@v3
         with:
