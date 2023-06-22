@@ -8,6 +8,8 @@
   "description": "Online 3D Dungeon Crawler made with BabylonJS",
   "main": "index.js",
   "scripts": {
+    "build": "npm run build --workspace=client",
+    "deploy-demo": "npm run deploy-demo --workspace=client",
     "start": "npm run start --workspace=client"
   },
   "keywords": [

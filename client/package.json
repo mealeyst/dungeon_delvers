@@ -8,7 +8,8 @@
     "app": "dist"
   },
   "scripts": {
-    "build": "node ./scripts/electron.js",
+    "build": "parcel build ./public/index.html --public-url ./",
+    "deploy-demo": "git push origin :gh-pages && git subtree push --prefix dist origin gh-pages",
     "start": "parcel --open chrome ./public/index.html"
   },
   "keywords": [
