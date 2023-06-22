@@ -9,6 +9,7 @@
   },
   "scripts": {
     "build": "parcel build ./public/index.html --public-url ./",
+    "clean": "rm -rf .parcel-cache dist",
     "deploy-demo": "git push origin :gh-pages && git subtree push --prefix dist origin gh-pages",
     "start": "parcel --open chrome ./public/index.html"
   },

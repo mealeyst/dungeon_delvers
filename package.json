@@ -9,6 +9,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npm run build --workspace=client",
+    "clean": "npm run clean --workspace=client",
     "deploy-demo": "npm run deploy-demo --workspace=client",
     "start": "npm run start --workspace=client"
   },
