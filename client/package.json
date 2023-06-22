@@ -1,0 +1,35 @@
+{
+  "name": "@dungeon_delvers/client",
+  "version": "0.0.1",
+  "description": "The Front End 3D Client for Dungeon Delvers powered by BabylonJS",
+  "homepage": "./",
+  "directories": {
+    "buildResources": "dist",
+    "app": "dist"
+  },
+  "scripts": {
+    "build": "node ./scripts/electron.js",
+    "start": "parcel --open chrome ./public/index.html"
+  },
+  "keywords": [
+    "BabylonJS",
+    "Browser",
+    "Game",
+    "Javascript",
+    "Typescript",
+    "3D"
+  ],
+  "author": "Shawn Mealey",
+  "license": "ISC",
+  "dependencies": {
+    "@babylonjs/core": "^6.8.0",
+    "@babylonjs/inspector": "^6.8.0",
+    "@parcel/types": "^2.9.2",
+    "earcut": "^2.2.4",
+    "parcel": "^2.9.2"
+  },
+  "devDependencies": {
+    "@parcel/config-default": "^2.9.2",
+    "@parcel/core": "^2.9.2"
+  }
+}
