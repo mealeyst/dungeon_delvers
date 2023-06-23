@@ -325,7 +325,10 @@ export class DungeonGenerator extends TransformNode {
         new Vector3(roomOrigins[p1][0], 0, roomOrigins[p1][1]),
         new Vector3(roomOrigins[p2][0], 0, roomOrigins[p2][1]),
       ]
-      MeshBuilder.CreateLines(`triangle_${i / 3}`, { points: triangle })
+      const line = MeshBuilder.CreateLines(`triangle_${i / 3}`, {
+        points: triangle,
+      })
+      line.parent = this
     }
   }
 }
