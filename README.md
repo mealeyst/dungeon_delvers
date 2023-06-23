@@ -3,6 +3,10 @@
 A 3D "Roguelike" dungeon crawling game. Dungeons are generated with Binary-Space
 Partitioning.
 
+## 🕹️ Testing
+
+A demo is available here https://mealeyst.github.io/dungeon_delvers/.
+
 ## 💻 Running
 
 To run the game locally run the following commands:
