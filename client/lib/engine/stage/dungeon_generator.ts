@@ -6,7 +6,8 @@ import {
   StandardMaterial,
   TransformNode,
 } from '@babylonjs/core'
-import * as Rooms from '../../content/stage'
+import { Rooms, isRoomKey } from '../../content/stage'
+import { Room } from '../../content/stage/room'
 import { random, randomChoice } from '../core/random'
 import { Container } from './container'
 import { Direction, TreeNode } from './tree_node'
@@ -220,13 +221,13 @@ export class DungeonGenerator extends TransformNode {
       left = new Container(
         container.x,
         container.y,
-        random(container.width * 0.2, container.width),
+        container.width * 0.5 - random(0, this._gutter),
         container.length,
       )
       right = new Container(
         container.x + container.width,
         container.y,
-        container.width - left.width,
+        container.width - left.width - random(0, this._gutter),
         container.length,
       )
       // Retry splitting the container if it's not large enough
@@ -242,13 +243,13 @@ export class DungeonGenerator extends TransformNode {
         container.x,
         container.y,
         container.width,
-        random(container.length * 0.2, container.length),
+        container.length * 0.5 - random(0, this._gutter),
       )
       right = new Container(
         container.x,
         container.y + left.length,
         container.width,
-        container.length - left.length,
+        container.length - left.length - random(0, this._gutter),
       )
 
       // Retry splitting the container if it's not high enough
@@ -259,39 +260,43 @@ export class DungeonGenerator extends TransformNode {
         return this.splitContainer(container, retries - 1)
       }
     }
-    // const leftWireframe = MeshBuilder.CreateGround(`left_${retries}`, {
-    //   height: left.length,
-    //   width: left.width,
-    // })
-    // leftWireframe.position.x = left.x
-    // leftWireframe.position.z = left.y
-    // leftWireframe.material = this._transparentMaterial
-    // leftWireframe.material.wireframe = true
-    // const rightWireframe = MeshBuilder.CreateGround(`right_${retries}`, {
-    //   height: right.length,
-    //   width: right.width,
-    // })
-    // rightWireframe.position.x = right.x
-    // rightWireframe.position.z = right.y
-    // rightWireframe.material = this._transparentMaterial
-    // rightWireframe.material.wireframe = true
 
     return [left, right]
   }
   generateRooms() {
     const iterations = this._iterations
     this._tree = this.createTree(iterations)
+    const availableRooms = Object.keys(Rooms).reduce<
+      Record<keyof typeof Rooms, { count: number }>
+    >((acc: any, key) => {
+      if (isRoomKey(Rooms, key)) {
+        acc[key] = {
+          count: 0,
+        }
+      }
+      return acc
+    }, {} as Record<keyof typeof Rooms, { count: number }>)
     this._tree.leaves.forEach((leaf, index) => {
-      const room = new Rooms.Room(
+      const randomRoomKey = randomChoice(
+        Object.keys(availableRooms),
+      ) as keyof typeof Rooms
+      const room = new Rooms[randomRoomKey](
         {
           name: index,
           x: leaf.x,
           z: leaf.y,
-          length: random(leaf.length * 0.4, leaf.length * 0.7),
-          width: random(leaf.width * 0.4, leaf.width * 0.7),
+          length: random(leaf.length * 0.4, leaf.length * 0.6),
+          width: random(leaf.width * 0.4, leaf.width * 0.6),
         },
         this._scene,
       )
+      availableRooms[randomRoomKey].count++
+      if (
+        room.roomCountLimit &&
+        room.roomCountLimit === availableRooms[randomRoomKey].count
+      ) {
+        delete availableRooms[randomRoomKey]
+      }
       room.parent = this
     })
   }

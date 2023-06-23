@@ -1,0 +1,10 @@
+{
+  "transformIgnorePatterns": [],
+  "transform": {
+      "^.+\\.js$": "babel-jest",
+      "^.+\\.ts$": "ts-jest"
+  },
+  "globals": {
+      "NODE_ENV": "test"
+  }
+}

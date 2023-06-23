@@ -12,30 +12,32 @@ import {
 
 export type RoomProps = {
   color?: Color3
-  type?: string
-  name?: string | number
-  width: number
-  length: number
   height?: number
+  length: number
+  name?: string | number
+  roomCountLimit?: number
+  subdivisions?: number
+  type?: string
+  width: number
   x?: number
   y?: number
   z?: number
-  subdivisions?: number
 }
 
 export class Room extends TransformNode {
-  private ceiling: Mesh | undefined
-  private floor: GroundMesh
-  private height: number | undefined
-  private length: number
-  private material: Nullable<StandardMaterial>
+  private _roomCountLimit: number | undefined
+  private _ceiling: Mesh | undefined
+  private _floor: GroundMesh
+  private _height: number | undefined
+  private _length: number
+  private _material: Nullable<StandardMaterial>
   private scene: Scene
-  private subdivisions: number | undefined
-  private type: string | undefined
-  private width: number
-  private x: number
-  private y: number
-  private z: number
+  private _subdivisions: number | undefined
+  private _type: string | undefined
+  private _width: number
+  private _x: number
+  private _y: number
+  private _z: number
   constructor(
     args: RoomProps = { type: 'room', width: 4, length: 4 },
     scene: Scene,
@@ -44,39 +46,43 @@ export class Room extends TransformNode {
       args.name !== undefined ? `_${args.name}` : '_default'
     }`
     super(identifier, scene)
-    this.length = args.length
-    this.width = args.width
-    this.x = args.x || 0
-    this.y = args.y || 0
-    this.z = args.z || 0
-    this.material = null
-    this.subdivisions = args.subdivisions
-    this.type = args.type
+    this._length = args.length
+    this._material = null
     this.scene = scene
-    this.floor = MeshBuilder.CreateGround(
+    this._roomCountLimit = args.roomCountLimit
+    this._subdivisions = args.subdivisions
+    this._type = args.type
+    this._width = args.width
+    this._x = args.x || 0
+    this._y = args.y || 0
+    this._z = args.z || 0
+    this._floor = MeshBuilder.CreateGround(
       `${this.id}_floor`,
       {
-        width: this.width,
-        height: this.length,
-        subdivisions: this.subdivisions,
+        width: this._width,
+        height: this._length,
+        subdivisions: this._subdivisions,
       },
       this.scene,
     )
-    this.floor.parent = this
-    this.floor.position.x = this.x
-    this.floor.position.y = this.y
-    this.floor.position.z = this.z
-    if (this.height) {
-      this.ceiling = this.floor.clone()
-      this.ceiling.position.y = this.height
+    this._floor.parent = this
+    this._floor.position.x = this._x
+    this._floor.position.y = this._y
+    this._floor.position.z = this._z
+    if (this._height) {
+      this._ceiling = this._floor.clone()
+      this._ceiling.position.y = this._height
     }
     if (args.color) {
       this.setColor(args.color)
     }
   }
   setColor(color: Color3) {
-    this.material = new StandardMaterial(`${this.id}_material`, this.scene)
-    this.material.diffuseColor = color
-    this.floor.material = this.material
+    this._material = new StandardMaterial(`${this.id}_material`, this.scene)
+    this._material.diffuseColor = color
+    this._floor.material = this._material
+  }
+  get roomCountLimit() {
+    return this._roomCountLimit
   }
 }
