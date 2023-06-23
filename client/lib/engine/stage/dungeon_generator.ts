@@ -5,12 +5,14 @@ import {
   Scene,
   StandardMaterial,
   TransformNode,
+  Vector3,
 } from '@babylonjs/core'
 import { Rooms, isRoomKey } from '../../content/stage'
 import { Room } from '../../content/stage/room'
 import { random, randomChoice } from '../core/random'
 import { Container } from './container'
 import { Direction, TreeNode } from './tree_node'
+import Delaunator from 'delaunator'
 
 type DungeonArgs = {
   corridorWidth?: number
@@ -35,6 +37,7 @@ export class DungeonGenerator extends TransformNode {
   _transparentMaterial: StandardMaterial
   _tree?: TreeNode<Container>
   _width: number
+  _rooms: Room[] = []
   public inspectableCustomProperties: any
   constructor(name = 'dungeon', scene: Scene, options?: DungeonArgs) {
     super(name, scene)
@@ -181,7 +184,7 @@ export class DungeonGenerator extends TransformNode {
 
   createTree(iterations: number): TreeNode<Container> {
     return this.generateTree(
-      new Container(0, 0, this._width, this._length),
+      new Container(0, 0, 0, this._width, this._length),
       iterations,
     )
   }
@@ -221,12 +224,14 @@ export class DungeonGenerator extends TransformNode {
       left = new Container(
         container.x,
         container.y,
+        container.z,
         container.width * 0.5 - random(0, this._gutter),
         container.length,
       )
       right = new Container(
         container.x + container.width,
         container.y,
+        container.z,
         container.width - left.width - random(0, this._gutter),
         container.length,
       )
@@ -242,12 +247,14 @@ export class DungeonGenerator extends TransformNode {
       left = new Container(
         container.x,
         container.y,
+        container.z,
         container.width,
         container.length * 0.5 - random(0, this._gutter),
       )
       right = new Container(
         container.x,
         container.y + left.length,
+        container.z,
         container.width,
         container.length - left.length - random(0, this._gutter),
       )
@@ -298,6 +305,27 @@ export class DungeonGenerator extends TransformNode {
         delete availableRooms[randomRoomKey]
       }
       room.parent = this
+      this._rooms.push(room)
     })
+    this.generateLines()
+  }
+  generateLines() {
+    const roomOrigins = this._rooms.reduce<[number, number][]>((acc, room) => {
+      const { x, z } = room
+      acc.push([x, z])
+      return acc
+    }, [])
+    const { triangles } = Delaunator.from(roomOrigins)
+    for (var i = 0; i < triangles.length; i += 3) {
+      var p0 = triangles[i]
+      var p1 = triangles[i + 1]
+      var p2 = triangles[i + 2]
+      const triangle = [
+        new Vector3(roomOrigins[p0][0], 0, roomOrigins[p0][1]),
+        new Vector3(roomOrigins[p1][0], 0, roomOrigins[p1][1]),
+        new Vector3(roomOrigins[p2][0], 0, roomOrigins[p2][1]),
+      ]
+      MeshBuilder.CreateLines(`triangle_${i / 3}`, { points: triangle })
+    }
   }
 }

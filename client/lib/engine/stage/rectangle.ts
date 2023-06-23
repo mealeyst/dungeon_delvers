@@ -1,20 +1,26 @@
-import { Vector2 } from '@babylonjs/core'
+import { Vector3 } from '@babylonjs/core'
 
 export class Rectangle {
   x: number
   y: number
+  z: number
   width: number
   length: number
 
-  constructor(x: number, y: number, width: number, length: number) {
+  constructor(x: number, y: number, z: number, width: number, length: number) {
     this.x = x
     this.y = y
+    this.z = z
     this.width = width
     this.length = length
   }
 
-  get center(): Vector2 {
-    return new Vector2(this.x + this.width / 2, this.y + this.length / 2)
+  get center(): Vector3 {
+    return new Vector3(
+      this.x + this.width / 2,
+      this.y,
+      this.z + this.length / 2,
+    )
   }
 
   get surface(): number {

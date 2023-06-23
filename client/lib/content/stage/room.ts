@@ -8,6 +8,7 @@ import {
   Scene,
   StandardMaterial,
   TransformNode,
+  Vector3,
 } from '@babylonjs/core'
 
 export type RoomProps = {
@@ -27,6 +28,7 @@ export type RoomProps = {
 export class Room extends TransformNode {
   private _roomCountLimit: number | undefined
   private _ceiling: Mesh | undefined
+  private _center: Vector3
   private _floor: GroundMesh
   private _height: number | undefined
   private _length: number
@@ -84,5 +86,17 @@ export class Room extends TransformNode {
   }
   get roomCountLimit() {
     return this._roomCountLimit
+  }
+  get x() {
+    return this._x
+  }
+  get y() {
+    return this._y
+  }
+  get z() {
+    return this._z
+  }
+  get center() {
+    return this._center
   }
 }
