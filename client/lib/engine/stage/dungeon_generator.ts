@@ -49,7 +49,7 @@ export class DungeonGenerator extends TransformNode {
       length: 250,
       minSize: 8,
       ratio: 0.35,
-      retries: 30,
+      retries: 20,
       tileWidth: 16,
       width: 300,
     }
@@ -226,14 +226,14 @@ export class DungeonGenerator extends TransformNode {
         container.x,
         container.y,
         container.z,
-        container.width * 0.5 - random(0, this._gutter),
+        container.width * 0.5,
         container.length,
       )
       right = new Container(
         container.x + container.width,
         container.y,
         container.z,
-        container.width - left.width - random(0, this._gutter),
+        container.width - left.width,
         container.length,
       )
       // Retry splitting the container if it's not large enough
@@ -250,14 +250,14 @@ export class DungeonGenerator extends TransformNode {
         container.y,
         container.z,
         container.width,
-        container.length * 0.5 - random(0, this._gutter),
+        container.length * 0.5,
       )
       right = new Container(
         container.x,
         container.y + left.length,
         container.z,
         container.width,
-        container.length - left.length - random(0, this._gutter),
+        container.length - left.length,
       )
 
       // Retry splitting the container if it's not high enough
