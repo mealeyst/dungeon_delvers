@@ -13,6 +13,7 @@ import { random, randomChoice } from '../core/random'
 import { Container } from './container'
 import { Direction, TreeNode } from './tree_node'
 import Delaunator from 'delaunator'
+import { Triangle } from '../core/triangle'
 
 type DungeonArgs = {
   corridorWidth?: number
@@ -133,9 +134,9 @@ export class DungeonGenerator extends TransformNode {
         label: 'Generate Dungeon',
         propertyName: 'generate',
         type: InspectableType.Button,
-        callback: () => {
-          const children = this.getChildren()
-          children.forEach(child => child.dispose())
+        callback: async () => {
+          this._rooms = []
+          this.getChildren().forEach(child => child.dispose())
           this.generateRooms()
         },
       },
@@ -320,15 +321,14 @@ export class DungeonGenerator extends TransformNode {
       var p0 = triangles[i]
       var p1 = triangles[i + 1]
       var p2 = triangles[i + 2]
-      const triangle = [
+      const points = [
         new Vector3(roomOrigins[p0][0], 0, roomOrigins[p0][1]),
         new Vector3(roomOrigins[p1][0], 0, roomOrigins[p1][1]),
         new Vector3(roomOrigins[p2][0], 0, roomOrigins[p2][1]),
+        new Vector3(roomOrigins[p0][0], 0, roomOrigins[p0][1]),
       ]
-      const line = MeshBuilder.CreateLines(`triangle_${i / 3}`, {
-        points: triangle,
-      })
-      line.parent = this
+      const triangle = new Triangle({ id: i / 3, points: points }, this._scene)
+      triangle.parent = this
     }
   }
 }
