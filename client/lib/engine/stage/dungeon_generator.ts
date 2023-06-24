@@ -293,8 +293,14 @@ export class DungeonGenerator extends TransformNode {
           name: index,
           x: leaf.x,
           z: leaf.y,
-          length: random(leaf.length * 0.4, leaf.length * 0.6),
-          width: random(leaf.width * 0.4, leaf.width * 0.6),
+          length:
+            leaf.length < leaf.width * 0.6
+              ? random(leaf.length * 0.4, leaf.length * 0.6)
+              : leaf.width,
+          width:
+            leaf.width < leaf.length * 0.6
+              ? random(leaf.width * 0.4, leaf.width * 0.6)
+              : leaf.length,
         },
         this._scene,
       )
