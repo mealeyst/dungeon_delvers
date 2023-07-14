@@ -31,6 +31,7 @@ export class Room extends TransformNode {
   private _floor: GroundMesh
   private _height: number | undefined
   private _length: number
+  private _neightbors: Room[] = []
   private _material: Nullable<StandardMaterial>
   private scene: Scene
   private _subdivisions: number | undefined
@@ -94,5 +95,8 @@ export class Room extends TransformNode {
   }
   get z() {
     return this._z
+  }
+  public addNeighbor(room: Room) {
+    this._neightbors = [...this._neightbors, room]
   }
 }

@@ -26,6 +26,13 @@ type DungeonArgs = {
   width?: number
 }
 
+type DungeonRooms = {
+  id: string
+  room: Room
+  neighbors?: string[]
+  reached: boolean
+}
+
 export class DungeonGenerator extends TransformNode {
   _corridorWidth: number
   _gutter: number
@@ -38,7 +45,7 @@ export class DungeonGenerator extends TransformNode {
   _transparentMaterial: StandardMaterial
   _tree?: TreeNode<Container>
   _width: number
-  _rooms: Room[] = []
+  _rooms: DungeonRooms[] = []
   public inspectableCustomProperties: any
   constructor(name = 'dungeon', scene: Scene, options?: DungeonArgs) {
     super(name, scene)
@@ -312,28 +319,49 @@ export class DungeonGenerator extends TransformNode {
         delete availableRooms[randomRoomKey]
       }
       room.parent = this
-      this._rooms.push(room)
+      this._rooms.push({
+        id: randomRoomKey,
+        room,
+        reached: false,
+        neighbors: [],
+      })
     })
     this.generateLines()
   }
   generateLines() {
-    const roomOrigins = this._rooms.reduce<[number, number][]>((acc, room) => {
-      const { x, z } = room
-      acc.push([x, z])
-      return acc
-    }, [])
-    const { triangles } = Delaunator.from(roomOrigins)
-    for (var i = 0; i < triangles.length; i += 3) {
-      var p0 = triangles[i]
-      var p1 = triangles[i + 1]
-      var p2 = triangles[i + 2]
-      const points = [
+    const roomOrigins = this._rooms.reduce<[number, number][]>(
+      (acc, { room }) => {
+        const { x, z } = room
+        acc.push([x, z])
+        return acc
+      },
+      [],
+    )
+    const delauney = Delaunator.from(roomOrigins)
+    console.log(roomOrigins, delauney)
+    for (var i = 0; i < delauney.triangles.length; i += 3) {
+      var p0 = delauney.triangles[i]
+      var p1 = delauney.triangles[i + 1]
+      var p2 = delauney.triangles[i + 2]
+      const neighbor1 = this._rooms.find(({ room }) => {
+        return room.x === roomOrigins[p1][0] && room.z === roomOrigins[p1][1]
+      })
+      const neighbor2 = this._rooms.find(({ room }) => {
+        return room.x === roomOrigins[p2][0] && room.z === roomOrigins[p2][1]
+      })
+      const room = this._rooms.find(({ room }) => {
+        return room.x === roomOrigins[p0][0] && room.z === roomOrigins[p0][1]
+      })
+
+      room && room.neighbors && neighbor1 && room.neighbors.push(neighbor1.id)
+      room && room.neighbors && neighbor2 && room.neighbors.push(neighbor2.id)
+      console.log(room)
+      const vectors = [
         new Vector3(roomOrigins[p0][0], 0, roomOrigins[p0][1]),
         new Vector3(roomOrigins[p1][0], 0, roomOrigins[p1][1]),
         new Vector3(roomOrigins[p2][0], 0, roomOrigins[p2][1]),
-        new Vector3(roomOrigins[p0][0], 0, roomOrigins[p0][1]),
       ]
-      const triangle = new Triangle({ id: i / 3, points: points }, this._scene)
+      const triangle = new Triangle({ id: i / 3, vectors }, this._scene)
       triangle.parent = this
     }
   }
