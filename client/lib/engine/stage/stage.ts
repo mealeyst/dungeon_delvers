@@ -35,7 +35,7 @@ export class Stage {
     const scene = new Scene(engine)
 
     // This creates and positions a free camera (non-mesh)
-    const camera = new FreeCamera('camera1', new Vector3(0, 200, -100), scene)
+    const camera = new FreeCamera('camera1', new Vector3(0, 500, -400), scene)
 
     // This targets the camera to scene origin
     camera.setTarget(Vector3.Zero())

@@ -1,16 +1,13 @@
-export type Direction = 'horizontal' | 'vertical'
 export type Axis = 'x' | 'y' | 'z'
 
 export class TreeNode<T> {
   _branch_a?: TreeNode<T>
   _branch_b?: TreeNode<T>
-  _leaf: T
+  _node: T
 
   constructor(data: T) {
-    this._leaf = data
+    this._node = data
   }
-
-  split(data: T, direction: Direction): void {
 
   /**
    * This function works to get the bottom most leaves.
@@ -21,7 +18,7 @@ export class TreeNode<T> {
     if (this._branch_a && this._branch_b) {
       result.push(...this._branch_a.leaves, ...this._branch_b.leaves)
     } else {
-      result.push(this._leaf)
+      result.push(this._node)
     }
     return result
   }

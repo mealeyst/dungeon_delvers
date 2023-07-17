@@ -26,6 +26,7 @@
   "license": "ISC",
   "dependencies": {
     "@babylonjs/core": "^6.8.0",
+    "@babylonjs/gui": "^6.12.3",
     "@babylonjs/inspector": "^6.8.0",
     "@parcel/types": "^2.9.2",
     "delaunator": "^5.0.0",

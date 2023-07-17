@@ -7,17 +7,43 @@ type SplitResult = {
   branch_b: Container
 }
 
-export class BinarySpacePartition {
-  private _tree = TreeNode<Container>
-  private _minSize = 10
-  private _mapLength = 500
-  private _mapWidth = 500
-  private _mapHeight = 500
-  private _iterations = 30
-  private _tree: TreeNode<Container>
+type BinarySpacePartitionArgs = {
+  iterations?: number
+  mapHeight?: number
+  mapDepth?: number
+  mapWidth?: number
+  minSize?: number
+}
 
-  constructor() {
+export class BinarySpacePartition {
+  private _iterations = 10
+  private _mapHeight = 500
+  private _mapDepth = 500
+  private _mapWidth = 500
+  private _minSize = 10
+  private _tree?: TreeNode<Container>
+
+  constructor(args?: BinarySpacePartitionArgs) {
+    if (args) {
+      const {
+        iterations,
+        mapHeight,
+        mapDepth: mapLength,
+        mapWidth,
+        minSize,
+      } = args
+      this._iterations = iterations ?? this._iterations
+      this._mapHeight = mapHeight ?? this._mapHeight
+      this._mapDepth = mapLength ?? this._mapDepth
+      this._mapWidth = mapWidth ?? this._mapWidth
+      this._minSize = minSize ?? this._minSize
+    }
+
     this.initializeTree()
+  }
+
+  get leaves() {
+    return this._tree?.leaves
   }
 
   initializeTree() {
@@ -27,19 +53,21 @@ export class BinarySpacePartition {
       0,
       this._mapWidth,
       this._mapHeight,
-      this._mapLength,
+      this._mapDepth,
     )
     this._tree = this.generateTree(container, this._iterations)
   }
+
   generateTree(container: Container, iterations: number): TreeNode<Container> {
+    const node = new TreeNode<Container>(container)
     if (
       iterations !== 0 &&
-      node._leaf.width > this._minSize * 2 &&
-      node._leaf.height > this._minSize * 2 &&
-      node._leaf.length > this._minSize * 2
+      node._node.width > this._minSize * 2 &&
+      node._node.height > this._minSize * 2 &&
+      node._node.depth > this._minSize * 2
     ) {
       const direction = this.getRandomDirection()
-      const { branch_a, branch_b } = this.split(node._leaf, direction)
+      const { branch_a, branch_b } = this.split(node._node, direction)
       node._branch_a = this.generateTree(branch_a, iterations - 1)
       node._branch_b = this.generateTree(branch_b, iterations - 1)
     }
@@ -58,7 +86,7 @@ export class BinarySpacePartition {
           container.z,
           splitWidth,
           container.height,
-          container.length,
+          container.depth,
         )
         branch_b = new Container(
           container.x + splitWidth,
@@ -66,7 +94,7 @@ export class BinarySpacePartition {
           container.z,
           container.width - splitWidth,
           container.height,
-          container.length,
+          container.depth,
         )
         break
       case 'y':
@@ -77,7 +105,7 @@ export class BinarySpacePartition {
           container.z,
           container.width,
           splitHeight,
-          container.length,
+          container.depth,
         )
         branch_b = new Container(
           container.x,
@@ -85,26 +113,26 @@ export class BinarySpacePartition {
           container.z,
           container.width,
           container.height - splitHeight,
-          container.length,
+          container.depth,
         )
         break
       case 'z':
-        const splitLength = Math.floor(container.length / 2)
+        const splitDepth = Math.floor(container.depth / 2)
         branch_a = new Container(
           container.x,
           container.y,
           container.z,
           container.width,
           container.height,
-          splitLength,
+          splitDepth,
         )
         branch_b = new Container(
           container.x,
           container.y,
-          container.z + splitLength,
+          container.z + splitDepth,
           container.width,
           container.height,
-          container.length - splitLength,
+          container.depth - splitDepth,
         )
         break
     }

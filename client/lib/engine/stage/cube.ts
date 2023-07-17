@@ -5,7 +5,7 @@ export class Cube {
   y: number
   z: number
   width: number
-  length: number
+  depth: number
   height: number
 
   constructor(
@@ -20,7 +20,7 @@ export class Cube {
     this.y = y
     this.z = z
     this.width = width
-    this.length = length
+    this.depth = length
     this.height = height
   }
 
@@ -28,20 +28,20 @@ export class Cube {
     return new Vector3(
       this.x + this.width / 2,
       this.y + this.height / 2,
-      this.z + this.length / 2,
+      this.z + this.depth / 2,
     )
   }
 
   get surface(): number {
-    return this.width * this.length
+    return this.width * this.depth
   }
 
   get back(): number {
-    return this.z + this.length
+    return this.z + this.depth
   }
 
   get down(): number {
-    return this.y + this.length
+    return this.y + this.depth
   }
 
   get right(): number {
