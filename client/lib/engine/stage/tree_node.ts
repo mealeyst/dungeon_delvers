@@ -1,13 +1,16 @@
 export type Direction = 'horizontal' | 'vertical'
+export type Axis = 'x' | 'y' | 'z'
 
 export class TreeNode<T> {
-  _left?: TreeNode<T>
-  _right?: TreeNode<T>
+  _branch_a?: TreeNode<T>
+  _branch_b?: TreeNode<T>
   _leaf: T
 
   constructor(data: T) {
     this._leaf = data
   }
+
+  split(data: T, direction: Direction): void {
 
   /**
    * This function works to get the bottom most leaves.
@@ -15,8 +18,8 @@ export class TreeNode<T> {
   get leaves(): T[] {
     const result: T[] = []
 
-    if (this._left && this._right) {
-      result.push(...this._left.leaves, ...this._right.leaves)
+    if (this._branch_a && this._branch_b) {
+      result.push(...this._branch_a.leaves, ...this._branch_b.leaves)
     } else {
       result.push(this._leaf)
     }

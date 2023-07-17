@@ -35,7 +35,7 @@ export class Triangle extends TransformNode {
         points: lineVectors,
       })
       mesh.parent = this
-      mesh.alphaIndex = 0;
+      mesh.alphaIndex = 0
       this._lines.push({ vectors: lineVectors, mesh })
     })
   }
