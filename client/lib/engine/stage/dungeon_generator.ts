@@ -1,4 +1,5 @@
 import {
+  Color3,
   InspectableType,
   MeshBuilder,
   Scene,
@@ -6,6 +7,7 @@ import {
   ScenePerformancePriority,
   StandardMaterial,
   TransformNode,
+  Vector3,
 } from '@babylonjs/core'
 import { AdvancedDynamicTexture, Control, TextBlock } from '@babylonjs/gui'
 import { Rooms, isRoomKey } from '../../content/stage'
@@ -33,13 +35,12 @@ type DungeonRooms = {
 }
 
 export class DungeonGenerator extends TransformNode {
-  private _iterations = 20
+  private _iterations = 3
   private _mapHeight = 200
-  private _mapDepth = 500
-  private _mapWidth = 500
-  private _minRoomSize = 50
-  private _gutter = 20
-  private _tick = 0
+  private _mapDepth = 300
+  private _mapWidth = 300
+  private _minRoomSize = 40
+  private _gutter = 10
   _rooms: DungeonRooms[] = []
   public inspectableCustomProperties: any
   constructor(name = 'dungeon', scene: Scene, options?: DungeonArgs) {
@@ -84,8 +85,8 @@ export class DungeonGenerator extends TransformNode {
         step: 1,
       },
       {
-        label: 'Map Length',
-        propertyName: 'mapLength',
+        label: 'Map Depth',
+        propertyName: 'mapDepth',
         type: InspectableType.Slider,
         min: 30,
         max: 500,
@@ -104,7 +105,7 @@ export class DungeonGenerator extends TransformNode {
         propertyName: 'minRoomSize',
         type: InspectableType.Slider,
         min: 5,
-        max: 50,
+        max: 100,
         step: 1,
       },
       {
@@ -144,11 +145,11 @@ export class DungeonGenerator extends TransformNode {
     return this._mapHeight
   }
 
-  set mapLength(value: number) {
+  set mapDepth(value: number) {
     this._mapDepth = value
   }
 
-  get mapLength() {
+  get mapDepth() {
     return this._mapDepth
   }
 
@@ -169,112 +170,53 @@ export class DungeonGenerator extends TransformNode {
   }
 
   generateRooms() {
-    const bsp = new BinarySpacePartition({
+    let bsp = new BinarySpacePartition({
       iterations: this._iterations,
       mapHeight: this._mapHeight,
       mapDepth: this._mapDepth,
       mapWidth: this._mapWidth,
       minSize: this._minRoomSize,
     })
-    // const material = new StandardMaterial('wireframe', this._scene)
-    // material.wireframe = true
-    bsp.leaves?.forEach(({ depth, height, width, x, y, z }, index) => {
-      const room = MeshBuilder.CreateBox(
-        `room_${index}`,
-        {
-          depth: depth - this._gutter / 2,
-          height: height - this._gutter / 2,
-          width: width - this._gutter / 2,
-        },
-        this._scene,
-      )
-      // room.material = material
-      room.position.x = x + this._gutter / 2
-      room.position.y = y + this._gutter / 2
-      room.position.z = z + this._gutter / 2
-      room.parent = this
-    })
-    // const availableRooms = Object.keys(Rooms).reduce<
-    //   Record<keyof typeof Rooms, { count: number }>
-    // >((acc: any, key) => {
-    //   if (isRoomKey(Rooms, key)) {
-    //     acc[key] = {
-    //       count: 0,
-    //     }
-    //   }
-    //   return acc
-    // }, {} as Record<keyof typeof Rooms, { count: number }>)
-    // this._tree.leaves.forEach((leaf, index) => {
-    //   const randomRoomKey = randomChoice(
-    //     Object.keys(availableRooms),
-    //   ) as keyof typeof Rooms
-    //   const room = new Rooms[randomRoomKey](
-    //     {
-    //       name: index,
-    //       x: leaf.x,
-    //       z: leaf.y,
-    //       length:
-    //         leaf.length < leaf.width * 0.6
-    //           ? random(leaf.length * 0.4, leaf.length * 0.6)
-    //           : leaf.width,
-    //       width:
-    //         leaf.width < leaf.length * 0.6
-    //           ? random(leaf.width * 0.4, leaf.width * 0.6)
-    //           : leaf.length,
-    //     },
-    //     this._scene,
-    //   )
-    //   availableRooms[randomRoomKey].count++
-    //   if (
-    //     room.roomCountLimit &&
-    //     room.roomCountLimit === availableRooms[randomRoomKey].count
-    //   ) {
-    //     delete availableRooms[randomRoomKey]
-    //   }
-    //   room.parent = this
-    //   this._rooms.push({
-    //     id: randomRoomKey,
-    //     room,
-    //     reached: false,
-    //     neighbors: [],
-    //   })
-    // })
-  }
-  // generateLines() {
-  //   const roomOrigins = this._rooms.reduce<[number, number][]>(
-  //     (acc, { room }) => {
-  //       const { x, z } = room
-  //       acc.push([x, z])
-  //       return acc
-  //     },
-  //     [],
-  //   )
-  //   const delauney = Delaunator.from(roomOrigins)
-  //   console.log(roomOrigins, delauney)
-  //   for (var i = 0; i < delauney.triangles.length; i += 3) {
-  //     var p0 = delauney.triangles[i]
-  //     var p1 = delauney.triangles[i + 1]
-  //     var p2 = delauney.triangles[i + 2]
-  //     const neighbor1 = this._rooms.find(({ room }) => {
-  //       return room.x === roomOrigins[p1][0] && room.z === roomOrigins[p1][1]
-  //     })
-  //     const neighbor2 = this._rooms.find(({ room }) => {
-  //       return room.x === roomOrigins[p2][0] && room.z === roomOrigins[p2][1]
-  //     })
-  //     const room = this._rooms.find(({ room }) => {
-  //       return room.x === roomOrigins[p0][0] && room.z === roomOrigins[p0][1]
-  //     })
+    while (bsp.leaves && bsp.leaves.length < 5) {
+      bsp = new BinarySpacePartition({
+        iterations: this._iterations,
+        mapHeight: this._mapHeight,
+        mapDepth: this._mapDepth,
+        mapWidth: this._mapWidth,
+        minSize: this._minRoomSize,
+      })
+    }
 
-  //     room && room.neighbors && neighbor1 && room.neighbors.push(neighbor1.id)
-  //     room && room.neighbors && neighbor2 && room.neighbors.push(neighbor2.id)
-  //     console.log(room)
-  //     const vectors = [
-  //       new Vector3(roomOrigins[p0][0], 0, roomOrigins[p0][1]),
-  //       new Vector3(roomOrigins[p1][0], 0, roomOrigins[p1][1]),
-  //       new Vector3(roomOrigins[p2][0], 0, roomOrigins[p2][1]),
-  //     ]
-  //     const triangle = new Triangle({ id: i / 3, vectors }, this._scene)
-  //     triangle.parent = this
-  //   }
-  // }
+    bsp.leaves?.forEach(
+      (
+        { branch, depth: leaf_depth, node: { depth, height, width, x, y, z } },
+        index,
+      ) => {
+        const room = MeshBuilder.CreateBox(
+          `container${index}_branch_${branch}_depth_${leaf_depth}`,
+          {
+            depth: this._minRoomSize,
+            height: this._minRoomSize,
+            width: this._minRoomSize,
+          },
+          this._scene,
+        )
+        // room.material = material
+        room.position.x = x
+        room.position.y = y
+        room.position.z = z
+        room.parent = this
+        const material = new StandardMaterial(
+          `container${index}_material`,
+          this._scene,
+        )
+        ;(material.diffuseColor = new Color3(
+          random(1, 100) / 100,
+          random(1, 100) / 100,
+          random(1, 100) / 100,
+        )),
+          (room.material = material)
+      },
+    )
+  }
 }
