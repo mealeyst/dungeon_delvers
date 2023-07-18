@@ -195,9 +195,9 @@ export class DungeonGenerator extends TransformNode {
         const room = MeshBuilder.CreateBox(
           `container${index}_branch_${branch}_depth_${leaf_depth}`,
           {
-            depth: this._minRoomSize,
+            depth: (this._minRoomSize * random(50, 150)) / 100,
             height: this._minRoomSize,
-            width: this._minRoomSize,
+            width: (this._minRoomSize * random(50, 150)) / 100,
           },
           this._scene,
         )
