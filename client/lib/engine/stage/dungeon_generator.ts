@@ -1,6 +1,7 @@
 import {
   Color3,
   InspectableType,
+  Material,
   MeshBuilder,
   Scene,
   SceneInstrumentation,
@@ -8,8 +9,8 @@ import {
   StandardMaterial,
   TransformNode,
   Vector3,
+  VertexBuffer,
 } from '@babylonjs/core'
-import { AdvancedDynamicTexture, Control, TextBlock } from '@babylonjs/gui'
 import { Rooms, isRoomKey } from '../../content/stage'
 import { Room } from '../../content/stage/room'
 import { random, randomChoice } from '../core/random'
@@ -17,6 +18,8 @@ import { Container } from './container'
 import Delaunator from 'delaunator'
 import { Triangle } from '../core/triangle'
 import { BinarySpacePartition } from './binary_space_partition'
+import Delaunay from './delaunay3D'
+import * as earcut from 'earcut'
 
 type DungeonArgs = {
   gutter?: number
@@ -41,7 +44,7 @@ export class DungeonGenerator extends TransformNode {
   private _mapWidth = 300
   private _minRoomSize = 40
   private _gutter = 10
-  _rooms: DungeonRooms[] = []
+  _rooms: Room[] = []
   public inspectableCustomProperties: any
   constructor(name = 'dungeon', scene: Scene, options?: DungeonArgs) {
     super(name, scene)
@@ -115,6 +118,7 @@ export class DungeonGenerator extends TransformNode {
         callback: async () => {
           this._rooms = []
           this.getChildren().forEach(child => child.dispose())
+          this._scene.materials.forEach(material => material.dispose())
           this.generateRooms()
         },
       },
@@ -192,31 +196,62 @@ export class DungeonGenerator extends TransformNode {
         { branch, depth: leaf_depth, node: { depth, height, width, x, y, z } },
         index,
       ) => {
-        const room = MeshBuilder.CreateBox(
-          `container${index}_branch_${branch}_depth_${leaf_depth}`,
-          {
+        this._rooms.push(
+          new Room({
+            name: `room_${index}_branch_${branch}_${leaf_depth}`,
+            x,
+            y,
+            z,
             depth: (this._minRoomSize * random(50, 150)) / 100,
             height: this._minRoomSize,
             width: (this._minRoomSize * random(50, 150)) / 100,
-          },
-          this._scene,
+          }),
         )
-        // room.material = material
-        room.position.x = x
-        room.position.y = y
-        room.position.z = z
-        room.parent = this
-        const material = new StandardMaterial(
-          `container${index}_material`,
-          this._scene,
-        )
-        ;(material.diffuseColor = new Color3(
-          random(1, 100) / 100,
-          random(1, 100) / 100,
-          random(1, 100) / 100,
-        )),
-          (room.material = material)
       },
     )
+    this._rooms.forEach(room => {
+      const { name, depth, height, width, x, y, z } = room
+      const material = new StandardMaterial(`${name}_material`, this._scene)
+      // material.wireframe = true
+      const roomMesh = MeshBuilder.CreateBox(
+        room.name,
+        {
+          depth,
+          height,
+          width,
+        },
+        this._scene,
+      )
+      roomMesh.position.x = x
+      roomMesh.position.y = y
+      roomMesh.position.z = z
+      roomMesh.parent = this
+      ;(material.diffuseColor = new Color3(
+        random(1, 100) / 100,
+        random(1, 100) / 100,
+        random(1, 100) / 100,
+      )),
+        (roomMesh.material = material)
+    })
+    const delaunay = new Delaunay(
+      this._rooms.map(room => new Vector3(room.x, room.y, room.z)),
+    )
+    if (delaunay.edges.size === 0) {
+      console.log('no edges, regenerating')
+      this._rooms = []
+      this.getChildren().forEach(child => child.dispose())
+      this._scene.materials.forEach(material => material.dispose())
+      this.generateRooms()
+    }
+    let i = 0
+    delaunay.edges.forEach(edge => {
+      const { _u, _v } = edge
+      const line = MeshBuilder.CreateLines(
+        `line_${i++}`,
+        { points: [_u, _v] },
+        this._scene,
+      )
+      line.parent = this
+    })
   }
 }

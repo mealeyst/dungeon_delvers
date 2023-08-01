@@ -36,6 +36,7 @@
   "devDependencies": {
     "@parcel/config-default": "^2.9.2",
     "@parcel/core": "^2.9.2",
-    "@types/delaunator": "^5.0.0"
+    "@types/delaunator": "^5.0.0",
+    "@types/earcut": "^2.1.1"
   }
 }
