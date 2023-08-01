@@ -10,8 +10,8 @@ import {
 import { Room } from '../../content/stage/room'
 import { random } from '../core/random'
 import { BinarySpacePartition } from './binary_space_partition'
-import Delaunay from './delaunay3D'
 import triangulate from 'delaunay-triangulate'
+import { Prim } from './prim'
 
 type DungeonArgs = {
   gutter?: number
@@ -225,24 +225,33 @@ export class DungeonGenerator extends TransformNode {
       )),
         (roomMesh.material = material)
     })
-    const delaunay = new Delaunay(
-      this._rooms.map(room => new Vector3(room.x, room.y, room.z)),
-    )
+    const entrance = this._rooms.reduce((acc, room, index) => {
+      acc = room.y > this._rooms[acc].y ? index : acc
+      return acc
+    }, 0)
     const cells = triangulate(this._rooms.map(room => [room.x, room.y, room.z]))
 
-    cells.forEach((cell: number[], i: number) => {
-      const tetrahedron = [
-        this._rooms[cell[0]].center(),
-        this._rooms[cell[1]].center(),
-        this._rooms[cell[2]].center(),
-        this._rooms[cell[3]].center(),
-      ]
-      const line = MeshBuilder.CreateLines(
-        `line_${i}`,
-        { points: tetrahedron },
-        this._scene,
-      )
-      line.parent = this
-    })
+    // cells.forEach((cell: number[], i: number) => {
+    //   const tetrahedron = [
+    //     this._rooms[cell[0]].center(),
+    //     this._rooms[cell[1]].center(),
+    //     this._rooms[cell[2]].center(),
+    //     this._rooms[cell[3]].center(),
+    //   ]
+    //   const line = MeshBuilder.CreateLines(
+    //     `line_${i}`,
+    //     { points: tetrahedron },
+    //     this._scene,
+    //   )
+    //   line.parent = this
+    // })
+    const prim = new Prim(this._rooms, entrance)
+    const lines = MeshBuilder.CreateLines(
+      `min_spanning_tree`,
+      { points: Array.from(prim.tree) },
+      this._scene,
+    )
+    lines.color = new Color3(0, 1, 0)
+    lines.parent = this
   }
 }
