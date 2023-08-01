@@ -30,10 +30,10 @@ type DungeonRooms = {
 }
 
 export class DungeonGenerator extends TransformNode {
-  private _iterations = 3
+  private _iterations = 8
   private _mapHeight = 200
-  private _mapDepth = 300
-  private _mapWidth = 300
+  private _mapDepth = 500
+  private _mapWidth = 500
   private _minRoomSize = 40
   private _gutter = 10
   _rooms: Room[] = []
