@@ -225,7 +225,9 @@ export class DungeonGenerator extends TransformNode {
       )),
         (roomMesh.material = material)
     })
-
+    const delaunay = new Delaunay(
+      this._rooms.map(room => new Vector3(room.x, room.y, room.z)),
+    )
     const cells = triangulate(this._rooms.map(room => [room.x, room.y, room.z]))
 
     cells.forEach((cell: number[], i: number) => {
