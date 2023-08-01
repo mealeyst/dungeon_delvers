@@ -218,11 +218,7 @@ export class DungeonGenerator extends TransformNode {
       roomMesh.position.y = y
       roomMesh.position.z = z
       roomMesh.parent = this
-      ;(material.diffuseColor = new Color3(
-        random(1, 100) / 100,
-        random(1, 100) / 100,
-        random(1, 100) / 100,
-      )),
+      ;(material.diffuseColor = new Color3(1, 0, 0)),
         (roomMesh.material = material)
     })
     const entrance = this._rooms.reduce((acc, room, index) => {
