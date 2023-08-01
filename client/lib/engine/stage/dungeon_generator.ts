@@ -1,25 +1,17 @@
 import {
   Color3,
   InspectableType,
-  Material,
   MeshBuilder,
   Scene,
-  SceneInstrumentation,
-  ScenePerformancePriority,
   StandardMaterial,
   TransformNode,
   Vector3,
-  VertexBuffer,
 } from '@babylonjs/core'
-import { Rooms, isRoomKey } from '../../content/stage'
 import { Room } from '../../content/stage/room'
-import { random, randomChoice } from '../core/random'
-import { Container } from './container'
-import Delaunator from 'delaunator'
-import { Triangle } from '../core/triangle'
+import { random } from '../core/random'
 import { BinarySpacePartition } from './binary_space_partition'
 import Delaunay from './delaunay3D'
-import * as earcut from 'earcut'
+import triangulate from 'delaunay-triangulate'
 
 type DungeonArgs = {
   gutter?: number
@@ -233,22 +225,19 @@ export class DungeonGenerator extends TransformNode {
       )),
         (roomMesh.material = material)
     })
-    const delaunay = new Delaunay(
-      this._rooms.map(room => new Vector3(room.x, room.y, room.z)),
-    )
-    if (delaunay.edges.size === 0) {
-      console.log('no edges, regenerating')
-      this._rooms = []
-      this.getChildren().forEach(child => child.dispose())
-      this._scene.materials.forEach(material => material.dispose())
-      this.generateRooms()
-    }
-    let i = 0
-    delaunay.edges.forEach(edge => {
-      const { _u, _v } = edge
+
+    const cells = triangulate(this._rooms.map(room => [room.x, room.y, room.z]))
+
+    cells.forEach((cell: number[], i: number) => {
+      const tetrahedron = [
+        this._rooms[cell[0]].center(),
+        this._rooms[cell[1]].center(),
+        this._rooms[cell[2]].center(),
+        this._rooms[cell[3]].center(),
+      ]
       const line = MeshBuilder.CreateLines(
-        `line_${i++}`,
-        { points: [_u, _v] },
+        `line_${i}`,
+        { points: tetrahedron },
         this._scene,
       )
       line.parent = this

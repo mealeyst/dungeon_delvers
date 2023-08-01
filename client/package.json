@@ -29,14 +29,13 @@
     "@babylonjs/gui": "^6.12.3",
     "@babylonjs/inspector": "^6.8.0",
     "@parcel/types": "^2.9.2",
-    "delaunator": "^5.0.0",
+    "delaunay-triangulate": "^1.1.6",
     "earcut": "^2.2.4",
     "parcel": "^2.9.2"
   },
   "devDependencies": {
     "@parcel/config-default": "^2.9.2",
     "@parcel/core": "^2.9.2",
-    "@types/delaunator": "^5.0.0",
     "@types/earcut": "^2.1.1"
   }
 }
