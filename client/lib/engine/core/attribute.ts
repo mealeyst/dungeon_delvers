@@ -1,73 +1,82 @@
-enum ATTRIBUTE_NAMES {
-  MIG = "MIGHT",
-  CON = "CONSTITUTION",
-  DEX = "DEXTERITY",
-  PER = "PERCEPTION",
-  INT = "INTELLECT",
-  RES = "RESOLVE"
+export enum ATTRIBUTES {
+  CON = 'CONSTITUTION',
+  DEX = 'DEXTERITY',
+  INT = 'INTELLECT',
+  MIG = 'MIGHT',
+  PER = 'PERCEPTION',
+  RES = 'RESOLVE',
 }
 
-const MIN_VALUE = 3;
-const MAX_VALUE = 18;
+export type Attributes = {
+  [ATTRIBUTES.CON]: Constitution
+  [ATTRIBUTES.DEX]: Dexterity
+  [ATTRIBUTES.INT]: Intellect
+  [ATTRIBUTES.MIG]: Might
+  [ATTRIBUTES.PER]: Perception
+  [ATTRIBUTES.RES]: Resolve
+}
 
-const ACTION_SPEED = 0.03;
-const AREA_OF_EFFECT_MODIFIER = 0.06;
-const DAMAGE_MODIFIER = 0.03;
-const DEFLECTION_MODIFIER = 0.01;
-const DURATION_MODIFIER = 0.05;
-const ENDURANCE_MODIFIER = 0.03;
-const FORTITUDE_MODIFIER = 0.02;
-const HEALING_MODIFIER = 0.03;
-const REFLEX_MODIFIER = 0.02;
-const WILLPOWER_MODIFIER = 0.02;
+export const ATTRIBUTE_MAX_VALUE = 18
+export const ATTRIBUTE_MIN_VALUE = 3
 
-abstract class Attribute {
+class Attribute {
   private _value: number
   constructor(_value: number) {
-    this._value = _value;
+    if (!this.attributeWithinBounds(_value)) {
+      throw new Error(
+        `Attribute value ${_value} is not within the bounds of ${ATTRIBUTE_MIN_VALUE} and ${ATTRIBUTE_MAX_VALUE}`,
+      )
+    }
+    this._value = _value
   }
   get value() {
-    return this._value;
+    return this._value
   }
   set value(_value) {
-    this._value = _value;
+    this._value = _value
+  }
+  attributeWithinBounds(value: number) {
+    return value >= ATTRIBUTE_MIN_VALUE && value <= ATTRIBUTE_MAX_VALUE
+      ? true
+      : false
+  }
+  calculateModifier(modifier: number) {
+    return (this._value - 10) * modifier
   }
 }
 
-class Might extends Attribute {
-  constructor (_value: number) {
-    super(_value)
-  }
-  
-
-}
-
-class Constitution extends Attribute {
-  constructor (_value: number) {
-    super(_value)
-  }
-}
-
-class Dexterity extends Attribute {
-  constructor (_value: number) {
+export class Constitution extends Attribute {
+  constructor(_value: number) {
     super(_value)
   }
 }
 
-class Perception extends Attribute {
-  constructor (_value: number) {
+export class Dexterity extends Attribute {
+  constructor(_value: number) {
     super(_value)
   }
 }
 
-class Intellect extends Attribute {
-  constructor (_value: number) {
+export class Intellect extends Attribute {
+  constructor(_value: number) {
     super(_value)
   }
 }
 
-class Resolve extends Attribute {
-  constructor (_value: number) {
+export class Might extends Attribute {
+  constructor(_value: number) {
+    super(_value)
+  }
+}
+
+export class Perception extends Attribute {
+  constructor(_value: number) {
+    super(_value)
+  }
+}
+
+export class Resolve extends Attribute {
+  constructor(_value: number) {
     super(_value)
   }
 }
