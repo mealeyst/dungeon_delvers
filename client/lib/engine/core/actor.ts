@@ -15,7 +15,7 @@ const MOD_WILLPOWER = 0.02
 
 type BaseStats = {
   accuracy: number
-  defense: number
+  deflection: number
   fortitude: number
   health: number
   reflex: number
@@ -52,35 +52,64 @@ export class Actor {
         baseStats.accuracy,
         this._attributes[ATTRIBUTES.PER].calculateModifier(MOD_ACCURACY),
       ),
-      actionSpeed:
-        this._attributes[ATTRIBUTES.DEX].calculateModifier(MOD_ACTION_SPEED),
-      areaOfEffect:
-        this._attributes[ATTRIBUTES.INT].calculateModifier(MOD_AREA_OF_EFFECT),
-      damage: this._attributes[ATTRIBUTES.MIG].calculateModifier(MOD_DAMAGE),
-      duration:
-        this._attributes[ATTRIBUTES.INT].calculateModifier(MOD_DURATION),
-      healing: this._attributes[ATTRIBUTES.MIG].calculateModifier(MOD_HEALING),
+      actionSpeed: Math.ceil(
+        this._attributes[ATTRIBUTES.DEX].calculateModifier(MOD_ACTION_SPEED) +
+          0,
+      ),
+      areaOfEffect: Math.ceil(
+        this._attributes[ATTRIBUTES.INT].calculateModifier(MOD_AREA_OF_EFFECT) +
+          0,
+      ),
+      damage: Math.ceil(
+        this._attributes[ATTRIBUTES.MIG].calculateModifier(MOD_DAMAGE) + 0,
+      ),
+      duration: Math.ceil(
+        this._attributes[ATTRIBUTES.INT].calculateModifier(MOD_DURATION) + 0,
+      ),
+      healing: Math.ceil(
+        this._attributes[ATTRIBUTES.MIG].calculateModifier(MOD_HEALING + 0),
+      ),
     }
     this._defenseStats = {
-      deflection:
+      deflection: this.calculateStat(
+        baseStats.deflection,
         this._attributes[ATTRIBUTES.RES].calculateModifier(MOD_DEFLECTION),
-      fortitude:
+      ),
+      fortitude: this.calculateStat(
+        baseStats.fortitude,
         this._attributes[ATTRIBUTES.CON].calculateModifier(MOD_FORTITUDE) +
-        this._attributes[ATTRIBUTES.MIG].calculateModifier(MOD_FORTITUDE),
-      reflex:
+          this._attributes[ATTRIBUTES.MIG].calculateModifier(MOD_FORTITUDE),
+      ),
+      reflex: this.calculateStat(
+        baseStats.reflex,
         this._attributes[ATTRIBUTES.DEX].calculateModifier(MOD_REFLEX) +
-        this._attributes[ATTRIBUTES.PER].calculateModifier(MOD_REFLEX),
-      willpower:
+          this._attributes[ATTRIBUTES.PER].calculateModifier(MOD_REFLEX),
+      ),
+      willpower: this.calculateStat(
+        baseStats.willpower,
         this._attributes[ATTRIBUTES.INT].calculateModifier(MOD_WILLPOWER) +
-        this._attributes[ATTRIBUTES.RES].calculateModifier(MOD_WILLPOWER),
+          this._attributes[ATTRIBUTES.RES].calculateModifier(MOD_WILLPOWER),
+      ),
     }
     this._passiveStats = {
-      concentration:
-        this._attributes[ATTRIBUTES.RES].calculateModifier(MOD_CONCENTRATION),
-      health: this._attributes[ATTRIBUTES.CON].calculateModifier(MOD_HEALTH),
+      concentration: Math.ceil(
+        this._attributes[ATTRIBUTES.RES].calculateModifier(MOD_CONCENTRATION) +
+          0,
+      ),
+      health: this.calculateStat(
+        baseStats.health,
+        this._attributes[ATTRIBUTES.CON].calculateModifier(MOD_HEALTH),
+      ),
     }
   }
   calculateStat(base: number, modifiers: number) {
-    return base * (100 / modifiers)
+    return Math.ceil(base * 1 + modifiers)
+  }
+  get stats() {
+    return {
+      ...this._actionStats,
+      ...this._defenseStats,
+      ...this._passiveStats,
+    }
   }
 }
