@@ -11,6 +11,7 @@ import { Entry } from '../../content/stage/entry'
 import { Exit } from '../../content/stage/exit'
 import { Monster } from '../../content/stage/monster'
 import { DungeonGenerator } from './dungeon_generator'
+import { Stair } from './stairs'
 
 export class Stage {
   public canvas: HTMLCanvasElement
@@ -35,7 +36,7 @@ export class Stage {
     const scene = new Scene(engine)
 
     // This creates and positions a free camera (non-mesh)
-    const camera = new FreeCamera('camera1', new Vector3(0, 500, -400), scene)
+    const camera = new FreeCamera('camera1', new Vector3(0, 10, -20), scene)
 
     // This targets the camera to scene origin
     camera.setTarget(Vector3.Zero())
@@ -57,7 +58,17 @@ export class Stage {
     // new Exit({ x: 5, z: 5 }, scene)
     // new Monster({ x: -5, z: 5 }, scene)
 
-    new DungeonGenerator('dungeon', scene)
+    // new DungeonGenerator('dungeon', scene)
+    const stair = new Stair('stair', scene, {
+      x: 0,
+      y: 0,
+      z: 0,
+      width: 4,
+      height: 10,
+      depth: 6
+    })
+
+    camera.setTarget(stair.position)
 
     // Our built-in 'ground' shape.
     scene.debugLayer.show()
