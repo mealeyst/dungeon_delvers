@@ -6,7 +6,7 @@ import {
   Engine,
 } from '@babylonjs/core'
 import '@babylonjs/core/Debug/debugLayer'
-import '@babylonjs/inspector'
+// import '@babylonjs/inspector'
 import { Entry } from '../../content/stage/entry'
 import { Exit } from '../../content/stage/exit'
 import { Monster } from '../../content/stage/monster'
@@ -22,7 +22,10 @@ export class Stage {
     this.canvas.style.height = '100%'
     this.canvas.style.display = 'block'
     this.canvas.oncontextmenu = () => false
-    document.body.appendChild(this.canvas)
+    const container = document.createElement('main')
+    container.id = 'game'
+    container.appendChild(this.canvas)
+    document.body.appendChild(container)
     this.canvas.width = window.innerWidth
     this.canvas.height = window.innerHeight
 
@@ -65,7 +68,7 @@ export class Stage {
       z: 0,
       width: 4,
       height: 10,
-      depth: 6
+      depth: 6,
     })
 
     camera.setTarget(stair.position)

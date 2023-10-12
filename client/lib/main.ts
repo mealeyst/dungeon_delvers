@@ -1,11 +1,6 @@
-import { MainMenu } from './engine/gui/mainMenu'
-import { Stage } from './engine/stage/stage'
+import React from 'react'
+import reactDom from 'react-dom'
 
-document.addEventListener(
-  'DOMContentLoaded',
-  function () {
-    new Stage()
-    new MainMenu()
-  },
-  false,
-)
+import { Game } from './engine'
+
+Game()
