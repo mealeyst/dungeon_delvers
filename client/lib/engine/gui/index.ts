@@ -29,9 +29,8 @@ const party = [
 ]
 
 const characterButton = async (character: Character) => {
-  const button = GUI.Button.CreateImageButton(
+  const button = GUI.Button.CreateImageOnlyButton(
     'character_button',
-    character.name,
     character.image,
   )
   button.width = '100px'
@@ -67,6 +66,19 @@ const characterButton = async (character: Character) => {
   healthValue.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT
   healthValue.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM
   button.addControl(healthValue)
+  const healthText = new GUI.TextBlock(
+    'health_text',
+    `${character.health_current}/${character.health_max}`,
+  )
+  healthText.color = '#ffffff'
+  healthText.fontSize = 12
+  healthText.shadowBlur = 1
+  healthText.shadowColor = '#000000'
+  healthText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM
+  healthText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT
+  healthText.paddingRight = '10px'
+  button.addControl(healthText)
+  console.log('children', button.children)
   return button
 }
 
