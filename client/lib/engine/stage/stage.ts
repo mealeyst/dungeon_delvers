@@ -4,6 +4,7 @@ import {
   Vector3,
   HemisphericLight,
   Engine,
+  MeshBuilder,
 } from '@babylonjs/core'
 import '@babylonjs/core/Debug/debugLayer'
 // import '@babylonjs/inspector'
@@ -57,21 +58,23 @@ export class Stage {
     // Default intensity is 1. Let's dim the light a small amount
     light.intensity = 0.7
 
-    // new Entry({ x: -5, z: -5 }, scene)
-    // new Exit({ x: 5, z: 5 }, scene)
-    // new Monster({ x: -5, z: 5 }, scene)
+    const ground = MeshBuilder.CreateGround(
+      'ground',
+      { width: 100, height: 100 },
+      scene,
+    )
 
     // new DungeonGenerator('dungeon', scene)
-    const stair = new Stair('stair', scene, {
-      x: 0,
-      y: 0,
-      z: 0,
-      width: 4,
-      height: 10,
-      depth: 6,
-    })
+    // const stair = new Stair('stair', scene, {
+    //   x: 0,
+    //   y: 0,
+    //   z: 0,
+    //   width: 4,
+    //   height: 10,
+    //   depth: 6,
+    // })
 
-    camera.setTarget(stair.position)
+    camera.setTarget(ground.position)
 
     // Our built-in 'ground' shape.
     scene.debugLayer.show()

@@ -37,6 +37,7 @@
   "devDependencies": {
     "@parcel/config-default": "^2.9.2",
     "@parcel/core": "^2.9.2",
-    "@types/earcut": "^2.1.1"
+    "@types/earcut": "^2.1.1",
+    "parcel-reporter-static-files-copy": "^1.5.3"
   }
 }
