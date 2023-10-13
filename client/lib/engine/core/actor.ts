@@ -25,6 +25,9 @@ type BaseStats = {
 export class Actor {
   private id: string
   private _attributes: Attributes
+  private currentHealth: number
+  private _image: string
+  // Action stats are calculated based on actor's action/weapon
   private _actionStats: {
     accuracy: number
     actionSpeed: number
@@ -33,18 +36,26 @@ export class Actor {
     duration: number
     healing: number
   }
+
+  // Defense stats are calculated based on actor's level and class
   private _defenseStats: {
     deflection: number
     fortitude: number
     reflex: number
     willpower: number
   }
+  // Passive stats are calculated based on actor's level and class
   private _passiveStats: {
     concentration: number
-    health: number
+    maxHealth: number
   }
 
-  constructor(id: string, attributes: Attributes, baseStats: BaseStats) {
+  constructor(
+    id: string,
+    attributes: Attributes,
+    baseStats: BaseStats,
+    image: string,
+  ) {
     this.id = id
     this._attributes = attributes
     this._actionStats = {
@@ -96,11 +107,14 @@ export class Actor {
         this._attributes[ATTRIBUTES.RES].calculateModifier(MOD_CONCENTRATION) +
           0,
       ),
-      health: this.calculateStat(
+      maxHealth: this.calculateStat(
         baseStats.health,
         this._attributes[ATTRIBUTES.CON].calculateModifier(MOD_HEALTH),
       ),
     }
+    // On creation, set current health to max health
+    this.currentHealth = this._passiveStats.maxHealth
+    this._image = image
   }
   calculateStat(base: number, modifiers: number) {
     return Math.ceil(base * 1 + modifiers)
@@ -111,5 +125,14 @@ export class Actor {
       ...this._defenseStats,
       ...this._passiveStats,
     }
+  }
+  get health() {
+    return {
+      current: this.currentHealth,
+      max: this._passiveStats.maxHealth,
+    }
+  }
+  get image() {
+    return this._image
   }
 }

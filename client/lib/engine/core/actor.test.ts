@@ -28,6 +28,7 @@ test('Actor', () => {
       reflex: 53, // 54
       willpower: 30, // 30
     },
+    'test.png',
   )
   expect(actor.stats).toEqual({
     accuracy: 47,
@@ -39,7 +40,7 @@ test('Actor', () => {
     duration: -0,
     fortitude: 42,
     healing: 1,
-    health: 118,
+    maxHealth: 118,
     reflex: 54,
     willpower: 30,
   })

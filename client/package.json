@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "The Front End 3D Client for Dungeon Delvers powered by BabylonJS",
   "homepage": "./",
+  "assetsPath": "public/assets",
   "directories": {
     "buildResources": "dist",
     "app": "dist"
