@@ -1,3 +1,4 @@
+import { Scene, SceneLoader, Vector3, Animation } from '@babylonjs/core'
 import { ATTRIBUTES, Attributes } from './attribute'
 
 const MOD_ACCURACY = 0.01
@@ -13,7 +14,7 @@ const MOD_HEALTH = 0.05
 const MOD_REFLEX = 0.02
 const MOD_WILLPOWER = 0.02
 
-type BaseStats = {
+export type BaseStats = {
   accuracy: number
   deflection: number
   fortitude: number
@@ -27,6 +28,8 @@ export class Actor {
   private _attributes: Attributes
   private currentHealth: number
   private _image: string
+  private _model
+  private _scene: Scene
   // Action stats are calculated based on actor's action/weapon
   private _actionStats: {
     accuracy: number
@@ -55,6 +58,8 @@ export class Actor {
     attributes: Attributes,
     baseStats: BaseStats,
     image: string,
+    model: string,
+    scene: Scene,
   ) {
     this.id = id
     this._attributes = attributes
@@ -115,6 +120,8 @@ export class Actor {
     // On creation, set current health to max health
     this.currentHealth = this._passiveStats.maxHealth
     this._image = image
+    this._scene = scene
+    this._model = SceneLoader.ImportMesh(model, '', scene, scene => {})
   }
   calculateStat(base: number, modifiers: number) {
     return Math.ceil(base * 1 + modifiers)
@@ -134,5 +141,21 @@ export class Actor {
   }
   get image() {
     return this._image
+  }
+  get model() {
+    return this._model
+  }
+  move(x: number, y: number, z: number) {
+    console.log('move', this._model, new Vector3(x, y, z))
+    Animation.CreateAndStartAnimation(
+      'anim',
+      this._model,
+      'position',
+      30,
+      100,
+      this._model.position,
+      new Vector3(x, y, z),
+      Animation.ANIMATIONLOOPMODE_CONSTANT,
+    )
   }
 }

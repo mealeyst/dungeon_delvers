@@ -3,4 +3,4 @@ import reactDom from 'react-dom'
 
 import { Game } from './engine'
 
-Game()
+new Game()
