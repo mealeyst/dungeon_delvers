@@ -25,6 +25,7 @@ import { Stage } from './stage/stage'
 import { Player } from './player/player'
 
 import yBot from '../../public/assets/models/y-bot.glb'
+import { PlayerInput } from './core/inputController'
 
 export enum GAME_STATE {
   MENU = 0,
@@ -41,6 +42,7 @@ export class Game {
 
   //Game State Related
   public assets: any //TODO: update this type to NOT by any
+  private _input: PlayerInput;
   private _stage: Stage
   private _player: Player
 
@@ -262,6 +264,9 @@ export class Game {
       scene.detachControl() //observables disabled
     })
 
+    //--INPUT--
+    this._input = new PlayerInput(scene); //detect keyboard/mobile inputs
+
     //primitive character and setting
     await this._initializeGameAsync(scene)
 
@@ -387,6 +392,7 @@ export class Game {
     shadowGenerator.darkness = 0.4
 
     //Create the player
-    this._player = new Player(this.assets, scene, shadowGenerator) //dont have inputs yet so we dont need to pass it in
+    this._player = new Player(this.assets, scene, shadowGenerator, this._input)
+    const camera = this._player.activatePlayerCamera();
   }
 }
