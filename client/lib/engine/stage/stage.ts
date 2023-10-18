@@ -1,4 +1,4 @@
-import { MeshBuilder, Scene, Vector3 } from "@babylonjs/core";
+import { MeshBuilder, Scene, Vector3 } from '@babylonjs/core'
 
 export class Stage {
   private _scene: Scene
@@ -7,7 +7,11 @@ export class Stage {
   }
 
   public async load() {
-    const ground = MeshBuilder.CreateGround("ground", { width: 24, height: 24 }, this._scene)
-    ground.scaling = new Vector3(1,.02,1)
+    const ground = MeshBuilder.CreateGround(
+      'ground',
+      { width: 24, height: 24 },
+      this._scene,
+    )
+    ground.scaling = new Vector3(1, 0.02, 1)
   }
 }
