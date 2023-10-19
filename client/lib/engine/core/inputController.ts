@@ -12,7 +12,7 @@ export class PlayerInput {
   
   constructor(scene: Scene) {
     scene.actionManager = new ActionManager(scene);
-
+    console.log(scene)
     this.inputMap = {};
     scene.actionManager.registerAction(new ExecuteCodeAction(ActionManager.OnKeyDownTrigger, (evt) => {
       this.inputMap[evt.sourceEvent.key] = evt.sourceEvent.type == "keydown";
@@ -20,9 +20,8 @@ export class PlayerInput {
     scene.actionManager.registerAction(new ExecuteCodeAction(ActionManager.OnKeyUpTrigger, (evt) => {
       this.inputMap[evt.sourceEvent.key] = evt.sourceEvent.type == "keydown";
     }));
-
     scene.onBeforeRenderObservable.add(() => {
-      this._updateFromKeyboard();
+      this._updateFromKeyboard()
     });
   }
 
@@ -49,5 +48,9 @@ export class PlayerInput {
       this.horizontal = 0;
       this.horizontalAxis = 0;
     }
+  }
+
+  private _updateFromMouse(): void {
+
   }
 }

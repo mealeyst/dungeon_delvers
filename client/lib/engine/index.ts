@@ -1,4 +1,5 @@
 import {
+  AbstractMesh,
   ArcRotateCamera,
   Color3,
   Color4,
@@ -333,36 +334,26 @@ export class Game {
   private async _loadCharacterAssets(scene: Scene) {
     async function loadCharacter() {
       //collision mesh
-      const outer = MeshBuilder.CreateBox(
-        'outer',
-        { width: 2, depth: 1, height: 3 },
-        scene,
-      )
-      outer.isVisible = false
-      outer.isPickable = false
-      outer.checkCollisions = true
-
-      //move origin of box collider to the bottom of the mesh (to match player mesh)
-      outer.bakeTransformIntoVertices(Matrix.Translation(0, 1.5, 0))
-
-      //for collisions
-      outer.ellipsoid = new Vector3(1, 1.5, 1)
-      outer.ellipsoidOffset = new Vector3(0, 1.5, 0)
-
-      outer.rotationQuaternion = new Quaternion(0, 1, 0, 0) // rotate the player mesh 180 since we want to see the back of the player
 
       return SceneLoader.ImportMeshAsync(null, '', yBot, scene).then(result => {
         const root = result.meshes[0]
         //body is our actual player mesh
         const body = root
-        body.parent = outer
+        body.checkCollisions = true
+
+        //move origin of box collider to the bottom of the mesh (to match player mesh)
+
+        //for collisions
+        body.ellipsoid = new Vector3(1, 1.5, 1)
+        body.ellipsoidOffset = new Vector3(0, 1.5, 0)
+
         body.isPickable = false //so our raycasts dont hit ourself
         body.getChildMeshes().forEach(m => {
           m.isPickable = false
         })
 
         return {
-          mesh: outer as Mesh,
+          mesh: body as AbstractMesh,
         }
       })
     }
