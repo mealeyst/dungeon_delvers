@@ -43,7 +43,7 @@ export class Game {
 
   //Game State Related
   public assets: any //TODO: update this type to NOT by any
-  private _input: PlayerInput;
+  private _input: PlayerInput
   private _stage: Stage
   private _player: Player
 
@@ -101,7 +101,8 @@ export class Game {
   }
 
   private async _main(): Promise<void> {
-    await this._goToMenu()
+    // await this._goToMenu()
+    await this._goToGame()
     // run the main render loop
     this._engine.runRenderLoop(() => {
       switch (this._state) {
@@ -266,7 +267,7 @@ export class Game {
     })
 
     //--INPUT--
-    this._input = new PlayerInput(scene); //detect keyboard/mobile inputs
+    this._input = new PlayerInput(scene) //detect keyboard/mobile inputs
 
     //primitive character and setting
     await this._initializeGameAsync(scene)
@@ -333,27 +334,41 @@ export class Game {
 
   private async _loadCharacterAssets(scene: Scene) {
     async function loadCharacter() {
-      //collision mesh
+      const outer = MeshBuilder.CreateBox(
+        'outer',
+        { width: 2, depth: 1, height: 3 },
+        scene,
+      )
+      outer.isVisible = false
+      outer.isPickable = false
+      outer.checkCollisions = true
+
+      //move origin of box collider to the bottom of the mesh (to match player mesh)
+      outer.bakeTransformIntoVertices(Matrix.Translation(0, 3, 0))
+
+      //for collisions
+      outer.ellipsoid = new Vector3(1, 1.5, 1)
+      outer.ellipsoidOffset = new Vector3(0, 1.5, 0)
+
+      outer.rotationQuaternion = new Quaternion(0, 1, 0, 0)
 
       return SceneLoader.ImportMeshAsync(null, '', yBot, scene).then(result => {
         const root = result.meshes[0]
+        root.position.y = 1.5
         //body is our actual player mesh
         const body = root
-        body.checkCollisions = true
-
-        //move origin of box collider to the bottom of the mesh (to match player mesh)
-
-        //for collisions
-        body.ellipsoid = new Vector3(1, 1.5, 1)
-        body.ellipsoidOffset = new Vector3(0, 1.5, 0)
-
+        body.parent = outer
         body.isPickable = false //so our raycasts dont hit ourself
         body.getChildMeshes().forEach(m => {
           m.isPickable = false
         })
+        result.animationGroups.forEach(animationGroup => {
+          console.log(animationGroup.targetedAnimations)
+        })
 
         return {
-          mesh: body as AbstractMesh,
+          mesh: outer as Mesh,
+          animationGroups: result.animationGroups,
         }
       })
     }
@@ -384,6 +399,6 @@ export class Game {
 
     //Create the player
     this._player = new Player(this.assets, scene, shadowGenerator, this._input)
-    const camera = this._player.activatePlayerCamera();
+    const camera = this._player.activatePlayerCamera()
   }
 }
