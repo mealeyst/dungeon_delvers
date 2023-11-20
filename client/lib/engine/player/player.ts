@@ -10,6 +10,8 @@ import {
   Ray,
   DeepImmutableObject,
   AbstractMesh,
+  AnimationGroup,
+  Observable,
 } from '@babylonjs/core'
 
 export class Player extends TransformNode {
@@ -30,7 +32,7 @@ export class Player extends TransformNode {
   private _jump: AnimationGroup
 
   // animation trackers
-  private _currentAnim: AnimationGroup = null
+  private _currentAnim: AnimationGroup | null = null
   private _prevAnim: AnimationGroup
   private _isFalling: boolean = false
   private _jumped: boolean = false
@@ -58,6 +60,8 @@ export class Player extends TransformNode {
   private _lastGroundPos: Vector3 = Vector3.Zero() // keep track of the last grounded position
   private _grounded: boolean
 
+  public onRun = new Observable()
+
   constructor(
     assets: any,
     scene: Scene,
@@ -71,10 +75,10 @@ export class Player extends TransformNode {
     this.mesh = assets.mesh
     this.mesh.parent = this
 
-    console.log(assets.animationGroups)
-    this._idle = assets.animationGroups[1]
-    this._run = assets.animationGroups[3]
-    this._jump = assets.animationGroups[10]
+    this._idle = assets.animationGroups[0]
+    this._run = assets.animationGroups[1]
+
+    this._setUpAnimations()
 
     shadowGenerator.addShadowCaster(assets.mesh) //the player mesh will cast shadows
 
@@ -139,14 +143,33 @@ export class Player extends TransformNode {
 
   private _setUpAnimations(): void {
     this.scene.stopAllAnimations()
-    this._run.loopAnimation = true
     this._idle.loopAnimation = true
+    this._run.loopAnimation = true
 
     //initialize current and previous
     this._currentAnim = this._idle
+    this._prevAnim = this._run
   }
 
   private _animatePlayer(): void {
+    if (
+      !this._isFalling &&
+      !this._jumped &&
+      (this._input.inputMap['ArrowUp'] ||
+        this._input.mobileUp ||
+        this._input.inputMap['ArrowDown'] ||
+        this._input.mobileDown ||
+        this._input.inputMap['ArrowLeft'] ||
+        this._input.mobileLeft ||
+        this._input.inputMap['ArrowRight'] ||
+        this._input.mobileRight)
+    ) {
+      this._currentAnim = this._run
+      this.onRun.notifyObservers(true)
+    } else if (!this._isFalling && this._grounded) {
+      this._currentAnim = this._idle
+    }
+
     if (this._currentAnim != null && this._prevAnim !== this._currentAnim) {
       this._prevAnim.stop()
       this._currentAnim.play(this._currentAnim.loopAnimation)
@@ -209,6 +232,7 @@ export class Player extends TransformNode {
   private _beforeRenderUpdate(): void {
     this._updateFromControls()
     this._updateGroundDetection()
+    this._animatePlayer()
   }
 
   public activatePlayerCamera(): UniversalCamera {

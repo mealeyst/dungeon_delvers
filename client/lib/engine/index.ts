@@ -1,5 +1,4 @@
 import {
-  AbstractMesh,
   ArcRotateCamera,
   Color3,
   Color4,
@@ -15,7 +14,6 @@ import {
   Scene,
   SceneLoader,
   ShadowGenerator,
-  StandardMaterial,
   Vector3,
 } from '@babylonjs/core'
 import { AdvancedDynamicTexture, Button, Control } from '@babylonjs/gui'
@@ -25,7 +23,7 @@ import '@babylonjs/loaders/glTF'
 import { Stage } from './stage/stage'
 import { Player } from './player/player'
 
-import yBot from '../../public/assets/models/y-bot.glb'
+import human_male from '../../public/assets/models/Human_Male.glb'
 import { PlayerInput } from './core/inputController'
 
 export enum GAME_STATE {
@@ -352,25 +350,24 @@ export class Game {
 
       outer.rotationQuaternion = new Quaternion(0, 1, 0, 0)
 
-      return SceneLoader.ImportMeshAsync(null, '', yBot, scene).then(result => {
-        const root = result.meshes[0]
-        root.position.y = 1.5
-        //body is our actual player mesh
-        const body = root
-        body.parent = outer
-        body.isPickable = false //so our raycasts dont hit ourself
-        body.getChildMeshes().forEach(m => {
-          m.isPickable = false
-        })
-        result.animationGroups.forEach(animationGroup => {
-          console.log(animationGroup.targetedAnimations)
-        })
+      return SceneLoader.ImportMeshAsync(null, '', human_male, scene).then(
+        result => {
+          const root = result.meshes[0]
+          root.position.y = 1.5
+          //body is our actual player mesh
+          const body = root
+          body.parent = outer
+          body.isPickable = false //so our raycasts dont hit ourself
+          body.getChildMeshes().forEach(m => {
+            m.isPickable = false
+          })
 
-        return {
-          mesh: outer as Mesh,
-          animationGroups: result.animationGroups,
-        }
-      })
+          return {
+            mesh: outer as Mesh,
+            animationGroups: result.animationGroups,
+          }
+        },
+      )
     }
     return loadCharacter().then(assets => {
       this.assets = assets
