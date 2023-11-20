@@ -9,7 +9,7 @@ export class Stage {
   public async load() {
     const ground = MeshBuilder.CreateGround(
       'ground',
-      { width: 24, height: 24 },
+      { width: 40, height: 40 },
       this._scene,
     )
     ground.scaling = new Vector3(1, 0.02, 1)
