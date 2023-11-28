@@ -1,37 +1,62 @@
-import { AdvancedDynamicTexture, Button, Control } from '@babylonjs/gui'
-export class MainMenu {
-  private advancedTexture: AdvancedDynamicTexture
-  constructor() {
-    this.advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI('UI')
-    const buttonsData = [
-      {
-        id: 'new_game_button',
-        text: 'New Game',
-        action: () => alert('New Game Started'),
-      },
-      {
-        id: 'options_button',
-        text: 'Options',
-        action: () => alert('Options'),
-      },
-      {
-        id: 'quit_game_button',
-        text: 'Quit Game',
-        action: () => alert('Quit the game'),
-      },
-    ]
-    buttonsData.forEach((buttonData, index) => {
-      const buttonHeight = 60
-      const button = Button.CreateSimpleButton(buttonData.id, buttonData.text)
-      button.width = '150px'
-      button.height = `${buttonHeight}px`
-      button.color = 'white'
-      button.paddingTop = '10px'
-      button.paddingBottom = '10px'
-      // Evenly space buttons vertically based on index
-      button.top = `${index * buttonHeight}px`
-      button.onPointerUpObservable.add(buttonData.action)
-      this.advancedTexture.addControl(button)
+import { Color4, Engine, Scene, SceneLoader } from '@babylonjs/core'
+import { FullScreenMenu } from './fullScreenMenu'
+import { Button, TextBlock } from '@babylonjs/gui'
+import dungeonEntrance from '../../../public/assets/models/Main_Menu_Background.glb'
+
+type MainMenuActions = {
+  onNewGame: () => void
+  onOptions: () => void
+  onQuitGame: () => void
+}
+
+export class MainMenu extends FullScreenMenu {
+  constructor(engine: Engine, scene: Scene) {
+    const menuId = 'main_menu'
+    const title = new TextBlock(`${menuId}__title`, 'Dungeon Delvers')
+    title.fontSize = 48
+    title.width = '500px'
+    title.color = 'white'
+    title.paddingBottom = '80px'
+    const newGame = Button.CreateSimpleButton(`${menuId}__new_game`, 'New Game')
+    const options = Button.CreateSimpleButton(
+      `${menuId}__game_options`,
+      'Options',
+    )
+    const logout = Button.CreateSimpleButton(`${menuId}__logout`, 'Logout')
+
+    const buttons = [newGame, options, logout]
+    const controls = [title, ...buttons]
+    super(engine, controls, menuId, new Color4(0.67, 0.47, 0.16), scene)
+    newGame.onPointerDownObservable.add(() => {
+      alert('New Game')
     })
+    options.onPointerDownObservable.add(() => {
+      alert('Options')
+    })
+    logout.onPointerDownObservable.add(() => {
+      alert('Logout')
+    })
+    const buttonHeight = 60
+    controls.forEach((control, index) => {
+      control.height = `${buttonHeight}px`
+      control.color = 'white'
+      control.paddingTop = '10px'
+      control.paddingBottom = '10px'
+      // Evenly space controls vertically based on index
+      control.top = `${index * buttonHeight}px`
+    })
+
+    this._renderSceneBackground()
+  }
+
+  private async _renderSceneBackground() {
+    const result = await SceneLoader.ImportMeshAsync(
+      null,
+      '',
+      dungeonEntrance,
+      this.scene,
+    )
+    const mesh = result.meshes[0]
+    this.camera.lockedTarget = mesh
   }
 }

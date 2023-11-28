@@ -1,4 +1,5 @@
 import {
+  AnimationGroup,
   ArcRotateCamera,
   Color3,
   Color4,
@@ -14,6 +15,7 @@ import {
   Scene,
   SceneLoader,
   ShadowGenerator,
+  TransformNode,
   Vector3,
 } from '@babylonjs/core'
 import { AdvancedDynamicTexture, Button, Control } from '@babylonjs/gui'
@@ -25,6 +27,8 @@ import { Player } from './player/player'
 
 import human_male from '../../public/assets/models/Human_Male.glb'
 import { PlayerInput } from './core/inputController'
+import { MainMenu } from './gui/mainMenu'
+import { CharacterSelect } from './gui/characterSelect'
 
 export enum GAME_STATE {
   MENU = 0,
@@ -40,7 +44,10 @@ export class Game {
   private _engine: Engine
 
   //Game State Related
-  public assets: any //TODO: update this type to NOT by any
+  public assets: {
+    mesh: Mesh
+    animations: AnimationGroup[]
+  } //TODO: update this type to NOT by any
   private _input: PlayerInput
   private _stage: Stage
   private _player: Player
@@ -78,11 +85,6 @@ export class Game {
       new Vector3(1, 1, 0),
       this._scene,
     )
-    const sphere: Mesh = MeshBuilder.CreateSphere(
-      'sphere',
-      { diameter: 1 },
-      this._scene,
-    )
 
     // hide/show the Inspector
     window.addEventListener('keydown', ev => {
@@ -99,8 +101,8 @@ export class Game {
   }
 
   private async _main(): Promise<void> {
-    // await this._goToMenu()
-    await this._goToGame()
+    await this._goToMenu()
+    // await this._goToGame()
     // run the main render loop
     this._engine.runRenderLoop(() => {
       switch (this._state) {
@@ -129,41 +131,9 @@ export class Game {
   }
 
   private async _goToMenu() {
-    this._engine.displayLoadingUI()
-
-    this._scene.detachControl()
-    let scene = new Scene(this._engine)
-    scene.clearColor = new Color4(0, 0, 0, 1)
-    let camera = new FreeCamera('camera1', new Vector3(0, 0, 0), scene)
-    camera.setTarget(Vector3.Zero())
-
-    //create a fullscreen ui for all of our GUI elements
-    const guiMenu = AdvancedDynamicTexture.CreateFullscreenUI('UI')
-    guiMenu.idealHeight = 720 //fit our fullscreen ui to this height
-
-    //create a simple button
-    const startBtn = Button.CreateSimpleButton('start', 'PLAY')
-    startBtn.width = 0.2
-    startBtn.height = '40px'
-    startBtn.color = 'white'
-    startBtn.top = '-14px'
-    startBtn.thickness = 0
-    startBtn.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM
-    guiMenu.addControl(startBtn)
-
-    //this handles interactions with the start button attached to the scene
-    startBtn.onPointerDownObservable.add(() => {
-      this._goToCutScene()
-      scene.detachControl() //observables disabled
-    })
-
-    //--SCENE FINISHED LOADING--
-    await scene.whenReadyAsync()
-    this._engine.hideLoadingUI()
-    //lastly set the current state to the start state and set the scene to the start scene
-    this._scene.dispose()
-    this._scene = scene
-    this._state = GAME_STATE.MENU
+    // const mainMenu = new MainMenu(this._engine, this._scene)
+    const characterSelect = new CharacterSelect(this._engine, this._scene)
+    this._scene = characterSelect.scene
   }
 
   private async _goToCutScene(): Promise<void> {
@@ -245,6 +215,7 @@ export class Game {
 
     //--GUI--
     const playerUI = AdvancedDynamicTexture.CreateFullscreenUI('UI')
+    console.log(playerUI)
     //dont detect any inputs from this ui while the game is loading
     scene.detachControl()
 
@@ -257,6 +228,7 @@ export class Game {
     loseBtn.thickness = 0
     loseBtn.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM
     playerUI.addControl(loseBtn)
+    console.log(playerUI.getControlByName('lose'))
 
     //this handles interactions with the start button attached to the scene
     loseBtn.onPointerDownObservable.add(() => {
@@ -353,9 +325,10 @@ export class Game {
       return SceneLoader.ImportMeshAsync(null, '', human_male, scene).then(
         result => {
           const root = result.meshes[0]
-          root.position.y = 1.5
+          root.position.y = 1
           //body is our actual player mesh
           const body = root
+          body.rotationQuaternion = new Quaternion(0, 1, 0, 0)
           body.parent = outer
           body.isPickable = false //so our raycasts dont hit ourself
           body.getChildMeshes().forEach(m => {
@@ -363,8 +336,8 @@ export class Game {
           })
 
           return {
-            mesh: outer as Mesh,
-            animationGroups: result.animationGroups,
+            mesh: body as Mesh,
+            animations: result.animationGroups,
           }
         },
       )
@@ -395,7 +368,7 @@ export class Game {
     shadowGenerator.darkness = 0.4
 
     //Create the player
-    this._player = new Player(this.assets, scene, shadowGenerator, this._input)
-    const camera = this._player.activatePlayerCamera()
+    this._player = new Player(this.assets, scene, this._input)
+    // const camera = this._player.activatePlayerCamera()
   }
 }
