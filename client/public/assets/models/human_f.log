@@ -1,0 +1,424 @@
+Exporter version: 3.3.0, Blender version: 3.4.1
+========= Conversion from Blender to Babylon.js =========
+	Scene settings used :
+		Inline textures     :  false
+		Material Type       :  PBR
+		Positions Precision :  4
+		Normals Precision   :  3
+		UVs Precision       :  3
+		Vert Color Precision:  3
+		Mat Weight Precision:  2
+		Keep Z-up r-handed  :  no
+		Texture directory   :  C:\Users\meale\Projects\Personal\dungeon_delver\client\public\assets\models\
+	Python World class constructor completed
+	processing begun of skeleton:  Armature, id:  0
+		processing begun of bone:  mixamorig:Hips, index:  0
+		processing begun of bone:  mixamorig:Spine, index:  1
+		processing begun of bone:  mixamorig:Spine1, index:  2
+		processing begun of bone:  mixamorig:Spine2, index:  3
+		processing begun of bone:  mixamorig:Neck, index:  4
+		processing begun of bone:  mixamorig:Head, index:  5
+		processing begun of bone:  mixamorig:HeadTop_End, index:  6
+		processing begun of bone:  mixamorig:LeftShoulder, index:  7
+		processing begun of bone:  mixamorig:LeftArm, index:  8
+		processing begun of bone:  mixamorig:LeftForeArm, index:  9
+		processing begun of bone:  mixamorig:LeftHand, index:  10
+		processing begun of bone:  mixamorig:LeftHandThumb1, index:  11
+		processing begun of bone:  mixamorig:LeftHandThumb2, index:  12
+		processing begun of bone:  mixamorig:LeftHandThumb3, index:  13
+		processing begun of bone:  mixamorig:LeftHandThumb4, index:  14
+		processing begun of bone:  mixamorig:LeftHandIndex1, index:  15
+		processing begun of bone:  mixamorig:LeftHandIndex2, index:  16
+		processing begun of bone:  mixamorig:LeftHandIndex3, index:  17
+		processing begun of bone:  mixamorig:LeftHandIndex4, index:  18
+		processing begun of bone:  mixamorig:LeftHandRing1, index:  19
+		processing begun of bone:  mixamorig:LeftHandRing2, index:  20
+		processing begun of bone:  mixamorig:LeftHandRing3, index:  21
+		processing begun of bone:  mixamorig:LeftHandRing4, index:  22
+		processing begun of bone:  Ctrl_Thumb1_Left, index:  23
+		processing begun of bone:  Ctrl_Thumb2_Left, index:  24
+		processing begun of bone:  Ctrl_Thumb3_Left, index:  25
+		processing begun of bone:  Ctrl_Index1_Left, index:  26
+		processing begun of bone:  Ctrl_Index2_Left, index:  27
+		processing begun of bone:  Ctrl_Index3_Left, index:  28
+		processing begun of bone:  Ctrl_Ring1_Left, index:  29
+		processing begun of bone:  Ctrl_Ring2_Left, index:  30
+		processing begun of bone:  Ctrl_Ring3_Left, index:  31
+		processing begun of bone:  mixamorig:RightShoulder, index:  32
+		processing begun of bone:  mixamorig:RightArm, index:  33
+		processing begun of bone:  mixamorig:RightForeArm, index:  34
+		processing begun of bone:  mixamorig:RightHand, index:  35
+		processing begun of bone:  mixamorig:RightHandThumb1, index:  36
+		processing begun of bone:  mixamorig:RightHandThumb2, index:  37
+		processing begun of bone:  mixamorig:RightHandThumb3, index:  38
+		processing begun of bone:  mixamorig:RightHandThumb4, index:  39
+		processing begun of bone:  mixamorig:RightHandIndex1, index:  40
+		processing begun of bone:  mixamorig:RightHandIndex2, index:  41
+		processing begun of bone:  mixamorig:RightHandIndex3, index:  42
+		processing begun of bone:  mixamorig:RightHandIndex4, index:  43
+		processing begun of bone:  mixamorig:RightHandRing1, index:  44
+		processing begun of bone:  mixamorig:RightHandRing2, index:  45
+		processing begun of bone:  mixamorig:RightHandRing3, index:  46
+		processing begun of bone:  mixamorig:RightHandRing4, index:  47
+		processing begun of bone:  Ctrl_Thumb1_Right, index:  48
+		processing begun of bone:  Ctrl_Thumb2_Right, index:  49
+		processing begun of bone:  Ctrl_Thumb3_Right, index:  50
+		processing begun of bone:  Ctrl_Index1_Right, index:  51
+		processing begun of bone:  Ctrl_Index2_Right, index:  52
+		processing begun of bone:  Ctrl_Index3_Right, index:  53
+		processing begun of bone:  Ctrl_Ring1_Right, index:  54
+		processing begun of bone:  Ctrl_Ring2_Right, index:  55
+		processing begun of bone:  Ctrl_Ring3_Right, index:  56
+		processing begun of bone:  mixamorig:LeftUpLeg, index:  57
+		processing begun of bone:  mixamorig:LeftLeg, index:  58
+		processing begun of bone:  mixamorig:LeftFoot, index:  59
+		processing begun of bone:  mixamorig:LeftToeBase, index:  60
+		processing begun of bone:  mixamorig:LeftToe_End, index:  61
+		processing begun of bone:  mixamorig:RightUpLeg, index:  62
+		processing begun of bone:  mixamorig:RightLeg, index:  63
+		processing begun of bone:  mixamorig:RightFoot, index:  64
+		processing begun of bone:  mixamorig:RightToeBase, index:  65
+		processing begun of bone:  mixamorig:RightToe_End, index:  66
+		processing begun of bone:  Ctrl_Master, index:  67
+		processing begun of bone:  Ctrl_Hips, index:  68
+		processing begun of bone:  Ctrl_Hips_Free, index:  69
+		processing begun of bone:  Hips_Free_Helper, index:  70
+		processing begun of bone:  UpLeg_IK_Left, index:  71
+		processing begun of bone:  Leg_IK_Left, index:  72
+		processing begun of bone:  Ctrl_UpLeg_FK_Left, index:  73
+		processing begun of bone:  Ctrl_Leg_FK_Left, index:  74
+		processing begun of bone:  Ctrl_Foot_FK_Left, index:  75
+		processing begun of bone:  Foot_FK_Left, index:  76
+		processing begun of bone:  Ctrl_Toe_FK_Left, index:  77
+		processing begun of bone:  UpLeg_IK_Right, index:  78
+		processing begun of bone:  Leg_IK_Right, index:  79
+		processing begun of bone:  Ctrl_UpLeg_FK_Right, index:  80
+		processing begun of bone:  Ctrl_Leg_FK_Right, index:  81
+		processing begun of bone:  Ctrl_Foot_FK_Right, index:  82
+		processing begun of bone:  Foot_FK_Right, index:  83
+		processing begun of bone:  Ctrl_Toe_FK_Right, index:  84
+		processing begun of bone:  Ctrl_Spine, index:  85
+		processing begun of bone:  Ctrl_Spine1, index:  86
+		processing begun of bone:  Ctrl_Spine2, index:  87
+		processing begun of bone:  Ctrl_Neck, index:  88
+		processing begun of bone:  Ctrl_Head, index:  89
+		processing begun of bone:  Ctrl_Shoulder_Left, index:  90
+		processing begun of bone:  Arm_IK_Left, index:  91
+		processing begun of bone:  ForeArm_IK_Left, index:  92
+		processing begun of bone:  Ctrl_Arm_FK_Left, index:  93
+		processing begun of bone:  Ctrl_ForeArm_FK_Left, index:  94
+		processing begun of bone:  Ctrl_Hand_FK_Left, index:  95
+		processing begun of bone:  Ctrl_Shoulder_Right, index:  96
+		processing begun of bone:  Arm_IK_Right, index:  97
+		processing begun of bone:  ForeArm_IK_Right, index:  98
+		processing begun of bone:  Ctrl_Arm_FK_Right, index:  99
+		processing begun of bone:  Ctrl_ForeArm_FK_Right, index:  100
+		processing begun of bone:  Ctrl_Hand_FK_Right, index:  101
+		processing begun of bone:  Ctrl_ArmPole_IK_Left, index:  102
+		processing begun of bone:  Ctrl_Hand_IK_Left, index:  103
+		processing begun of bone:  Ctrl_ArmPole_IK_Right, index:  104
+		processing begun of bone:  Ctrl_Hand_IK_Right, index:  105
+		processing begun of bone:  Ctrl_Foot_IK_Left, index:  106
+		processing begun of bone:  Foot_IK_Left, index:  107
+		processing begun of bone:  Foot_Snap_Left, index:  108
+		processing begun of bone:  ToeTrack_Left, index:  109
+		processing begun of bone:  Toe01_IK_Left, index:  110
+		processing begun of bone:  Toe02_Left, index:  111
+		processing begun of bone:  FootHeelOut_Left, index:  112
+		processing begun of bone:  FootHeelIn_Left, index:  113
+		processing begun of bone:  FootHeelMid_Left, index:  114
+		processing begun of bone:  ToeEnd_Left, index:  115
+		processing begun of bone:  ToeEnd_01_Left, index:  116
+		processing begun of bone:  Ctrl_Foot_01_Left, index:  117
+		processing begun of bone:  Foot_IK_target_Left, index:  118
+		processing begun of bone:  Foot_01_Pole_Left, index:  119
+		processing begun of bone:  Ctrl_Toe_IK_Left, index:  120
+		processing begun of bone:  Ctrl_FootRoll_Cursor_Left, index:  121
+		processing begun of bone:  Ctrl_LegPole_IK_Left, index:  122
+		processing begun of bone:  Ctrl_Foot_IK_Right, index:  123
+		processing begun of bone:  Foot_IK_Right, index:  124
+		processing begun of bone:  Foot_Snap_Right, index:  125
+		processing begun of bone:  ToeTrack_Right, index:  126
+		processing begun of bone:  Toe01_IK_Right, index:  127
+		processing begun of bone:  Toe02_Right, index:  128
+		processing begun of bone:  FootHeelOut_Right, index:  129
+		processing begun of bone:  FootHeelIn_Right, index:  130
+		processing begun of bone:  FootHeelMid_Right, index:  131
+		processing begun of bone:  ToeEnd_Right, index:  132
+		processing begun of bone:  ToeEnd_01_Right, index:  133
+		processing begun of bone:  Ctrl_Foot_01_Right, index:  134
+		processing begun of bone:  Foot_IK_target_Right, index:  135
+		processing begun of bone:  Foot_01_Pole_Right, index:  136
+		processing begun of bone:  Ctrl_Toe_IK_Right, index:  137
+		processing begun of bone:  Ctrl_FootRoll_Cursor_Right, index:  138
+		processing begun of bone:  Ctrl_LegPole_IK_Right, index:  139
+		processing action Action:  in[1 - 62], out[0 - 62]
+		processing action Armature|mixamo.com|Layer0:  in[0 - 1], out[70 - 71]
+		processing action Armature|mixamo.com|Layer0.001:  in[1 - 62], out[80 - 142]
+		processing action Armature|mixamo.com|Layer0.002:  in[1 - 62], out[150 - 212]
+	processing begun of camera (UniversalCamera):  Camera
+	processing begun of mesh:  HumanFemale
+		processing begun of material:  HumanFemale
+
+ERROR: UN-EXCEPTED NODE TYPE(SHADERNODENORMALMAP).  CANNOT CONTINUE.
+
+			bake time:  0 min, 0.032 secs
+		Custom split normals with tangents being used
+		num positions      :  15258
+		num normals        :  15258
+		num tangents       :  61032
+		num uvs            :  30516
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  13220
+		Skeleton stats:  
+			Total Influencers:  39982
+			Avg # of influencers per vertex:  2.6204
+			Highest # of influencers observed:  6, num vertices with this:  2
+			exported as 6 influencers
+			num skeletonWeights and skeletonIndices:  122064
+	processing begun of node:  cs_grp
+	processing begun of mesh:  cs_master
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_master, has 0 vertices; ignored
+	processing begun of mesh:  cs_square_2
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_square_2, has 0 vertices; ignored
+	processing begun of mesh:  cs_square
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_square, has 0 vertices; ignored
+	processing begun of mesh:  cs_hips
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_hips, has 0 vertices; ignored
+	processing begun of mesh:  cs_circle
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_circle, has 0 vertices; ignored
+	processing begun of mesh:  cs_neck
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_neck, has 0 vertices; ignored
+	processing begun of mesh:  cs_head
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_head, has 0 vertices; ignored
+	processing begun of mesh:  cs_shoulder_left
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_shoulder_left, has 0 vertices; ignored
+	processing begun of mesh:  cs_arm_fk
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_arm_fk, has 0 vertices; ignored
+	processing begun of mesh:  cs_forearm_fk
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_forearm_fk, has 0 vertices; ignored
+	processing begun of mesh:  cs_sphere_012
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_sphere_012, has 0 vertices; ignored
+	processing begun of mesh:  cs_sphere
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_sphere, has 0 vertices; ignored
+	processing begun of mesh:  cs_hand
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_hand, has 0 vertices; ignored
+	processing begun of mesh:  cs_circle_025
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_circle_025, has 0 vertices; ignored
+	processing begun of mesh:  cs_circle.001
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_circle.001, has 0 vertices; ignored
+	processing begun of mesh:  cs_shoulder_right
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_shoulder_right, has 0 vertices; ignored
+	processing begun of mesh:  cs_thigh_fk
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_thigh_fk, has 0 vertices; ignored
+	processing begun of mesh:  cs_calf_fk
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_calf_fk, has 0 vertices; ignored
+	processing begun of mesh:  cs_foot
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_foot, has 0 vertices; ignored
+	processing begun of mesh:  cs_foot_roll
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_foot_roll, has 0 vertices; ignored
+	processing begun of mesh:  cs_foot.001
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_foot.001, has 0 vertices; ignored
+	processing begun of mesh:  cs_foot_01
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_foot_01, has 0 vertices; ignored
+	processing begun of mesh:  cs_foot.002
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_foot.002, has 0 vertices; ignored
+	processing begun of mesh:  cs_toe
+		WARNING: No materials have been assigned: 
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  0
+	WARNING: mesh, cs_toe, has 0 vertices; ignored
+	processing begun of light (POINT):  Light
+	Output cancelled due to data error
+========= end of processing =========
+elapsed time:  0 min, 14.4656 secs

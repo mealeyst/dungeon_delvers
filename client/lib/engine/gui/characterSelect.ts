@@ -10,6 +10,7 @@ import {
 import { FullScreenMenu } from './fullScreenMenu'
 import { Button, Control, Grid, StackPanel } from '@babylonjs/gui'
 import Characters from '../../../public/assets/models/characters.glb'
+import CharacterCreateScene from '../../../public/assets/models/character_create_scene.glb'
 
 type Character = {
   mesh: AbstractMesh
@@ -125,12 +126,22 @@ export class CharacterSelect extends FullScreenMenu {
   }
 
   private async _renderSceneCharacters() {
+    const characterSelectScene = await SceneLoader.ImportMeshAsync(
+      null,
+      '',
+      CharacterCreateScene,
+      this.scene,
+    )
+    characterSelectScene.lights.forEach(light => {
+      light.intensity = 0.5
+    })
     const characters_result = await SceneLoader.ImportMeshAsync(
       null,
       '',
       Characters,
       this.scene,
     )
+    characters_result.meshes[0].position = new Vector3(0, 0.85, 0)
     this._characters = {
       f_dwarf: {
         mesh: characters_result.meshes[8],
