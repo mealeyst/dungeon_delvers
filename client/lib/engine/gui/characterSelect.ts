@@ -147,9 +147,9 @@ export class CharacterSelect extends FullScreenMenu {
       f_dwarf: {
         mesh: characters_result.meshes[8],
         animations: {
-          idle: characters_result.animationGroups[21],
-          run: characters_result.animationGroups[22],
-          walk: characters_result.animationGroups[23],
+          idle: characters_result.animationGroups[25],
+          run: characters_result.animationGroups[26],
+          walk: characters_result.animationGroups[27],
         },
         cameraRadius: 3,
       },
@@ -242,6 +242,7 @@ export class CharacterSelect extends FullScreenMenu {
     for (character in this._characters) {
       if (character !== `${this._selectedGender}_${this._selectedRace}`) {
         this._characters[character].mesh.isVisible = false
+        this._characters[character].animations.idle.stop()
       } else {
         this._characters[character].mesh.isVisible = true
         this._characters[character].animations.idle.play(true)
