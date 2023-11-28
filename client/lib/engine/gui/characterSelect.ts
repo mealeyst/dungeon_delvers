@@ -36,7 +36,7 @@ export class CharacterSelect extends FullScreenMenu {
   private _characters: Characters
   private _selectedRace: 'dwarf' | 'goblin' | 'human' | 'orc'
   private _selectedGender: 'm' | 'f'
-  constructor(engine: Engine, scene: Scene) {
+  constructor(canvas: HTMLCanvasElement, engine: Engine, scene: Scene) {
     const menuId = 'character_select'
     const humanButton = Button.CreateSimpleButton(`${menuId}__human`, 'Human')
     const dwarfButton = Button.CreateSimpleButton(`${menuId}__dwarf`, 'Dwarf')
@@ -116,6 +116,7 @@ export class CharacterSelect extends FullScreenMenu {
     attributeStackPanel.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT
 
     super(
+      canvas,
       engine,
       [attributeStackPanel],
       menuId,
@@ -223,11 +224,17 @@ export class CharacterSelect extends FullScreenMenu {
     this.camera.heightOffset = 2
     this.camera.fov = 1
     this.camera.lockedTarget = characters_result.meshes[0]
+    this.camera.upperRadiusLimit = 6
+    this.camera.lowerRadiusLimit = 3
+    this.camera.upperHeightOffsetLimit = 2
+    this.camera.lowerHeightOffsetLimit = 2
+    this.camera.maxCameraSpeed = 1
     let alpha = 0
-    this.scene.registerBeforeRender(() => {
-      alpha += 0.05
-      this.camera.rotationOffset = (18 * alpha) % 360
-    })
+    // this.scene.registerBeforeRender(() => {
+    //   alpha += 0.025
+    //   this.camera.rotationOffset = (18 * alpha) % 360
+    // })
+    this.camera.attachControl(true)
   }
 
   private _setModelVisibility() {

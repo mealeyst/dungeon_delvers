@@ -15,6 +15,7 @@ type MenuActions = Record<string, () => void>
 
 export class FullScreenMenu {
   private _advancedTexture: AdvancedDynamicTexture
+  private _canvas: HTMLCanvasElement
   private _engine: Engine
   private _scene: Scene
   private _controls: Control[]
@@ -22,6 +23,7 @@ export class FullScreenMenu {
   private _camera: FollowCamera
 
   constructor(
+    canvas: HTMLCanvasElement,
     engine: Engine,
     controls: Control[],
     menuName: string,
@@ -29,6 +31,7 @@ export class FullScreenMenu {
     oldScene: Scene,
   ) {
     this._menuName = menuName
+    this._canvas = canvas
     this._engine = engine
     this._engine.displayLoadingUI()
     this.scene = new Scene(engine)
@@ -63,6 +66,14 @@ export class FullScreenMenu {
     })
 
     await this._scene.whenReadyAsync()
+  }
+
+  get canvas(): HTMLCanvasElement {
+    return this._canvas
+  }
+
+  set canvas(canvas: HTMLCanvasElement) {
+    this._canvas = canvas
   }
 
   get scene(): Scene {

@@ -132,7 +132,11 @@ export class Game {
 
   private async _goToMenu() {
     // const mainMenu = new MainMenu(this._engine, this._scene)
-    const characterSelect = new CharacterSelect(this._engine, this._scene)
+    const characterSelect = new CharacterSelect(
+      this._canvas,
+      this._engine,
+      this._scene,
+    )
     this._scene = characterSelect.scene
   }
 

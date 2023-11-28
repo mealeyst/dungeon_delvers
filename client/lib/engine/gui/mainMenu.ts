@@ -10,7 +10,7 @@ type MainMenuActions = {
 }
 
 export class MainMenu extends FullScreenMenu {
-  constructor(engine: Engine, scene: Scene) {
+  constructor(canvas: HTMLCanvasElement, engine: Engine, scene: Scene) {
     const menuId = 'main_menu'
     const title = new TextBlock(`${menuId}__title`, 'Dungeon Delvers')
     title.fontSize = 48
@@ -26,7 +26,7 @@ export class MainMenu extends FullScreenMenu {
 
     const buttons = [newGame, options, logout]
     const controls = [title, ...buttons]
-    super(engine, controls, menuId, new Color4(0.67, 0.47, 0.16), scene)
+    super(canvas, engine, controls, menuId, new Color4(0.67, 0.47, 0.16), scene)
     newGame.onPointerDownObservable.add(() => {
       alert('New Game')
     })
