@@ -86,6 +86,7 @@ export class CharacterSelect extends FullScreenMenu {
     raceGrid.addControl(dwarfButton, 0, 1)
     raceGrid.addControl(goblinButton, 1, 0)
     raceGrid.addControl(orcButton, 1, 1)
+    raceGrid.verticalAlignment = Control.VERTICAL_ALIGNMENT_CENTER
     const genderGrid = new Grid(`${menuId}__gender_grid`)
     genderGrid.addColumnDefinition(0.5)
     genderGrid.addColumnDefinition(0.5)
@@ -93,6 +94,7 @@ export class CharacterSelect extends FullScreenMenu {
     genderGrid.height = '60px'
     genderGrid.addControl(maleButton, 0, 0)
     genderGrid.addControl(femaleButton, 0, 1)
+    genderGrid.verticalAlignment = Control.VERTICAL_ALIGNMENT_CENTER
     genderGrid.addControl
     buttons.forEach((control, index) => {
       control.color = 'white'
@@ -107,7 +109,7 @@ export class CharacterSelect extends FullScreenMenu {
     attributeStackPanel.adaptWidthToChildren = true
     attributeStackPanel.addControl(raceGrid)
     attributeStackPanel.addControl(genderGrid)
-    attributeStackPanel.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP
+    attributeStackPanel.verticalAlignment = Control.VERTICAL_ALIGNMENT_CENTER
     attributeStackPanel.height = '100%'
     attributeStackPanel.background = 'black'
     attributeStackPanel.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT
