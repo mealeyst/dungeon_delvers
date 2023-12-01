@@ -25,7 +25,6 @@ export class FullScreenMenu {
   constructor(
     canvas: HTMLCanvasElement,
     engine: Engine,
-    controls: Control[],
     menuName: string,
     color: Color4,
     oldScene: Scene,
@@ -41,8 +40,6 @@ export class FullScreenMenu {
       true,
       this._scene,
     )
-
-    this._controls = controls
     this._initMenu()
     this._engine.hideLoadingUI()
     oldScene.dispose()
@@ -59,13 +56,16 @@ export class FullScreenMenu {
       new Vector3(0, 5, -5),
       this._scene,
     )
-    // this._camera.lockedTarget = mesh
-    this._advancedTexture.addControl
-    this._controls.forEach(control => {
-      this._advancedTexture.addControl(control)
-    })
 
     await this._scene.whenReadyAsync()
+  }
+
+  get menu(): AdvancedDynamicTexture {
+    return this._advancedTexture
+  }
+
+  set menu(advancedTexture: AdvancedDynamicTexture) {
+    this._advancedTexture = advancedTexture
   }
 
   get canvas(): HTMLCanvasElement {

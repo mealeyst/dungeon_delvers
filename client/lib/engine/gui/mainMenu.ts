@@ -12,6 +12,7 @@ type MainMenuActions = {
 export class MainMenu extends FullScreenMenu {
   constructor(canvas: HTMLCanvasElement, engine: Engine, scene: Scene) {
     const menuId = 'main_menu'
+    super(canvas, engine, menuId, new Color4(0.67, 0.47, 0.16), scene)
     const title = new TextBlock(`${menuId}__title`, 'Dungeon Delvers')
     title.fontSize = 48
     title.width = '500px'
@@ -26,7 +27,6 @@ export class MainMenu extends FullScreenMenu {
 
     const buttons = [newGame, options, logout]
     const controls = [title, ...buttons]
-    super(canvas, engine, controls, menuId, new Color4(0.67, 0.47, 0.16), scene)
     newGame.onPointerDownObservable.add(() => {
       alert('New Game')
     })
@@ -44,6 +44,9 @@ export class MainMenu extends FullScreenMenu {
       control.paddingBottom = '10px'
       // Evenly space controls vertically based on index
       control.top = `${index * buttonHeight}px`
+    })
+    controls.forEach(control => {
+      this.menu.addControl(control)
     })
 
     this._renderSceneBackground()

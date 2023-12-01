@@ -8,9 +8,18 @@ import {
   Vector3,
 } from '@babylonjs/core'
 import { FullScreenMenu } from './fullScreenMenu'
-import { Button, Control, Grid, StackPanel } from '@babylonjs/gui'
+import {
+  Button,
+  Control,
+  Grid,
+  InputText,
+  StackPanel,
+  TextBlock,
+} from '@babylonjs/gui'
 import Characters from '../../../public/assets/models/characters.glb'
 import CharacterCreateScene from '../../../public/assets/models/character_create_scene.glb'
+import { RaceType, Races } from '../../content/race'
+import { ATTRIBUTES } from '../core/attribute'
 
 type Character = {
   mesh: AbstractMesh
@@ -34,10 +43,24 @@ type Characters = {
 
 export class CharacterSelect extends FullScreenMenu {
   private _characters: Characters
-  private _selectedRace: 'dwarf' | 'goblin' | 'human' | 'orc'
+  private _selectedRace: RaceType
   private _selectedGender: 'm' | 'f'
+  private _races = new Races()
+  private _descriptionText: TextBlock
   constructor(canvas: HTMLCanvasElement, engine: Engine, scene: Scene) {
     const menuId = 'character_select'
+    super(canvas, engine, menuId, new Color4(0.18, 0.09, 0.2), scene)
+    const characterNameLabel = new TextBlock(
+      `${menuId}__character_name`,
+      'Character Name:',
+    )
+    characterNameLabel.color = 'white'
+    characterNameLabel.height = '40px'
+
+    const characterNameInput = new InputText(`${menuId}__character_name_input`)
+    characterNameInput.width = '400px'
+    characterNameInput.height = '40px'
+    characterNameInput.color = 'white'
     const humanButton = Button.CreateSimpleButton(`${menuId}__human`, 'Human')
     const dwarfButton = Button.CreateSimpleButton(`${menuId}__dwarf`, 'Dwarf')
     const goblinButton = Button.CreateSimpleButton(
@@ -106,23 +129,77 @@ export class CharacterSelect extends FullScreenMenu {
 
       // Evenly space controls vertically based on index
     })
-    const attributeStackPanel = new StackPanel(`${menuId}__attribute_stack`)
-    attributeStackPanel.adaptWidthToChildren = true
-    attributeStackPanel.addControl(raceGrid)
-    attributeStackPanel.addControl(genderGrid)
-    attributeStackPanel.verticalAlignment = Control.VERTICAL_ALIGNMENT_CENTER
-    attributeStackPanel.height = '100%'
-    attributeStackPanel.background = 'black'
-    attributeStackPanel.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT
+    const characterPanel = new StackPanel(`${menuId}__character_stack`)
+    characterPanel.adaptWidthToChildren = true
+    this._descriptionText = new TextBlock(`${menuId}__race_description`, '')
+    this._descriptionText.color = 'white'
+    this._descriptionText.width = '400px'
+    this._descriptionText.fontSize = 16
+    this._descriptionText.textWrapping = true
+    this._descriptionText.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM
+    characterPanel.addControl(this._descriptionText)
+    characterPanel.addControl(characterNameLabel)
+    characterPanel.addControl(characterNameInput)
+    characterPanel.addControl(raceGrid)
+    characterPanel.addControl(genderGrid)
 
-    super(
-      canvas,
-      engine,
-      [attributeStackPanel],
-      menuId,
-      new Color4(0.18, 0.09, 0.2),
-      scene,
-    )
+    characterPanel.verticalAlignment = Control.VERTICAL_ALIGNMENT_CENTER
+    characterPanel.height = '100%'
+    characterPanel.background = 'black'
+    characterPanel.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT
+    this.menu.addControl(characterPanel)
+    const attributesPanel = new StackPanel(`${menuId}__attribute_stack`)
+    attributesPanel.height = '100%'
+    attributesPanel.width = '200px'
+    attributesPanel.background = 'black'
+    attributesPanel.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT
+
+    for (const attribute in ATTRIBUTES) {
+      const attributePanel = new StackPanel(`${menuId}__${attribute}_stack`)
+      const attributeValueGrid = new Grid(
+        `${menuId}__attribute_${attribute}_grid`,
+      )
+      attributeValueGrid.width = '100%'
+      attributeValueGrid.height = '40px'
+      attributeValueGrid.addColumnDefinition(0.33)
+      attributeValueGrid.addColumnDefinition(0.33)
+      attributeValueGrid.addColumnDefinition(0.33)
+      const attributeLabel = new TextBlock(
+        `${menuId}__attribute_${attribute}`,
+        ATTRIBUTES[attribute as keyof typeof ATTRIBUTES],
+      )
+      console.log(this._races)
+      const attributeValue = new TextBlock(
+        `${menuId}__attribute_${attribute}_value`,
+        '10',
+      )
+      attributeValue.color = 'white'
+      attributeLabel.color = 'white'
+      attributeLabel.height = '40px'
+      attributePanel.addControl(attributeLabel)
+      attributeValueGrid.addControl(attributeValue, 1, 1)
+      const attributeMinusButton = Button.CreateSimpleButton(
+        `${menuId}__${attribute}_minus`,
+        '-',
+      )
+      const attributePlusButton = Button.CreateSimpleButton(
+        `${menuId}__${attribute}_plus`,
+        '+',
+      )
+      attributeMinusButton.onPointerDownObservable.add(() => {
+        console.log('minus')
+      })
+      attributePlusButton.onPointerDownObservable.add(() => {
+        console.log('plus')
+      })
+      attributeMinusButton.color = 'white'
+      attributePlusButton.color = 'white'
+      attributeValueGrid.addControl(attributeMinusButton, 0, 0)
+      attributeValueGrid.addControl(attributePlusButton, 0, 2)
+      attributePanel.addControl(attributeValueGrid)
+      attributesPanel.addControl(attributePanel)
+    }
+    this.menu.addControl(attributesPanel)
     this._renderSceneCharacters()
   }
 
@@ -219,6 +296,7 @@ export class CharacterSelect extends FullScreenMenu {
     }
     this._selectedGender = 'm'
     this._selectedRace = 'human'
+    this._descriptionText.text = this._races.description(this._selectedRace)
     this._setModelVisibility()
     this.camera.radius = 6
     this.camera.heightOffset = 2
@@ -256,8 +334,9 @@ export class CharacterSelect extends FullScreenMenu {
     this._setModelVisibility()
   }
 
-  private _setRace(race: 'dwarf' | 'goblin' | 'human' | 'orc') {
+  private _setRace(race: RaceType) {
     this._selectedRace = race
+    this._descriptionText.text = this._races.description(race)
     this._setModelVisibility()
   }
 }
