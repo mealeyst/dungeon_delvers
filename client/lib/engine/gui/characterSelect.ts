@@ -199,8 +199,6 @@ export class CharacterSelect extends FullScreenMenu {
       attributeValueGrid.addControl(attributePlusButton, 0, 2)
       attributePanel.addControl(attributeValueGrid)
       attributePanel.paddingBottom = '20px'
-      attributePanel.paddingLeft = '10px'
-      attributePanel.paddingRight = '10px'
       attributesPanel.addControl(attributePanel)
     }
     this.menu.addControl(attributesPanel)
