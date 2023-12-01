@@ -160,7 +160,7 @@ export class CharacterSelect extends FullScreenMenu {
       const attributeValueGrid = new Grid(
         `${menuId}__attribute_${attribute}_grid`,
       )
-      attributeValueGrid.width = '100%'
+      attributeValueGrid.width = '160px'
       attributeValueGrid.height = '40px'
       attributeValueGrid.addColumnDefinition(0.33)
       attributeValueGrid.addColumnDefinition(0.33)
@@ -198,6 +198,9 @@ export class CharacterSelect extends FullScreenMenu {
       attributeValueGrid.addControl(attributeMinusButton, 0, 0)
       attributeValueGrid.addControl(attributePlusButton, 0, 2)
       attributePanel.addControl(attributeValueGrid)
+      attributePanel.paddingBottom = '20px'
+      attributePanel.paddingLeft = '10px'
+      attributePanel.paddingRight = '10px'
       attributesPanel.addControl(attributePanel)
     }
     this.menu.addControl(attributesPanel)
