@@ -28,6 +28,7 @@ type Character = {
 
 type CharacterCreationSettings = Character & {
   cameraRadius: number
+  cameraHeightOffset: number
 }
 
 type Characters = {
@@ -229,6 +230,7 @@ export class CharacterSelect extends FullScreenMenu {
           walk: characters_result.animationGroups[27],
         },
         cameraRadius: 3,
+        cameraHeightOffset: 1,
       },
       f_goblin: {
         mesh: characters_result.meshes[2],
@@ -238,6 +240,7 @@ export class CharacterSelect extends FullScreenMenu {
           walk: characters_result.animationGroups[5],
         },
         cameraRadius: 3,
+        cameraHeightOffset: 1,
       },
       f_human: {
         mesh: characters_result.meshes[1],
@@ -247,6 +250,7 @@ export class CharacterSelect extends FullScreenMenu {
           walk: characters_result.animationGroups[2],
         },
         cameraRadius: 6,
+        cameraHeightOffset: 1.5,
       },
       f_orc: {
         mesh: characters_result.meshes[3],
@@ -256,6 +260,7 @@ export class CharacterSelect extends FullScreenMenu {
           walk: characters_result.animationGroups[8],
         },
         cameraRadius: 6,
+        cameraHeightOffset: 1.5,
       },
       m_dwarf: {
         mesh: characters_result.meshes[5],
@@ -265,6 +270,7 @@ export class CharacterSelect extends FullScreenMenu {
           walk: characters_result.animationGroups[14],
         },
         cameraRadius: 3,
+        cameraHeightOffset: 1,
       },
       m_goblin: {
         mesh: characters_result.meshes[6],
@@ -274,6 +280,7 @@ export class CharacterSelect extends FullScreenMenu {
           walk: characters_result.animationGroups[17],
         },
         cameraRadius: 3,
+        cameraHeightOffset: 1,
       },
       m_human: {
         mesh: characters_result.meshes[7],
@@ -283,6 +290,7 @@ export class CharacterSelect extends FullScreenMenu {
           walk: characters_result.animationGroups[20],
         },
         cameraRadius: 6,
+        cameraHeightOffset: 1.5,
       },
       m_orc: {
         mesh: characters_result.meshes[4],
@@ -292,6 +300,7 @@ export class CharacterSelect extends FullScreenMenu {
           walk: characters_result.animationGroups[11],
         },
         cameraRadius: 6,
+        cameraHeightOffset: 1.5,
       },
     }
     this._selectedGender = 'm'
@@ -305,7 +314,7 @@ export class CharacterSelect extends FullScreenMenu {
     this.camera.upperRadiusLimit = 6
     this.camera.lowerRadiusLimit = 3
     this.camera.upperHeightOffsetLimit = 2
-    this.camera.lowerHeightOffsetLimit = 2
+    this.camera.lowerHeightOffsetLimit = 1
     this.camera.maxCameraSpeed = 1
     let alpha = 0
     // this.scene.registerBeforeRender(() => {
@@ -325,6 +334,8 @@ export class CharacterSelect extends FullScreenMenu {
         this._characters[character].mesh.isVisible = true
         this._characters[character].animations.idle.play(true)
         this.camera.radius = this._characters[character].cameraRadius
+        this.camera.heightOffset =
+          this._characters[character].cameraHeightOffset
       }
     }
   }
