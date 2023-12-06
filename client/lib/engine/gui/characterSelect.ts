@@ -16,22 +16,17 @@ import {
   StackPanel,
   TextBlock,
 } from '@babylonjs/gui'
-import Characters from '../../../public/assets/models/characters.glb'
 import CharacterCreateScene from '../../../public/assets/models/character_create_scene.glb'
 import { RaceType, Races } from '../../content/race'
 import { ATTRIBUTES } from '../core/attribute'
+import { CharacterModels, CharacterProps } from '../race/race'
 
-type Character = {
-  mesh: AbstractMesh
-  animations: Record<string, AnimationGroup>
-}
-
-type CharacterCreationSettings = Character & {
+type CharacterCreationSettings = CharacterProps & {
   cameraRadius: number
   cameraHeightOffset: number
 }
 
-type Characters = {
+type CharactersCreationSettings = {
   f_dwarf: CharacterCreationSettings
   f_goblin: CharacterCreationSettings
   f_human: CharacterCreationSettings
@@ -43,7 +38,7 @@ type Characters = {
 }
 
 export class CharacterSelect extends FullScreenMenu {
-  private _characters: Characters
+  private _characters: CharactersCreationSettings
   private _selectedRace: RaceType
   private _selectedGender: 'm' | 'f'
   private _races = new Races()
@@ -169,7 +164,6 @@ export class CharacterSelect extends FullScreenMenu {
         `${menuId}__attribute_${attribute}`,
         ATTRIBUTES[attribute as keyof typeof ATTRIBUTES],
       )
-      console.log(this._races)
       const attributeValue = new TextBlock(
         `${menuId}__attribute_${attribute}_value`,
         '10',
@@ -215,95 +209,33 @@ export class CharacterSelect extends FullScreenMenu {
     characterSelectScene.lights.forEach(light => {
       light.intensity = 0.5
     })
-    const characters_result = await SceneLoader.ImportMeshAsync(
-      null,
-      '',
-      Characters,
-      this.scene,
+    const result = await CharacterModels.loadCharacterMeshes(this.scene)
+    this._characters = Object.entries(result.characters).reduce(
+      (accumulator, [key, value]) => {
+        const characterSelectData = value as CharacterCreationSettings
+        switch (key) {
+          case 'f_dwarf':
+          case 'f_goblin':
+          case 'm_dwarf':
+          case 'm_goblin':
+            characterSelectData.cameraRadius = 3
+            characterSelectData.cameraHeightOffset = 1
+            break
+          case 'f_human':
+          case 'f_orc':
+          case 'm_human':
+          case 'm_orc':
+            characterSelectData.cameraRadius = 6
+            characterSelectData.cameraHeightOffset = 1.5
+            break
+        }
+        accumulator[key as keyof CharactersCreationSettings] =
+          characterSelectData
+        return accumulator
+      },
+      {} as CharactersCreationSettings,
     )
-    characters_result.meshes[0].position = new Vector3(0, 0.85, 0)
-    this._characters = {
-      f_dwarf: {
-        mesh: characters_result.meshes[8],
-        animations: {
-          idle: characters_result.animationGroups[25],
-          run: characters_result.animationGroups[26],
-          walk: characters_result.animationGroups[27],
-        },
-        cameraRadius: 3,
-        cameraHeightOffset: 1,
-      },
-      f_goblin: {
-        mesh: characters_result.meshes[2],
-        animations: {
-          idle: characters_result.animationGroups[3],
-          run: characters_result.animationGroups[4],
-          walk: characters_result.animationGroups[5],
-        },
-        cameraRadius: 3,
-        cameraHeightOffset: 1,
-      },
-      f_human: {
-        mesh: characters_result.meshes[1],
-        animations: {
-          idle: characters_result.animationGroups[0],
-          run: characters_result.animationGroups[1],
-          walk: characters_result.animationGroups[2],
-        },
-        cameraRadius: 6,
-        cameraHeightOffset: 1.5,
-      },
-      f_orc: {
-        mesh: characters_result.meshes[3],
-        animations: {
-          idle: characters_result.animationGroups[6],
-          run: characters_result.animationGroups[7],
-          walk: characters_result.animationGroups[8],
-        },
-        cameraRadius: 6,
-        cameraHeightOffset: 1.5,
-      },
-      m_dwarf: {
-        mesh: characters_result.meshes[5],
-        animations: {
-          idle: characters_result.animationGroups[12],
-          run: characters_result.animationGroups[13],
-          walk: characters_result.animationGroups[14],
-        },
-        cameraRadius: 3,
-        cameraHeightOffset: 1,
-      },
-      m_goblin: {
-        mesh: characters_result.meshes[6],
-        animations: {
-          idle: characters_result.animationGroups[15],
-          run: characters_result.animationGroups[16],
-          walk: characters_result.animationGroups[17],
-        },
-        cameraRadius: 3,
-        cameraHeightOffset: 1,
-      },
-      m_human: {
-        mesh: characters_result.meshes[7],
-        animations: {
-          idle: characters_result.animationGroups[18],
-          run: characters_result.animationGroups[19],
-          walk: characters_result.animationGroups[20],
-        },
-        cameraRadius: 6,
-        cameraHeightOffset: 1.5,
-      },
-      m_orc: {
-        mesh: characters_result.meshes[4],
-        animations: {
-          idle: characters_result.animationGroups[9],
-          run: characters_result.animationGroups[10],
-          walk: characters_result.animationGroups[11],
-        },
-        cameraRadius: 6,
-        cameraHeightOffset: 1.5,
-      },
-    }
+    result.root.position = new Vector3(0, 0.85, 0)
     this._selectedGender = 'm'
     this._selectedRace = 'human'
     this._descriptionText.text = this._races.description(this._selectedRace)
@@ -311,7 +243,7 @@ export class CharacterSelect extends FullScreenMenu {
     this.camera.radius = 6
     this.camera.heightOffset = 2
     this.camera.fov = 1
-    this.camera.lockedTarget = characters_result.meshes[0]
+    this.camera.lockedTarget = result.root
     this.camera.upperRadiusLimit = 6
     this.camera.lowerRadiusLimit = 3
     this.camera.upperHeightOffsetLimit = 2

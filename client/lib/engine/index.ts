@@ -101,8 +101,8 @@ export class Game {
   }
 
   private async _main(): Promise<void> {
-    // await this._goToMenu()
-    await this._goToGame()
+    await this._goToMenu()
+    // await this._goToGame()
     // run the main render loop
     this._engine.runRenderLoop(() => {
       switch (this._state) {

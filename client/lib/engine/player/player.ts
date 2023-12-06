@@ -25,12 +25,6 @@ export class Player {
     this.load()
   }
   async load() {
-    const sphere = MeshBuilder.CreateSphere(
-      'sphere',
-      { diameter: 1 },
-      this._scene,
-    )
-    sphere.position.y = 1
     const playerCamera = new FollowCamera(
       'playerCamera',
       new Vector3(0, 10, -10),
