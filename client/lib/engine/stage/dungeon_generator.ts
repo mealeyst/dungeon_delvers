@@ -9,7 +9,7 @@ import {
 } from '@babylonjs/core'
 import { Room } from '../../content/stage/room'
 import { random } from '../core/random'
-import { BinarySpacePartition } from './binary_space_partition'
+import { BinarySpacePartition } from './binarySpacePartition'
 import triangulate from 'delaunay-triangulate'
 import { Prim } from './prim'
 
@@ -31,10 +31,11 @@ type DungeonRooms = {
 
 export class DungeonGenerator extends TransformNode {
   private _iterations = 8
-  private _mapHeight = 200
-  private _mapDepth = 500
-  private _mapWidth = 500
-  private _minRoomSize = 40
+  private _mapLevels = 4
+  private _mapLevelHeight = 2.5
+  private _mapDepth = 100
+  private _mapWidth = 100
+  private _minRoomSize = 20
   private _gutter = 10
   _rooms: Room[] = []
   public inspectableCustomProperties: any
@@ -43,7 +44,8 @@ export class DungeonGenerator extends TransformNode {
     this._scene = scene
     this._gutter = options?.gutter ?? this._gutter
     this._iterations = options?.iterations ?? this._iterations
-    this._mapHeight = options?.mapHeight ?? this._mapHeight
+    this._mapLevels = options?.mapHeight ?? this._mapLevels
+    this._mapLevelHeight = options?.mapHeight ?? this._mapLevelHeight
     this._mapDepth = options?.mapDepth ?? this._mapDepth
     this._mapWidth = options?.mapWidth ?? this._mapWidth
     this._minRoomSize = options?.minRoomSize ?? this._minRoomSize
@@ -72,11 +74,19 @@ export class DungeonGenerator extends TransformNode {
         step: 1,
       },
       {
-        label: 'Map Height',
-        propertyName: 'mapHeight',
+        label: 'Map Levels',
+        propertyName: 'mapLevels',
         type: InspectableType.Slider,
-        min: 30,
-        max: 500,
+        min: 1,
+        max: 5,
+        step: 1,
+      },
+      {
+        label: 'Map Level Height',
+        propertyName: 'mapLevelHeight',
+        type: InspectableType.Slider,
+        min: 2.5,
+        max: 8,
         step: 1,
       },
       {
@@ -133,12 +143,20 @@ export class DungeonGenerator extends TransformNode {
     return this._iterations
   }
 
-  set mapHeight(value: number) {
-    this._mapHeight = value
+  set mapLevels(value: number) {
+    this._mapLevels = value
   }
 
-  get mapHeight() {
-    return this._mapHeight
+  get mapLevels() {
+    return this._mapLevels
+  }
+
+  set mapLevelHeight(value: number) {
+    this._mapLevelHeight = value
+  }
+
+  get mapLevelHeight() {
+    return this._mapLevelHeight
   }
 
   set mapDepth(value: number) {
@@ -166,41 +184,56 @@ export class DungeonGenerator extends TransformNode {
   }
 
   generateRooms() {
+    console.log('Generating Dungeon')
     let bsp = new BinarySpacePartition({
       iterations: this._iterations,
-      mapHeight: this._mapHeight,
-      mapDepth: this._mapDepth,
-      mapWidth: this._mapWidth,
-      minSize: this._minRoomSize,
+      levels: this._mapLevels,
+      levelHeight: this._mapLevelHeight,
+      depth: this._mapDepth,
+      width: this._mapWidth,
+      minRoomSize: this._minRoomSize,
     })
-    while (bsp.leaves && bsp.leaves.length < 5) {
-      bsp = new BinarySpacePartition({
-        iterations: this._iterations,
-        mapHeight: this._mapHeight,
-        mapDepth: this._mapDepth,
-        mapWidth: this._mapWidth,
-        minSize: this._minRoomSize,
-      })
-    }
-
-    bsp.leaves?.forEach(
-      (
-        { branch, depth: leaf_depth, node: { depth, height, width, x, y, z } },
-        index,
-      ) => {
-        this._rooms.push(
-          new Room({
-            name: `room_${index}_branch_${branch}_${leaf_depth}`,
-            x,
-            y,
-            z,
-            depth: (this._minRoomSize * random(50, 150)) / 100,
-            height: this._minRoomSize,
-            width: (this._minRoomSize * random(50, 150)) / 100,
-          }),
+    // while (bsp.leaves && bsp.leaves.length < 5) {
+    //   bsp = new BinarySpacePartition({
+    //     iterations: this._iterations,
+    //     levels: this._mapLevels,
+    //     levelHeight: this._mapLevelHeight,
+    //     depth: this._mapDepth,
+    //     width: this._mapWidth,
+    //     minRoomSize: this._minRoomSize,
+    //   })
+    // }
+    bsp.leaves &&
+      bsp.leaves.forEach((level, level_index) => {
+        level.forEach(
+          (
+            {
+              branch,
+              depth: leaf_depth,
+              node: { depth, height, width, x, y, z },
+            },
+            index,
+          ) => {
+            this._rooms.push(
+              new Room({
+                name: `room_${index}_branch_${branch}_${leaf_depth}`,
+                x,
+                y: this._mapLevelHeight * level_index + this._gutter,
+                z,
+                depth:
+                  (this._minRoomSize *
+                    random(this._minRoomSize * 0.6, this._minRoomSize * 1.1)) /
+                  100,
+                height: this._mapLevelHeight,
+                width:
+                  (this._minRoomSize *
+                    random(this._minRoomSize * 0.6, this._minRoomSize * 1.1)) /
+                  100,
+              }),
+            )
+          },
         )
-      },
-    )
+      })
     this._rooms.forEach(room => {
       const { name, depth, height, width, x, y, z } = room
       const material = new StandardMaterial(`${name}_material`, this._scene)

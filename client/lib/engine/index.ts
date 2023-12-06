@@ -101,8 +101,8 @@ export class Game {
   }
 
   private async _main(): Promise<void> {
-    await this._goToMenu()
-    // await this._goToGame()
+    // await this._goToMenu()
+    await this._goToGame()
     // run the main render loop
     this._engine.runRenderLoop(() => {
       switch (this._state) {
@@ -190,8 +190,6 @@ export class Game {
     const stage = new Stage(scene)
     this._stage = stage
 
-    await this._stage.load()
-
     await this._loadCharacterAssets(scene) //character
   }
 
@@ -219,7 +217,6 @@ export class Game {
 
     //--GUI--
     const playerUI = AdvancedDynamicTexture.CreateFullscreenUI('UI')
-    console.log(playerUI)
     //dont detect any inputs from this ui while the game is loading
     scene.detachControl()
 
@@ -232,7 +229,6 @@ export class Game {
     loseBtn.thickness = 0
     loseBtn.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM
     playerUI.addControl(loseBtn)
-    console.log(playerUI.getControlByName('lose'))
 
     //this handles interactions with the start button attached to the scene
     loseBtn.onPointerDownObservable.add(() => {
