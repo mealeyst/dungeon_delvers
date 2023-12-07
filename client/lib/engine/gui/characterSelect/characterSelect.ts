@@ -84,8 +84,8 @@ export class CharacterSelect extends FullScreenMenu {
     characterPanel.background = 'black'
     characterPanel.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT
     this.menu.addControl(characterPanel)
-    const attributesPanel = attributeSelect(menuId, () => {})
-    this.menu.addControl(attributesPanel)
+    const attributesPanel = new AttributeSelect().renderAttributePanel(menuId)
+    attributesPanel && this.menu.addControl(attributesPanel)
     this._renderSceneCharacters()
   }
 

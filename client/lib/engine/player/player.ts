@@ -2,7 +2,6 @@ import {
   AnimationGroup,
   FollowCamera,
   Mesh,
-  MeshBuilder,
   Scene,
   Vector3,
 } from '@babylonjs/core'
@@ -30,7 +29,6 @@ export class Player {
       new Vector3(0, 10, -10),
       this._scene,
     )
-    playerCamera.lockedTarget = sphere
     this._scene.cameras.forEach(camera => {
       camera.detachControl()
     })
