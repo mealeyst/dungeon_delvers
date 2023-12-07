@@ -2,7 +2,6 @@ import {
   AnimationGroup,
   FollowCamera,
   Mesh,
-  MeshBuilder,
   Scene,
   Vector3,
 } from '@babylonjs/core'
@@ -25,18 +24,11 @@ export class Player {
     this.load()
   }
   async load() {
-    const sphere = MeshBuilder.CreateSphere(
-      'sphere',
-      { diameter: 1 },
-      this._scene,
-    )
-    sphere.position.y = 1
     const playerCamera = new FollowCamera(
       'playerCamera',
       new Vector3(0, 10, -10),
       this._scene,
     )
-    playerCamera.lockedTarget = sphere
     this._scene.cameras.forEach(camera => {
       camera.detachControl()
     })

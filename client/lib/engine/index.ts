@@ -28,7 +28,7 @@ import { Player } from './player/player'
 import human_male from '../../public/assets/models/Human_Male.glb'
 import { PlayerInput } from './core/inputController'
 import { MainMenu } from './gui/mainMenu'
-import { CharacterSelect } from './gui/characterSelect'
+import { CharacterSelect } from './gui/characterSelect/characterSelect'
 
 export enum GAME_STATE {
   MENU = 0,
@@ -101,8 +101,8 @@ export class Game {
   }
 
   private async _main(): Promise<void> {
-    // await this._goToMenu()
-    await this._goToGame()
+    await this._goToMenu()
+    // await this._goToGame()
     // run the main render loop
     this._engine.runRenderLoop(() => {
       switch (this._state) {
