@@ -106,7 +106,6 @@ export class CharacterModels {
       Characters,
       scene,
     )
-    console.log(characters_result)
     return new CharacterModels(characters_result)
   }
   get root() {

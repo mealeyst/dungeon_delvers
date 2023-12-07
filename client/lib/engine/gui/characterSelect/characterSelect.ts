@@ -18,7 +18,7 @@ import {
 } from '@babylonjs/gui'
 import CharacterCreateScene from '../../../../public/assets/models/character_create_scene.glb'
 import { RaceType, Races } from '../../../content/race'
-import { ATTRIBUTES } from '../../core/attribute'
+import { ATTRIBUTES, Attributes } from '../../core/attribute'
 import { CharacterModels, CharacterProps } from '../../race/race'
 import { raceSelect } from './raceSelect'
 import { genderSelect } from './genderSelect'
@@ -46,46 +46,55 @@ export class CharacterSelect extends FullScreenMenu {
   private _selectedGender: 'm' | 'f'
   private _races = new Races()
   private _descriptionText: TextBlock
-  private _attributes: Record<ATTRIBUTES, number>
+  private _attributes: Attributes
+  private _attributesPanel?: AttributeSelect
+  private _menuId: string
   constructor(canvas: HTMLCanvasElement, engine: Engine, scene: Scene) {
     const menuId = 'character_select'
     super(canvas, engine, menuId, new Color4(0.18, 0.09, 0.2), scene)
+    this._menuId = menuId
     const characterNameLabel = new TextBlock(
-      `${menuId}__character_name`,
+      `${this._menuId}__character_name`,
       'Character Name:',
     )
     characterNameLabel.color = 'white'
     characterNameLabel.height = '40px'
 
-    const characterNameInput = new InputText(`${menuId}__character_name_input`)
+    const characterNameInput = new InputText(
+      `${this._menuId}__character_name_input`,
+    )
     characterNameInput.width = '400px'
     characterNameInput.height = '40px'
     characterNameInput.color = 'white'
-    const raceGrid = raceSelect(menuId, (race: RaceType) => this._setRace(race))
-    const genderGrid = genderSelect(menuId, (gender: 'm' | 'f') =>
+    const raceGrid = raceSelect(this._menuId, (race: RaceType) =>
+      this._setRace(race),
+    )
+    const genderGrid = genderSelect(this._menuId, (gender: 'm' | 'f') =>
       this._setGender(gender),
     )
-    const characterPanel = new StackPanel(`${menuId}__character_stack`)
+    const characterPanel = new StackPanel(`${this._menuId}__character_stack`)
     characterPanel.adaptWidthToChildren = true
-    this._descriptionText = new TextBlock(`${menuId}__race_description`, '')
+    this._descriptionText = new TextBlock(
+      `${this._menuId}__race_description`,
+      '',
+    )
     this._descriptionText.color = 'white'
     this._descriptionText.width = '400px'
+    this._descriptionText.height = '400px'
     this._descriptionText.fontSize = 16
     this._descriptionText.textWrapping = true
     this._descriptionText.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM
-    characterPanel.addControl(this._descriptionText)
     characterPanel.addControl(characterNameLabel)
     characterPanel.addControl(characterNameInput)
     characterPanel.addControl(raceGrid)
     characterPanel.addControl(genderGrid)
+    characterPanel.addControl(this._descriptionText)
 
     characterPanel.verticalAlignment = Control.VERTICAL_ALIGNMENT_CENTER
     characterPanel.height = '100%'
     characterPanel.background = 'black'
     characterPanel.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT
     this.menu.addControl(characterPanel)
-    const attributesPanel = new AttributeSelect().renderAttributePanel(menuId)
-    attributesPanel && this.menu.addControl(attributesPanel)
     this._renderSceneCharacters()
   }
 
@@ -129,6 +138,7 @@ export class CharacterSelect extends FullScreenMenu {
     this._selectedGender = 'm'
     this._selectedRace = 'human'
     this._descriptionText.text = this._races.description(this._selectedRace)
+    this._attributes = this._races.attributes(this._selectedRace)
     this._setModelVisibility()
     this.camera.radius = 6
     this.camera.heightOffset = 2
@@ -140,6 +150,14 @@ export class CharacterSelect extends FullScreenMenu {
     this.camera.lowerHeightOffsetLimit = 1
     this.camera.maxCameraSpeed = 1
     let alpha = 0
+    this._attributesPanel = new AttributeSelect()
+    this._attributesPanel &&
+      this.menu.addControl(
+        this._attributesPanel.renderAttributePanel(
+          this._menuId,
+          this._attributes,
+        ),
+      )
     // this.scene.registerBeforeRender(() => {
     //   alpha += 0.025
     //   this.camera.rotationOffset = (18 * alpha) % 360
@@ -170,8 +188,9 @@ export class CharacterSelect extends FullScreenMenu {
 
   private _setRace(race: RaceType) {
     this._selectedRace = race
-    console.log(this._races.attributes(race))
     this._descriptionText.text = this._races.description(race)
+    const attibutes = this._races.attributes(race)
+    this._attributesPanel && this._attributesPanel.updateAttributes(attibutes)
     this._setModelVisibility()
   }
 }
