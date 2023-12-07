@@ -1,6 +1,5 @@
 import { Button, Control, Grid, StackPanel, TextBlock } from '@babylonjs/gui'
 import { ATTRIBUTES, Attributes } from '../../core/attribute'
-import { Race } from '../../../content/race'
 
 export class AttributeSelect {
   private _attributes: Attributes

@@ -18,11 +18,12 @@ import {
 } from '@babylonjs/gui'
 import CharacterCreateScene from '../../../../public/assets/models/character_create_scene.glb'
 import { RaceType, Races } from '../../../content/race'
-import { ATTRIBUTES, Attributes } from '../../core/attribute'
+import { Attributes } from '../../core/attribute'
 import { CharacterModels, CharacterProps } from '../../race/race'
 import { raceSelect } from './raceSelect'
 import { genderSelect } from './genderSelect'
 import { AttributeSelect } from './attributeSelect'
+import { uiButton } from './uiButton'
 
 type CharacterCreationSettings = CharacterProps & {
   cameraRadius: number
@@ -49,6 +50,7 @@ export class CharacterSelect extends FullScreenMenu {
   private _attributes: Attributes
   private _attributesPanel?: AttributeSelect
   private _menuId: string
+  private _autoRotate: boolean = false
   constructor(canvas: HTMLCanvasElement, engine: Engine, scene: Scene) {
     const menuId = 'character_select'
     super(canvas, engine, menuId, new Color4(0.18, 0.09, 0.2), scene)
@@ -95,6 +97,16 @@ export class CharacterSelect extends FullScreenMenu {
     characterPanel.background = 'black'
     characterPanel.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT
     this.menu.addControl(characterPanel)
+    const autoRotateButton = uiButton(`${this._menuId}__auto_rotate`, '↺')
+    autoRotateButton.onPointerDownObservable.add(() => {
+      this._autoRotate = !this._autoRotate
+    })
+    autoRotateButton.background = 'black'
+    autoRotateButton.width = '40px'
+    autoRotateButton.height = '40px'
+    autoRotateButton.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM
+    autoRotateButton.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_CENTER
+    this.menu.addControl(autoRotateButton)
     this._renderSceneCharacters()
   }
 
@@ -158,10 +170,12 @@ export class CharacterSelect extends FullScreenMenu {
           this._attributes,
         ),
       )
-    // this.scene.registerBeforeRender(() => {
-    //   alpha += 0.025
-    //   this.camera.rotationOffset = (18 * alpha) % 360
-    // })
+    this.scene.registerBeforeRender(() => {
+      if (this._autoRotate) {
+        alpha += 0.025
+        this.camera.rotationOffset = (18 * alpha) % 360
+      }
+    })
     this.camera.attachControl(true)
   }
 
