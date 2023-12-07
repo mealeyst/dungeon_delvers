@@ -112,6 +112,7 @@ export class AttributeSelect {
   updateAttributes(attributes: Attributes) {
     this._attributes = attributes
     this._availablePoints = 15
+    this._availablePointsLabel.text = `Available Points: ${this._availablePoints}`
     Object.values(ATTRIBUTES).forEach(attribute => {
       this._attributeValues[attribute].text =
         this._attributes[attribute as ATTRIBUTES].value.toString()
