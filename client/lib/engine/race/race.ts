@@ -81,9 +81,10 @@ export class CharacterModels {
       m_human: {
         mesh: data.meshes[7],
         animations: {
-          idle: data.animationGroups[18],
+          idle: data.animationGroups[19],
           run: data.animationGroups[19],
           walk: data.animationGroups[20],
+          combat_idle: data.animationGroups[18],
         },
       },
       m_orc: {
@@ -105,7 +106,7 @@ export class CharacterModels {
       Characters,
       scene,
     )
-    characters_result.meshes[0].name = 'characters_init'
+    console.log(characters_result)
     return new CharacterModels(characters_result)
   }
   get root() {
