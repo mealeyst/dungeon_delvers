@@ -7,15 +7,6 @@ export enum ATTRIBUTES {
   RES = 'RESOLVE',
 }
 
-export type Attributes = {
-  [ATTRIBUTES.CON]: Constitution
-  [ATTRIBUTES.DEX]: Dexterity
-  [ATTRIBUTES.INT]: Intellect
-  [ATTRIBUTES.MIG]: Might
-  [ATTRIBUTES.PER]: Perception
-  [ATTRIBUTES.RES]: Resolve
-}
-
 export const ATTRIBUTE_MAX_VALUE = 18
 export const ATTRIBUTE_MIN_VALUE = 3
 
@@ -78,5 +69,68 @@ export class Perception extends Attribute {
 export class Resolve extends Attribute {
   constructor(_value: number) {
     super(_value)
+  }
+}
+
+export type attributeProps = {
+  constitution: number
+  dexterity: number
+  intellect: number
+  might: number
+  perception: number
+  resolve: number
+}
+
+export class Attributes {
+  private _attributes = {
+    [ATTRIBUTES.CON]: new Constitution(10),
+    [ATTRIBUTES.DEX]: new Dexterity(10),
+    [ATTRIBUTES.INT]: new Intellect(10),
+    [ATTRIBUTES.MIG]: new Might(10),
+    [ATTRIBUTES.PER]: new Perception(10),
+    [ATTRIBUTES.RES]: new Resolve(10),
+  }
+  constructor({
+    constitution,
+    dexterity,
+    intellect,
+    might,
+    perception,
+    resolve,
+  }: attributeProps) {
+    this._attributes[ATTRIBUTES.CON] = new Constitution(constitution)
+    this._attributes[ATTRIBUTES.DEX] = new Dexterity(dexterity)
+    this._attributes[ATTRIBUTES.INT] = new Intellect(intellect)
+    this._attributes[ATTRIBUTES.MIG] = new Might(might)
+    this._attributes[ATTRIBUTES.PER] = new Perception(perception)
+    this._attributes[ATTRIBUTES.RES] = new Resolve(resolve)
+  }
+
+  setAttributes({
+    constitution,
+    dexterity,
+    intellect,
+    might,
+    perception,
+    resolve,
+  }: attributeProps) {
+    this._attributes[ATTRIBUTES.CON] = new Constitution(constitution)
+    this._attributes[ATTRIBUTES.DEX] = new Dexterity(dexterity)
+    this._attributes[ATTRIBUTES.INT] = new Intellect(intellect)
+    this._attributes[ATTRIBUTES.MIG] = new Might(might)
+    this._attributes[ATTRIBUTES.PER] = new Perception(perception)
+    this._attributes[ATTRIBUTES.RES] = new Resolve(resolve)
+  }
+
+  getAttributes() {
+    return this._attributes
+  }
+
+  setAttribute(attribute: ATTRIBUTES, value: number) {
+    this._attributes[attribute].value = value
+  }
+
+  getAttribute(attribute: ATTRIBUTES) {
+    return this._attributes[attribute]
   }
 }

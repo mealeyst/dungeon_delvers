@@ -33,14 +33,14 @@ export class Races {
     this._races = racesData.reduce(
       (accumulator, { race, attributes: attributeValues, description }) => {
         accumulator[race as RaceType] = new Race(
-          {
-            [ATTRIBUTES.CON]: new Constitution(attributeValues[ATTRIBUTES.CON]),
-            [ATTRIBUTES.DEX]: new Dexterity(attributeValues[ATTRIBUTES.DEX]),
-            [ATTRIBUTES.INT]: new Intellect(attributeValues[ATTRIBUTES.INT]),
-            [ATTRIBUTES.MIG]: new Might(attributeValues[ATTRIBUTES.MIG]),
-            [ATTRIBUTES.PER]: new Perception(attributeValues[ATTRIBUTES.PER]),
-            [ATTRIBUTES.RES]: new Resolve(attributeValues[ATTRIBUTES.RES]),
-          },
+          new Attributes({
+            constitution: attributeValues[ATTRIBUTES.CON],
+            dexterity: attributeValues[ATTRIBUTES.DEX],
+            intellect: attributeValues[ATTRIBUTES.INT],
+            might: attributeValues[ATTRIBUTES.MIG],
+            perception: attributeValues[ATTRIBUTES.PER],
+            resolve: attributeValues[ATTRIBUTES.RES],
+          }),
           description,
         )
         return accumulator
@@ -49,7 +49,7 @@ export class Races {
     )
   }
   attributes(race: RaceType) {
-    return this._races[race].attributes
+    return this._races[race].attributes.getAttributes()
   }
   description(race: RaceType) {
     return this._races[race].description
