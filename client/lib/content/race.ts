@@ -1,13 +1,4 @@
-import {
-  ATTRIBUTES,
-  Attributes,
-  Constitution,
-  Dexterity,
-  Intellect,
-  Might,
-  Perception,
-  Resolve,
-} from '../engine/core/attribute'
+import { ATTRIBUTES, Attributes } from '../engine/core/attribute'
 import racesData from './race.json'
 
 export type RaceType = 'dwarf' | 'goblin' | 'human' | 'orc' | 'elf' | 'half-orc'
@@ -49,7 +40,7 @@ export class Races {
     )
   }
   attributes(race: RaceType) {
-    return this._races[race].attributes.getAttributes()
+    return this._races[race].attributes
   }
   description(race: RaceType) {
     return this._races[race].description

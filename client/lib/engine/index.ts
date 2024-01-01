@@ -1,4 +1,5 @@
 import {
+  AbstractMesh,
   AnimationGroup,
   ArcRotateCamera,
   Color3,
@@ -13,9 +14,7 @@ import {
   PointLight,
   Quaternion,
   Scene,
-  SceneLoader,
   ShadowGenerator,
-  TransformNode,
   Vector3,
 } from '@babylonjs/core'
 import { AdvancedDynamicTexture, Button, Control } from '@babylonjs/gui'
@@ -25,10 +24,11 @@ import '@babylonjs/loaders/glTF'
 import { Stage } from './stage/stage'
 import { Player } from './player/player'
 
-import human_male from '../../public/assets/models/Human_Male.glb'
 import { PlayerInput } from './core/inputController'
 import { MainMenu } from './gui/mainMenu'
 import { CharacterSelect } from './gui/characterSelect/characterSelect'
+import { CharacterModels, CharacterModelsProps } from './race/race'
+import { RaceType } from '../content/race'
 
 export enum GAME_STATE {
   MENU = 0,
@@ -45,8 +45,8 @@ export class Game {
 
   //Game State Related
   public assets: {
-    mesh: Mesh
-    animations: AnimationGroup[]
+    mesh: AbstractMesh | Mesh
+    animations: Record<string, AnimationGroup>
   } //TODO: update this type to NOT by any
   private _input: PlayerInput
   private _stage: Stage
@@ -101,8 +101,8 @@ export class Game {
   }
 
   private async _main(): Promise<void> {
-    await this._goToMenu()
-    // await this._goToGame()
+    // await this._goToMenu()
+    await this._goToGame()
     // run the main render loop
     this._engine.runRenderLoop(() => {
       switch (this._state) {
@@ -205,15 +205,14 @@ export class Game {
       0.01568627450980392,
       0.20392156862745098,
     ) // a color that fit the overall color scheme better
-    let camera: ArcRotateCamera = new ArcRotateCamera(
+    let camera: FreeCamera = new FreeCamera(
       'Camera',
-      Math.PI / 2,
-      Math.PI / 2,
-      2,
-      Vector3.Zero(),
+      new Vector3(0, 150, 0),
       scene,
     )
     camera.setTarget(Vector3.Zero())
+    camera.rotation._y = 0
+    camera.attachControl(this._canvas)
 
     //--GUI--
     const playerUI = AdvancedDynamicTexture.CreateFullscreenUI('UI')
@@ -264,7 +263,7 @@ export class Game {
     this._scene.detachControl()
     let scene = new Scene(this._engine)
     scene.clearColor = new Color4(0, 0, 0, 1)
-    let camera = new FreeCamera('camera1', new Vector3(0, 0, 0), scene)
+    let camera = new FreeCamera('lose_camera', new Vector3(0, 0, 0), scene)
     camera.setTarget(Vector3.Zero())
 
     //--GUI--
@@ -322,25 +321,15 @@ export class Game {
 
       outer.rotationQuaternion = new Quaternion(0, 1, 0, 0)
 
-      return SceneLoader.ImportMeshAsync(null, '', human_male, scene).then(
-        result => {
-          const root = result.meshes[0]
-          root.position.y = 1
-          //body is our actual player mesh
-          const body = root
-          body.rotationQuaternion = new Quaternion(0, 1, 0, 0)
-          body.parent = outer
-          body.isPickable = false //so our raycasts dont hit ourself
-          body.getChildMeshes().forEach(m => {
-            m.isPickable = false
-          })
-
-          return {
-            mesh: body as Mesh,
-            animations: result.animationGroups,
-          }
-        },
-      )
+      const characters = await CharacterModels.loadCharacterMeshes(scene)
+      for (const key in characters.characters) {
+        characters.mesh(key as keyof CharacterModelsProps).isVisible = false
+      }
+      characters.mesh('m_human').isVisible = true
+      return {
+        mesh: characters.mesh('m_human'),
+        animations: characters.animations('m_human'),
+      }
     }
     return loadCharacter().then(assets => {
       this.assets = assets
@@ -368,7 +357,6 @@ export class Game {
     shadowGenerator.darkness = 0.4
 
     //Create the player
-    this._player = new Player(this.assets, scene, this._input)
-    // const camera = this._player.activatePlayerCamera()
+    // this._player = new Player(this.assets, scene, this._input)
   }
 }

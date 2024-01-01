@@ -6,37 +6,38 @@ export class AttributeSelect {
   private _attributeValues: Record<ATTRIBUTES, TextBlock>
   private _availablePoints: number = 15
   private _availablePointsLabel: TextBlock
-  constructor() {
+  private _menuId: string
+  private _attributesPanel: StackPanel
+  constructor(menuId: string, attributes: Attributes) {
+    this._menuId = menuId
     this._attributeValues = {
-      [ATTRIBUTES.CON]: new TextBlock(''),
-      [ATTRIBUTES.DEX]: new TextBlock(''),
-      [ATTRIBUTES.INT]: new TextBlock(''),
-      [ATTRIBUTES.MIG]: new TextBlock(''),
-      [ATTRIBUTES.PER]: new TextBlock(''),
-      [ATTRIBUTES.RES]: new TextBlock(''),
+      [ATTRIBUTES.CON]: new TextBlock(`${menuId}__attribute_${ATTRIBUTES.CON}`),
+      [ATTRIBUTES.DEX]: new TextBlock(`${menuId}__attribute_${ATTRIBUTES.DEX}`),
+      [ATTRIBUTES.INT]: new TextBlock(`${menuId}__attribute_${ATTRIBUTES.INT}`),
+      [ATTRIBUTES.MIG]: new TextBlock(`${menuId}__attribute_${ATTRIBUTES.MIG}`),
+      [ATTRIBUTES.PER]: new TextBlock(`${menuId}__attribute_${ATTRIBUTES.PER}`),
+      [ATTRIBUTES.RES]: new TextBlock(`${menuId}__attribute_${ATTRIBUTES.RES}`),
     }
-  }
-  renderAttributePanel(menuId: string, attributes: Attributes) {
     this._attributes = attributes
-    const attributesPanel = new StackPanel(`${menuId}__attributes_stack`)
+    const attributesPanel = new StackPanel(`${this._menuId}__attributes_stack`)
     attributesPanel.height = '100%'
     attributesPanel.width = '200px'
     attributesPanel.background = 'black'
     attributesPanel.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT
     this._availablePointsLabel = new TextBlock(
-      `${menuId}__available_points_label`,
+      `${this._menuId}__available_points_label`,
       `Available Points: ${this._availablePoints}`,
     )
     this._availablePointsLabel.color = 'white'
     this._availablePointsLabel.height = '40px'
     attributesPanel.addControl(this._availablePointsLabel)
     Object.values(ATTRIBUTES).forEach(attribute => {
-      const attributeGrid = new Grid(`${menuId}__attribute_${attribute}`)
+      const attributeGrid = new Grid(`${this._menuId}__attribute_${attribute}`)
       attributeGrid.height = '100px'
       attributeGrid.addRowDefinition(0.5)
       attributeGrid.addRowDefinition(0.5)
       const attributeValueGrid = new Grid(
-        `${menuId}__attribute_${attribute}_values_grid`,
+        `${this._menuId}__attribute_${attribute}_values_grid`,
       )
       attributeValueGrid.width = '160px'
       attributeValueGrid.height = '40px'
@@ -44,13 +45,12 @@ export class AttributeSelect {
       attributeValueGrid.addColumnDefinition(0.33)
       attributeValueGrid.addColumnDefinition(0.33)
       const attributeLabel = new TextBlock(
-        `${menuId}__attribute_${attribute}`,
+        `${this._menuId}__attribute_${attribute}`,
         attribute,
       )
-      this._attributeValues[attribute as ATTRIBUTES] = new TextBlock(
-        `${menuId}__attribute_${attribute}_value`,
-        this._attributes[attribute as ATTRIBUTES].value.toString(),
-      )
+      this._attributeValues[attribute as ATTRIBUTES].text = this._attributes
+        .getAttribute(attribute)
+        .value.toString()
       this._attributeValues[attribute as ATTRIBUTES].color = 'white'
       attributeLabel.color = 'white'
       attributeLabel.height = '40px'
@@ -61,11 +61,11 @@ export class AttributeSelect {
         1,
       )
       const attributeMinusButton = Button.CreateSimpleButton(
-        `${menuId}__${attribute}_minus`,
+        `${this._menuId}__${attribute}_minus`,
         '-',
       )
       const attributePlusButton = Button.CreateSimpleButton(
-        `${menuId}__${attribute}_plus`,
+        `${this._menuId}__${attribute}_plus`,
         '+',
       )
       attributeMinusButton.onPointerDownObservable.add(clickEvent => {
@@ -73,7 +73,7 @@ export class AttributeSelect {
           this.updateAtribute(
             this._availablePoints + 1,
             attribute,
-            this._attributes[attribute].value - 1,
+            this._attributes.getAttribute(attribute).value - 1,
           )
         }
       })
@@ -82,7 +82,7 @@ export class AttributeSelect {
           this.updateAtribute(
             this._availablePoints - 1,
             attribute,
-            this._attributes[attribute].value + 1,
+            this._attributes.getAttribute(attribute).value + 1,
           )
         }
       })
@@ -94,7 +94,11 @@ export class AttributeSelect {
       attributeGrid.paddingBottom = '20px'
       attributesPanel.addControl(attributeGrid)
     })
-    return attributesPanel
+    this._attributesPanel = attributesPanel
+  }
+
+  get attributesPanel() {
+    return this._attributesPanel
   }
 
   updateAtribute(
@@ -103,7 +107,7 @@ export class AttributeSelect {
     value: number,
   ) {
     this._availablePoints = availablePoints
-    this._attributes[attribute].value = value
+    this._attributes.getAttribute(attribute).value = value
     this._attributeValues[attribute].text = value.toString()
     this._availablePointsLabel.text = `Available Points: ${this._availablePoints}`
   }
@@ -113,8 +117,9 @@ export class AttributeSelect {
     this._availablePoints = 15
     this._availablePointsLabel.text = `Available Points: ${this._availablePoints}`
     Object.values(ATTRIBUTES).forEach(attribute => {
-      this._attributeValues[attribute].text =
-        this._attributes[attribute as ATTRIBUTES].value.toString()
+      this._attributeValues[attribute].text = this._attributes
+        .getAttribute(attribute)
+        .value.toString()
     })
   }
 }

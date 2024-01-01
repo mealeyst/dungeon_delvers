@@ -1,6 +1,7 @@
-import { random, randomChoice } from '../core/random'
-import { Container } from './container'
-import { TreeNode, Axis, Branch } from './tree_node'
+import { random, randomChoice } from './random'
+import { Container } from '../stage/container'
+import { TreeNode, Axis, Branch } from '../stage/tree_node'
+import { Color3, MeshBuilder, Scene, StandardMaterial } from '@babylonjs/core'
 
 type SplitResult = {
   branch_a: Container
@@ -14,6 +15,7 @@ type BinarySpacePartitionArgs = {
   depth?: number
   width?: number
   minRoomSize?: number
+  scene?: Scene
 }
 
 export class BinarySpacePartition {
@@ -38,6 +40,10 @@ export class BinarySpacePartition {
 
   get leaves() {
     return this._trees?.map(tree => tree?.leaves)
+  }
+
+  get trees() {
+    return this._trees
   }
 
   get levelHeight() {
@@ -126,6 +132,7 @@ export class BinarySpacePartition {
         )
         break
     }
+
     return {
       branch_a,
       branch_b,
@@ -135,5 +142,30 @@ export class BinarySpacePartition {
   getRandomDirection(): Axis {
     const directions = ['x', 'z'] as Axis[]
     return randomChoice<Axis>(directions)
+  }
+  operateTrees(
+    operation: (
+      branch_a: TreeNode<Container>,
+      branch_b: TreeNode<Container>,
+      depth?: number,
+    ) => void,
+  ) {
+    this._trees?.forEach(tree => {
+      this.operateTree(operation, tree)
+    })
+  }
+  operateTree(
+    operation: (
+      branch_a: TreeNode<Container>,
+      branch_b: TreeNode<Container>,
+      depth?: number,
+    ) => void,
+    tree: TreeNode<Container>,
+  ): void {
+    if (tree._branch_a && tree._branch_b) {
+      this.operateTree(operation, tree._branch_a)
+      this.operateTree(operation, tree._branch_b)
+      return operation(tree._branch_a, tree._branch_b, tree.depth)
+    }
   }
 }

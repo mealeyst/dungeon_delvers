@@ -38,4 +38,10 @@ export class TreeNode<T> {
     }
     return results
   }
+  get depth(): number {
+    return this._depth
+  }
+  get branch(): Branch {
+    return this._branch
+  }
 }

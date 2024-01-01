@@ -1,15 +1,4 @@
-import {
-  Color3,
-  GroundMesh,
-  Material,
-  Mesh,
-  MeshBuilder,
-  Nullable,
-  Scene,
-  StandardMaterial,
-  TransformNode,
-  Vector3,
-} from '@babylonjs/core'
+import { Color3, Vector3 } from '@babylonjs/core'
 
 export type RoomProps = {
   color?: Color3
@@ -29,7 +18,7 @@ export class Room {
   private _roomCountLimit: number | undefined
   private _height: number
   private _depth: number
-  private _neightbors: Room[] = []
+  private _neighbors: Room[] = []
   private _type: string | undefined
   private _width: number
   private _x: number
@@ -73,10 +62,10 @@ export class Room {
   get name() {
     return this._name
   }
-  center() {
+  get center() {
     return new Vector3(this._x, this._y, this._z)
   }
   public addNeighbor(room: Room) {
-    this._neightbors = [...this._neightbors, room]
+    this._neighbors = [...this._neighbors, room]
   }
 }

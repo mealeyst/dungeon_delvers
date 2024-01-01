@@ -2,6 +2,7 @@ import {
   AbstractMesh,
   AnimationGroup,
   ISceneLoaderAsyncResult,
+  Mesh,
   Scene,
   SceneLoader,
 } from '@babylonjs/core'
@@ -29,6 +30,7 @@ export class CharacterModels {
   constructor(data: ISceneLoaderAsyncResult) {
     this.__root__ = data.meshes[0]
     this.__root__.name = 'characters'
+    this.__root__.id = 'characters'
     this._characters = {
       f_dwarf: {
         mesh: data.meshes[8],

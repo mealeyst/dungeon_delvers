@@ -9,9 +9,10 @@ import {
 } from '@babylonjs/core'
 import { Room } from '../../content/stage/room'
 import { random } from '../core/random'
-import { BinarySpacePartition } from './binarySpacePartition'
+import { BinarySpacePartition } from '../core/binarySpacePartition'
 import triangulate from 'delaunay-triangulate'
 import { Prim } from './prim'
+import { Container } from '@babylonjs/gui'
 
 type DungeonArgs = {
   gutter?: number
@@ -30,11 +31,11 @@ type DungeonRooms = {
 }
 
 export class DungeonGenerator extends TransformNode {
-  private _iterations = 8
-  private _mapLevels = 4
-  private _mapLevelHeight = 2.5
-  private _mapDepth = 100
-  private _mapWidth = 100
+  private _iterations = 6
+  private _mapLevels = 3
+  private _mapLevelHeight = 3
+  private _mapDepth = 140
+  private _mapWidth = 140
   private _minRoomSize = 20
   private _gutter = 10
   _rooms: Room[] = []
@@ -193,16 +194,6 @@ export class DungeonGenerator extends TransformNode {
       width: this._mapWidth,
       minRoomSize: this._minRoomSize,
     })
-    // while (bsp.leaves && bsp.leaves.length < 5) {
-    //   bsp = new BinarySpacePartition({
-    //     iterations: this._iterations,
-    //     levels: this._mapLevels,
-    //     levelHeight: this._mapLevelHeight,
-    //     depth: this._mapDepth,
-    //     width: this._mapWidth,
-    //     minRoomSize: this._minRoomSize,
-    //   })
-    // }
     bsp.leaves &&
       bsp.leaves.forEach((level, level_index) => {
         level.forEach(
@@ -214,21 +205,32 @@ export class DungeonGenerator extends TransformNode {
             },
             index,
           ) => {
+            const randomizedWidth = random(
+              this._minRoomSize * 0.5,
+              this._minRoomSize * 1,
+            )
+            const randomizedX = random(
+              -width / 2 + this._gutter,
+              width / 2 - this._gutter,
+            )
+            const randomizedDepth = random(
+              this._minRoomSize * 0.5,
+              this._minRoomSize * 1,
+            )
+            const randomizedZ = random(
+              -depth / 2 + this._gutter,
+              depth / 2 - this._gutter,
+            )
+
             this._rooms.push(
               new Room({
                 name: `room_${index}_branch_${branch}_${leaf_depth}`,
-                x,
-                y: this._mapLevelHeight * level_index + this._gutter,
-                z,
-                depth:
-                  (this._minRoomSize *
-                    random(this._minRoomSize * 0.6, this._minRoomSize * 1.1)) /
-                  100,
+                x: x + randomizedX,
+                y: this._mapLevelHeight * level_index,
+                z: z + randomizedZ,
+                depth: randomizedDepth,
                 height: this._mapLevelHeight,
-                width:
-                  (this._minRoomSize *
-                    random(this._minRoomSize * 0.6, this._minRoomSize * 1.1)) /
-                  100,
+                width: randomizedWidth,
               }),
             )
           },
@@ -237,7 +239,7 @@ export class DungeonGenerator extends TransformNode {
     this._rooms.forEach(room => {
       const { name, depth, height, width, x, y, z } = room
       const material = new StandardMaterial(`${name}_material`, this._scene)
-      // material.wireframe = true
+      material.backFaceCulling = false
       const roomMesh = MeshBuilder.CreateBox(
         room.name,
         {
@@ -251,29 +253,14 @@ export class DungeonGenerator extends TransformNode {
       roomMesh.position.y = y
       roomMesh.position.z = z
       roomMesh.parent = this
-      ;(material.diffuseColor = new Color3(1, 0, 0)),
-        (roomMesh.material = material)
+      material.diffuseColor = new Color3(1, 0, 0)
+      roomMesh.material = material
     })
     const entrance = this._rooms.reduce((acc, room, index) => {
       acc = room.y > this._rooms[acc].y ? index : acc
       return acc
     }, 0)
-    const cells = triangulate(this._rooms.map(room => [room.x, room.y, room.z]))
 
-    // cells.forEach((cell: number[], i: number) => {
-    //   const tetrahedron = [
-    //     this._rooms[cell[0]].center(),
-    //     this._rooms[cell[1]].center(),
-    //     this._rooms[cell[2]].center(),
-    //     this._rooms[cell[3]].center(),
-    //   ]
-    //   const line = MeshBuilder.CreateLines(
-    //     `line_${i}`,
-    //     { points: tetrahedron },
-    //     this._scene,
-    //   )
-    //   line.parent = this
-    // })
     const prim = new Prim(this._rooms, entrance)
     const lines = MeshBuilder.CreateLines(
       `min_spanning_tree`,
@@ -282,5 +269,8 @@ export class DungeonGenerator extends TransformNode {
     )
     lines.color = new Color3(0, 1, 0)
     lines.parent = this
+
+    const material = new StandardMaterial('container_marterial', this._scene)
+    material.wireframe = true
   }
 }

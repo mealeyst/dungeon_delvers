@@ -162,14 +162,9 @@ export class CharacterSelect extends FullScreenMenu {
     this.camera.lowerHeightOffsetLimit = 1
     this.camera.maxCameraSpeed = 1
     let alpha = 0
-    this._attributesPanel = new AttributeSelect()
+    this._attributesPanel = new AttributeSelect(this._menuId, this._attributes)
     this._attributesPanel &&
-      this.menu.addControl(
-        this._attributesPanel.renderAttributePanel(
-          this._menuId,
-          this._attributes,
-        ),
-      )
+      this.menu.addControl(this._attributesPanel.attributesPanel)
     this.scene.registerBeforeRender(() => {
       if (this._autoRotate) {
         alpha += 0.025

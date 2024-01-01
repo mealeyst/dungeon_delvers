@@ -8,7 +8,7 @@ import {
   Vector3,
 } from '@babylonjs/core'
 import dungeonAssets from '../../../public/assets/models/dungeon_assets.glb'
-import { BinarySpacePartition } from './binarySpacePartition'
+import { BinarySpacePartition } from '../core/binarySpacePartition'
 import { DungeonGenerator } from './dungeon_generator'
 
 type StageAssets = {
@@ -87,7 +87,6 @@ export class Stage {
     )
     const floor_1 = this._assets.floor.clone('floor_1', null) as AbstractMesh
     floor_1.isVisible = true
-    console.log(floor_1.getBoundingInfo().boundingBox)
     // const floor_2 = this._assets.floor.clone('floor_2', null) as AbstractMesh
     // floor_2.isVisible = true
     // floor_2.position.z = 2
