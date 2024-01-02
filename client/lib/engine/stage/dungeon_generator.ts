@@ -7,12 +7,13 @@ import {
   TransformNode,
   Vector3,
 } from '@babylonjs/core'
+import { Container } from '../stage/container'
 import { Room } from '../../content/stage/room'
 import { random } from '../core/random'
 import { BinarySpacePartition } from '../core/binarySpacePartition'
 import triangulate from 'delaunay-triangulate'
 import { Prim } from './prim'
-import { Container } from '@babylonjs/gui'
+import { TreeNode } from './tree_node'
 
 type DungeonArgs = {
   gutter?: number
@@ -32,7 +33,7 @@ type DungeonRooms = {
 
 export class DungeonGenerator extends TransformNode {
   private _iterations = 6
-  private _mapLevels = 3
+  private _mapLevels = 1
   private _mapLevelHeight = 3
   private _mapDepth = 140
   private _mapWidth = 140
@@ -184,6 +185,98 @@ export class DungeonGenerator extends TransformNode {
     return this._minRoomSize
   }
 
+  generateRoom({ depth, width, x, y, z }: Container) {
+    const randomizedWidth = random(
+      this._minRoomSize * 0.5,
+      this._minRoomSize * 1,
+    )
+    const randomizedX = random(
+      -width / 2 + this._gutter,
+      width / 2 - this._gutter,
+    )
+    const randomizedDepth = random(
+      this._minRoomSize * 0.5,
+      this._minRoomSize * 1,
+    )
+    const randomizedZ = random(
+      -depth / 2 + this._gutter,
+      depth / 2 - this._gutter,
+    )
+    const room = new Room({
+      name: `room_${this._rooms.length}`,
+      x: x + randomizedX,
+      y: y,
+      z: z + randomizedZ,
+      depth: randomizedDepth,
+      height: this._mapLevelHeight,
+      width: randomizedWidth,
+    })
+    const material = new StandardMaterial(`${name}_material`, this._scene)
+    material.backFaceCulling = false
+    const roomMesh = MeshBuilder.CreateBox(
+      room.name,
+      {
+        depth: room.depth,
+        height: room.height,
+        width: room.width,
+      },
+      this._scene,
+    )
+    roomMesh.position.x = room.x
+    roomMesh.position.y = room.y
+    roomMesh.position.z = room.z
+    roomMesh.parent = this
+    material.diffuseColor = new Color3(1, 0, 0)
+    roomMesh.material = material
+  }
+
+  generateCorridor(branch_a: Container, branch_b: Container) {
+    const line = MeshBuilder.CreateLines(
+      `min_spanning_tree`,
+      {
+        points: Array.from([
+          new Vector3(branch_a.x, branch_a.y, branch_a.z),
+          new Vector3(branch_b.x, branch_b.y, branch_b.z),
+        ]),
+      },
+      this._scene,
+    )
+    line.color = new Color3(0, 1, 0)
+    line.parent = this
+
+    const material = new StandardMaterial('container_marterial', this._scene)
+    material.diffuseColor = Color3.Random()
+    material.wireframe = true
+    const container_a = MeshBuilder.CreateBox(
+      'corridor',
+      {
+        depth: branch_a.depth,
+        height: branch_a.height,
+        width: branch_a.width,
+      },
+      this._scene,
+    )
+    container_a.position.x = branch_a.x
+    container_a.position.y = branch_a.y
+    container_a.position.z = branch_a.z
+    container_a.parent = this
+    container_a.material = material
+    const container_b = MeshBuilder.CreateBox(
+      'corridor',
+      {
+        depth: branch_b.depth,
+        height: branch_b.height,
+        width: branch_b.width,
+      },
+      this._scene,
+    )
+    container_b.position.x = branch_b.x
+    container_b.position.y = branch_b.y
+    container_b.position.z = branch_b.z
+    container_b.parent = this
+    container_b.material = material
+  }
+
   generateRooms() {
     console.log('Generating Dungeon')
     let bsp = new BinarySpacePartition({
@@ -193,84 +286,11 @@ export class DungeonGenerator extends TransformNode {
       depth: this._mapDepth,
       width: this._mapWidth,
       minRoomSize: this._minRoomSize,
+      leafOperation: this.generateRoom.bind(this),
+      branchesOperation: this.generateCorridor.bind(this),
     })
-    bsp.leaves &&
-      bsp.leaves.forEach((level, level_index) => {
-        level.forEach(
-          (
-            {
-              branch,
-              depth: leaf_depth,
-              node: { depth, height, width, x, y, z },
-            },
-            index,
-          ) => {
-            const randomizedWidth = random(
-              this._minRoomSize * 0.5,
-              this._minRoomSize * 1,
-            )
-            const randomizedX = random(
-              -width / 2 + this._gutter,
-              width / 2 - this._gutter,
-            )
-            const randomizedDepth = random(
-              this._minRoomSize * 0.5,
-              this._minRoomSize * 1,
-            )
-            const randomizedZ = random(
-              -depth / 2 + this._gutter,
-              depth / 2 - this._gutter,
-            )
 
-            this._rooms.push(
-              new Room({
-                name: `room_${index}_branch_${branch}_${leaf_depth}`,
-                x: x + randomizedX,
-                y: this._mapLevelHeight * level_index,
-                z: z + randomizedZ,
-                depth: randomizedDepth,
-                height: this._mapLevelHeight,
-                width: randomizedWidth,
-              }),
-            )
-          },
-        )
-      })
-    this._rooms.forEach(room => {
-      const { name, depth, height, width, x, y, z } = room
-      const material = new StandardMaterial(`${name}_material`, this._scene)
-      material.backFaceCulling = false
-      const roomMesh = MeshBuilder.CreateBox(
-        room.name,
-        {
-          depth,
-          height,
-          width,
-        },
-        this._scene,
-      )
-      roomMesh.position.x = x
-      roomMesh.position.y = y
-      roomMesh.position.z = z
-      roomMesh.parent = this
-      material.diffuseColor = new Color3(1, 0, 0)
-      roomMesh.material = material
-    })
-    const entrance = this._rooms.reduce((acc, room, index) => {
-      acc = room.y > this._rooms[acc].y ? index : acc
-      return acc
-    }, 0)
-
-    const prim = new Prim(this._rooms, entrance)
-    const lines = MeshBuilder.CreateLines(
-      `min_spanning_tree`,
-      { points: Array.from(prim.tree) },
-      this._scene,
-    )
-    lines.color = new Color3(0, 1, 0)
-    lines.parent = this
-
-    const material = new StandardMaterial('container_marterial', this._scene)
-    material.wireframe = true
+    // const material = new StandardMaterial('container_marterial', this._scene)
+    // material.wireframe = true
   }
 }

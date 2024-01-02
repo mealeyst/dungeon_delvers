@@ -16,10 +16,17 @@ type BinarySpacePartitionArgs = {
   width?: number
   minRoomSize?: number
   scene?: Scene
+  leafOperation?: (container: Container) => void
+  branchesOperation?: (branch_a: Container, branch_b: Container) => void
 }
 
 export class BinarySpacePartition {
   private _iterations = 5
+  private _branchesOperation?: (
+    branch_a: Container,
+    branch_b: Container,
+  ) => void = () => {}
+  private _leafOperation?: (container: Container) => void = () => {}
   private _mapDepth = 140
   private _mapLevelHeight = 2.5
   private _mapLevels = 1
@@ -34,7 +41,8 @@ export class BinarySpacePartition {
     this._mapLevels = args?.levels ?? this._mapLevels
     this._mapWidth = args?.width ?? this._mapWidth
     this._minSize = args?.minRoomSize ?? this._minSize
-
+    this._leafOperation = args?.leafOperation
+    this._branchesOperation = args?.branchesOperation
     this.initializeTree()
   }
 
@@ -59,14 +67,17 @@ export class BinarySpacePartition {
       this._mapLevelHeight,
       this._mapDepth,
     )
-    for (let i = 0; i < this._mapLevels; i++) {
-      this._trees?.push(this.generateTree(container, this._iterations, 'root'))
+    for (let level = this._mapLevels; level > 0; level--) {
+      this._trees?.push(
+        this.generateTree(container, this._iterations, level, 'root'),
+      )
     }
   }
 
   generateTree(
     container: Container,
     iterations: number,
+    level: number,
     branch?: Branch,
   ): TreeNode<Container> {
     const node = new TreeNode<Container>(
@@ -81,23 +92,28 @@ export class BinarySpacePartition {
       node._node.depth > sizeBuffer
     ) {
       const direction = this.getRandomDirection()
-      const { branch_a, branch_b } = this.split(node._node, direction)
-      node._branch_a = this.generateTree(branch_a, iterations - 1, 'a')
-      node._branch_b = this.generateTree(branch_b, iterations - 1, 'b')
+      const { branch_a, branch_b } = this.split(node._node, direction, level)
+      node._branch_a = this.generateTree(branch_a, iterations - 1, level, 'a')
+      node._branch_b = this.generateTree(branch_b, iterations - 1, level, 'b')
+      this._branchesOperation &&
+        this._branchesOperation(node._branch_a._node, node._branch_b._node)
+    } else {
+      this._leafOperation && this._leafOperation(node._node)
     }
     return node
   }
 
-  split(container: Container, direction: Axis): SplitResult {
+  split(container: Container, direction: Axis, level: number): SplitResult {
     let branch_a: Container
     let branch_b: Container
     const percentage = random(40, 60) / 100
+
     switch (direction) {
       default:
         const splitWidth = container.width * percentage
         branch_a = new Container(
           container.x + -(container.width - splitWidth) / 2,
-          container.y,
+          level * this._mapLevelHeight,
           container.z,
           splitWidth,
           container.height,
@@ -105,7 +121,7 @@ export class BinarySpacePartition {
         )
         branch_b = new Container(
           container.x + splitWidth / 2,
-          container.y,
+          level * this._mapLevelHeight,
           container.z,
           container.width - splitWidth,
           container.height,
@@ -116,7 +132,7 @@ export class BinarySpacePartition {
         const splitDepth = container.depth * percentage
         branch_a = new Container(
           container.x,
-          container.y,
+          level * this._mapLevelHeight,
           container.z + -(container.depth - splitDepth) / 2,
           container.width,
           container.height,
@@ -124,7 +140,7 @@ export class BinarySpacePartition {
         )
         branch_b = new Container(
           container.x,
-          container.y,
+          level * this._mapLevelHeight,
           container.z + splitDepth / 2,
           container.width,
           container.height,
@@ -142,30 +158,5 @@ export class BinarySpacePartition {
   getRandomDirection(): Axis {
     const directions = ['x', 'z'] as Axis[]
     return randomChoice<Axis>(directions)
-  }
-  operateTrees(
-    operation: (
-      branch_a: TreeNode<Container>,
-      branch_b: TreeNode<Container>,
-      depth?: number,
-    ) => void,
-  ) {
-    this._trees?.forEach(tree => {
-      this.operateTree(operation, tree)
-    })
-  }
-  operateTree(
-    operation: (
-      branch_a: TreeNode<Container>,
-      branch_b: TreeNode<Container>,
-      depth?: number,
-    ) => void,
-    tree: TreeNode<Container>,
-  ): void {
-    if (tree._branch_a && tree._branch_b) {
-      this.operateTree(operation, tree._branch_a)
-      this.operateTree(operation, tree._branch_b)
-      return operation(tree._branch_a, tree._branch_b, tree.depth)
-    }
   }
 }
