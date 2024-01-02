@@ -22,6 +22,7 @@ type DungeonArgs = {
   mapDepth?: number
   mapWidth?: number
   minRoomSize?: number
+  minRoomHeight?: number
 }
 
 type DungeonRooms = {
@@ -32,12 +33,12 @@ type DungeonRooms = {
 }
 
 export class DungeonGenerator extends TransformNode {
-  private _iterations = 6
-  private _mapLevels = 1
-  private _mapLevelHeight = 3
-  private _mapDepth = 140
-  private _mapWidth = 140
+  private _iterations = 5
+  private _mapHeight = 20
+  private _mapDepth = 200
+  private _mapWidth = 200
   private _minRoomSize = 20
+  private _minRoomHeight = 3
   private _gutter = 10
   _rooms: Room[] = []
   public inspectableCustomProperties: any
@@ -46,11 +47,11 @@ export class DungeonGenerator extends TransformNode {
     this._scene = scene
     this._gutter = options?.gutter ?? this._gutter
     this._iterations = options?.iterations ?? this._iterations
-    this._mapLevels = options?.mapHeight ?? this._mapLevels
-    this._mapLevelHeight = options?.mapHeight ?? this._mapLevelHeight
+    this._mapHeight = options?.mapHeight ?? this._mapHeight
     this._mapDepth = options?.mapDepth ?? this._mapDepth
     this._mapWidth = options?.mapWidth ?? this._mapWidth
     this._minRoomSize = options?.minRoomSize ?? this._minRoomSize
+    this._minRoomHeight = options?.minRoomHeight ?? this._minRoomHeight
     this._scene = scene
     this.generateRooms()
     this.inspectableCustomProperties = [
@@ -116,13 +117,20 @@ export class DungeonGenerator extends TransformNode {
         step: 1,
       },
       {
+        label: 'Room Height',
+        propertyName: 'minRoomHeight',
+        type: InspectableType.Slider,
+        min: 3,
+        max: 5,
+        step: 1,
+      },
+      {
         label: 'Generate Dungeon',
         propertyName: 'generate',
         type: InspectableType.Button,
         callback: async () => {
           this._rooms = []
           this.getChildren().forEach(child => child.dispose())
-          this._scene.materials.forEach(material => material.dispose())
           this.generateRooms()
         },
       },
@@ -145,20 +153,12 @@ export class DungeonGenerator extends TransformNode {
     return this._iterations
   }
 
-  set mapLevels(value: number) {
-    this._mapLevels = value
+  set mapHeight(value: number) {
+    this._mapHeight = value
   }
 
-  get mapLevels() {
-    return this._mapLevels
-  }
-
-  set mapLevelHeight(value: number) {
-    this._mapLevelHeight = value
-  }
-
-  get mapLevelHeight() {
-    return this._mapLevelHeight
+  get mapHeight() {
+    return this._mapHeight
   }
 
   set mapDepth(value: number) {
@@ -185,30 +185,30 @@ export class DungeonGenerator extends TransformNode {
     return this._minRoomSize
   }
 
-  generateRoom({ depth, width, x, y, z }: Container) {
+  set minRoomHeight(value: number) {
+    this._minRoomHeight = value
+  }
+
+  get minRoomHeight() {
+    return this._minRoomHeight
+  }
+
+  generateRoom({ x, y, z }: Container) {
     const randomizedWidth = random(
       this._minRoomSize * 0.5,
-      this._minRoomSize * 1,
-    )
-    const randomizedX = random(
-      -width / 2 + this._gutter,
-      width / 2 - this._gutter,
+      this._minRoomSize * 0.8,
     )
     const randomizedDepth = random(
       this._minRoomSize * 0.5,
-      this._minRoomSize * 1,
-    )
-    const randomizedZ = random(
-      -depth / 2 + this._gutter,
-      depth / 2 - this._gutter,
+      this._minRoomSize * 0.8,
     )
     const room = new Room({
       name: `room_${this._rooms.length}`,
-      x: x + randomizedX,
-      y: y,
-      z: z + randomizedZ,
+      x,
+      y,
+      z,
       depth: randomizedDepth,
-      height: this._mapLevelHeight,
+      height: this._minRoomHeight,
       width: randomizedWidth,
     })
     const material = new StandardMaterial(`${name}_material`, this._scene)
@@ -228,6 +228,18 @@ export class DungeonGenerator extends TransformNode {
     roomMesh.parent = this
     material.diffuseColor = new Color3(1, 0, 0)
     roomMesh.material = material
+    const line = MeshBuilder.CreateLines(
+      `min_spanning_tree`,
+      {
+        points: Array.from([
+          new Vector3(x, y, z),
+          new Vector3(room.x, room.y, room.z),
+        ]),
+      },
+      this._scene,
+    )
+    line.color = new Color3(0, 1, 0)
+    line.parent = this
   }
 
   generateCorridor(branch_a: Container, branch_b: Container) {
@@ -243,46 +255,13 @@ export class DungeonGenerator extends TransformNode {
     )
     line.color = new Color3(0, 1, 0)
     line.parent = this
-
-    const material = new StandardMaterial('container_marterial', this._scene)
-    material.diffuseColor = Color3.Random()
-    material.wireframe = true
-    const container_a = MeshBuilder.CreateBox(
-      'corridor',
-      {
-        depth: branch_a.depth,
-        height: branch_a.height,
-        width: branch_a.width,
-      },
-      this._scene,
-    )
-    container_a.position.x = branch_a.x
-    container_a.position.y = branch_a.y
-    container_a.position.z = branch_a.z
-    container_a.parent = this
-    container_a.material = material
-    const container_b = MeshBuilder.CreateBox(
-      'corridor',
-      {
-        depth: branch_b.depth,
-        height: branch_b.height,
-        width: branch_b.width,
-      },
-      this._scene,
-    )
-    container_b.position.x = branch_b.x
-    container_b.position.y = branch_b.y
-    container_b.position.z = branch_b.z
-    container_b.parent = this
-    container_b.material = material
   }
 
   generateRooms() {
     console.log('Generating Dungeon')
     let bsp = new BinarySpacePartition({
       iterations: this._iterations,
-      levels: this._mapLevels,
-      levelHeight: this._mapLevelHeight,
+      height: this._mapHeight,
       depth: this._mapDepth,
       width: this._mapWidth,
       minRoomSize: this._minRoomSize,

@@ -1,7 +1,6 @@
 import { random, randomChoice } from './random'
 import { Container } from '../stage/container'
 import { TreeNode, Axis, Branch } from '../stage/tree_node'
-import { Color3, MeshBuilder, Scene, StandardMaterial } from '@babylonjs/core'
 
 type SplitResult = {
   branch_a: Container
@@ -10,12 +9,11 @@ type SplitResult = {
 
 type BinarySpacePartitionArgs = {
   iterations?: number
-  levelHeight?: number
+  height?: number
   levels?: number
   depth?: number
   width?: number
   minRoomSize?: number
-  scene?: Scene
   leafOperation?: (container: Container) => void
   branchesOperation?: (branch_a: Container, branch_b: Container) => void
 }
@@ -37,7 +35,7 @@ export class BinarySpacePartition {
   constructor(args?: BinarySpacePartitionArgs) {
     this._iterations = args?.iterations ?? this._iterations
     this._mapDepth = args?.depth ?? this._mapDepth
-    this._mapLevelHeight = args?.levelHeight ?? this._mapLevelHeight
+    this._mapLevelHeight = args?.height ?? this._mapLevelHeight
     this._mapLevels = args?.levels ?? this._mapLevels
     this._mapWidth = args?.width ?? this._mapWidth
     this._minSize = args?.minRoomSize ?? this._minSize
@@ -67,17 +65,12 @@ export class BinarySpacePartition {
       this._mapLevelHeight,
       this._mapDepth,
     )
-    for (let level = this._mapLevels; level > 0; level--) {
-      this._trees?.push(
-        this.generateTree(container, this._iterations, level, 'root'),
-      )
-    }
+    this.generateTree(container, this._iterations, 'root')
   }
 
   generateTree(
     container: Container,
     iterations: number,
-    level: number,
     branch?: Branch,
   ): TreeNode<Container> {
     const node = new TreeNode<Container>(
@@ -92,9 +85,9 @@ export class BinarySpacePartition {
       node._node.depth > sizeBuffer
     ) {
       const direction = this.getRandomDirection()
-      const { branch_a, branch_b } = this.split(node._node, direction, level)
-      node._branch_a = this.generateTree(branch_a, iterations - 1, level, 'a')
-      node._branch_b = this.generateTree(branch_b, iterations - 1, level, 'b')
+      const { branch_a, branch_b } = this.split(node._node, direction)
+      node._branch_a = this.generateTree(branch_a, iterations - 1, 'a')
+      node._branch_b = this.generateTree(branch_b, iterations - 1, 'b')
       this._branchesOperation &&
         this._branchesOperation(node._branch_a._node, node._branch_b._node)
     } else {
@@ -103,7 +96,7 @@ export class BinarySpacePartition {
     return node
   }
 
-  split(container: Container, direction: Axis, level: number): SplitResult {
+  split(container: Container, direction: Axis): SplitResult {
     let branch_a: Container
     let branch_b: Container
     const percentage = random(40, 60) / 100
@@ -113,7 +106,7 @@ export class BinarySpacePartition {
         const splitWidth = container.width * percentage
         branch_a = new Container(
           container.x + -(container.width - splitWidth) / 2,
-          level * this._mapLevelHeight,
+          container.y,
           container.z,
           splitWidth,
           container.height,
@@ -121,10 +114,29 @@ export class BinarySpacePartition {
         )
         branch_b = new Container(
           container.x + splitWidth / 2,
-          level * this._mapLevelHeight,
+          container.y,
           container.z,
           container.width - splitWidth,
           container.height,
+          container.depth,
+        )
+        break
+      case 'y':
+        const splitHeight = container.height * percentage
+        branch_a = new Container(
+          container.x,
+          container.y + -(container.height - splitHeight) / 2,
+          container.z,
+          container.width,
+          splitHeight,
+          container.depth,
+        )
+        branch_b = new Container(
+          container.x,
+          container.y + splitHeight / 2,
+          container.z,
+          container.width,
+          container.height - splitHeight,
           container.depth,
         )
         break
@@ -132,7 +144,7 @@ export class BinarySpacePartition {
         const splitDepth = container.depth * percentage
         branch_a = new Container(
           container.x,
-          level * this._mapLevelHeight,
+          container.y,
           container.z + -(container.depth - splitDepth) / 2,
           container.width,
           container.height,
@@ -140,7 +152,7 @@ export class BinarySpacePartition {
         )
         branch_b = new Container(
           container.x,
-          level * this._mapLevelHeight,
+          container.y,
           container.z + splitDepth / 2,
           container.width,
           container.height,
@@ -156,7 +168,7 @@ export class BinarySpacePartition {
   }
 
   getRandomDirection(): Axis {
-    const directions = ['x', 'z'] as Axis[]
+    const directions = ['x', 'y', 'z'] as Axis[]
     return randomChoice<Axis>(directions)
   }
 }

@@ -1,4 +1,4 @@
-export type Axis = 'x' | 'z'
+export type Axis = 'x' | 'y' | 'z'
 export type Branch = 'a' | 'b' | 'root'
 export type Leaf<T> = {
   depth: number
