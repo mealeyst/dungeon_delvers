@@ -34,7 +34,7 @@ type DungeonRooms = {
 
 export class DungeonGenerator extends TransformNode {
   private _iterations = 5
-  private _mapHeight = 20
+  private _mapHeight = 30
   private _mapDepth = 200
   private _mapWidth = 200
   private _minRoomSize = 20
@@ -77,19 +77,11 @@ export class DungeonGenerator extends TransformNode {
         step: 1,
       },
       {
-        label: 'Map Levels',
-        propertyName: 'mapLevels',
-        type: InspectableType.Slider,
-        min: 1,
-        max: 5,
-        step: 1,
-      },
-      {
-        label: 'Map Level Height',
+        label: 'Map Height',
         propertyName: 'mapLevelHeight',
         type: InspectableType.Slider,
-        min: 2.5,
-        max: 8,
+        min: 3,
+        max: 100,
         step: 1,
       },
       {
@@ -243,13 +235,40 @@ export class DungeonGenerator extends TransformNode {
   }
 
   generateCorridor(branch_a: Container, branch_b: Container) {
+    const point_a = new Vector3(branch_a.x, branch_a.y, branch_a.z)
+    const point_b = new Vector3(branch_b.x, branch_b.y, branch_b.z)
+    const max = new Vector3()
+    const min = new Vector3()
+    min.x = Math.min(point_a.x, point_b.x)
+    min.y = Math.min(point_a.y, point_b.y)
+    min.z = Math.min(point_a.z, point_b.z)
+    max.x = Math.max(point_a.x, point_b.x)
+    max.y = Math.max(point_a.y, point_b.y)
+    max.z = Math.max(point_a.z, point_b.z)
+    const center = min.add(max.subtract(min).scale(0.5))
+    const distance = Vector3.Distance(point_a, point_b)
+    const direction = point_a.subtract(point_b).normalize()
+    const material = new StandardMaterial('corridor_material', this._scene)
+    const corridorMesh = MeshBuilder.CreateBox(
+      'corridor',
+      {
+        depth: !(direction.z === 0) ? distance : 3,
+        height: !(direction.y === 0) ? distance : 3,
+        width: !(direction.x === 0) ? distance : 3,
+      },
+      this._scene,
+    )
+    corridorMesh.position.x = center.x
+    corridorMesh.position.y = center.y
+    corridorMesh.position.z = center.z
+    corridorMesh.parent = this
+    material.diffuseColor = new Color3(0, 1, 0)
+    corridorMesh.material = material
+
     const line = MeshBuilder.CreateLines(
       `min_spanning_tree`,
       {
-        points: Array.from([
-          new Vector3(branch_a.x, branch_a.y, branch_a.z),
-          new Vector3(branch_b.x, branch_b.y, branch_b.z),
-        ]),
+        points: [point_a, point_b],
       },
       this._scene,
     )
