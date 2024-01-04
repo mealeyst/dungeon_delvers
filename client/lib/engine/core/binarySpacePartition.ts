@@ -81,8 +81,8 @@ export class BinarySpacePartition {
     const sizeBuffer = this._minSize * 2
     if (
       iterations !== 0 &&
-      node._node.width > sizeBuffer &&
-      node._node.depth > sizeBuffer
+      node._node._width > sizeBuffer &&
+      node._node._depth > sizeBuffer
     ) {
       const direction = this.getRandomDirection()
       const { branch_a, branch_b } = this.split(node._node, direction)
@@ -103,60 +103,60 @@ export class BinarySpacePartition {
 
     switch (direction) {
       default:
-        const splitWidth = container.width * percentage
+        const splitWidth = container._width * percentage
         branch_a = new Container(
-          container.x + -(container.width - splitWidth) / 2,
-          container.y,
-          container.z,
+          container._x + -(container._width - splitWidth) / 2,
+          container._y,
+          container._z,
           splitWidth,
-          container.height,
-          container.depth,
+          container._height,
+          container._depth,
         )
         branch_b = new Container(
-          container.x + splitWidth / 2,
-          container.y,
-          container.z,
-          container.width - splitWidth,
-          container.height,
-          container.depth,
+          container._x + splitWidth / 2,
+          container._y,
+          container._z,
+          container._width - splitWidth,
+          container._height,
+          container._depth,
         )
         break
       case 'y':
-        const splitHeight = container.height * percentage
+        const splitHeight = container._height * percentage
         branch_a = new Container(
-          container.x,
-          container.y + -(container.height - splitHeight) / 2,
-          container.z,
-          container.width,
+          container._x,
+          container._y + -(container._height - splitHeight) / 2,
+          container._z,
+          container._width,
           splitHeight,
-          container.depth,
+          container._depth,
         )
         branch_b = new Container(
-          container.x,
-          container.y + splitHeight / 2,
-          container.z,
-          container.width,
-          container.height - splitHeight,
-          container.depth,
+          container._x,
+          container._y + splitHeight / 2,
+          container._z,
+          container._width,
+          container._height - splitHeight,
+          container._depth,
         )
         break
       case 'z':
-        const splitDepth = container.depth * percentage
+        const splitDepth = container._depth * percentage
         branch_a = new Container(
-          container.x,
-          container.y,
-          container.z + -(container.depth - splitDepth) / 2,
-          container.width,
-          container.height,
+          container._x,
+          container._y,
+          container._z + -(container._depth - splitDepth) / 2,
+          container._width,
+          container._height,
           splitDepth,
         )
         branch_b = new Container(
-          container.x,
-          container.y,
-          container.z + splitDepth / 2,
-          container.width,
-          container.height,
-          container.depth - splitDepth,
+          container._x,
+          container._y,
+          container._z + splitDepth / 2,
+          container._width,
+          container._height,
+          container._depth - splitDepth,
         )
         break
     }

@@ -40,7 +40,8 @@ export class DungeonGenerator extends TransformNode {
   private _minRoomSize = 20
   private _minRoomHeight = 3
   private _gutter = 10
-  _rooms: Room[] = []
+  private _rooms: Record<string, Room> = {}
+  private _container: Container[] = []
   public inspectableCustomProperties: any
   constructor(name = 'dungeon', scene: Scene, options?: DungeonArgs) {
     super(name, scene)
@@ -121,7 +122,6 @@ export class DungeonGenerator extends TransformNode {
         propertyName: 'generate',
         type: InspectableType.Button,
         callback: async () => {
-          this._rooms = []
           this.getChildren().forEach(child => child.dispose())
           this.generateRooms()
         },
@@ -185,7 +185,7 @@ export class DungeonGenerator extends TransformNode {
     return this._minRoomHeight
   }
 
-  generateRoom({ x, y, z }: Container) {
+  generateRoom({ _x: x, _y: y, _z: z }: Container) {
     const randomizedWidth = random(
       this._minRoomSize * 0.5,
       this._minRoomSize * 0.8,
@@ -195,7 +195,7 @@ export class DungeonGenerator extends TransformNode {
       this._minRoomSize * 0.8,
     )
     const room = new Room({
-      name: `room_${this._rooms.length}`,
+      name: `room_x${x}_y${y}_z${z}`,
       x,
       y,
       z,
@@ -203,6 +203,7 @@ export class DungeonGenerator extends TransformNode {
       height: this._minRoomHeight,
       width: randomizedWidth,
     })
+    this._rooms[room.name] = room
     const material = new StandardMaterial(`${name}_material`, this._scene)
     material.backFaceCulling = false
     const roomMesh = MeshBuilder.CreateBox(
@@ -220,23 +221,18 @@ export class DungeonGenerator extends TransformNode {
     roomMesh.parent = this
     material.diffuseColor = new Color3(1, 0, 0)
     roomMesh.material = material
-    const line = MeshBuilder.CreateLines(
-      `min_spanning_tree`,
-      {
-        points: Array.from([
-          new Vector3(x, y, z),
-          new Vector3(room.x, room.y, room.z),
-        ]),
-      },
-      this._scene,
-    )
-    line.color = new Color3(0, 1, 0)
-    line.parent = this
   }
 
   generateCorridor(branch_a: Container, branch_b: Container) {
-    const point_a = new Vector3(branch_a.x, branch_a.y, branch_a.z)
-    const point_b = new Vector3(branch_b.x, branch_b.y, branch_b.z)
+    const point_a = new Vector3(branch_a._x, branch_a._y, branch_a._z)
+    const point_b = new Vector3(branch_b._x, branch_b._y, branch_b._z)
+    const room_a =
+      this._rooms[`room_x${branch_a._x}_y${branch_a._y}_z${branch_a._z}`]
+    const room_b =
+      this._rooms[`room_x${branch_b._x}_y${branch_b._y}_z${branch_b._z}`]
+    const rooms_depth =
+      (room_a ? room_a.depth / 2 : 0) + (room_b ? room_b.depth / 2 : 0)
+
     const max = new Vector3()
     const min = new Vector3()
     min.x = Math.min(point_a.x, point_b.x)
@@ -246,7 +242,8 @@ export class DungeonGenerator extends TransformNode {
     max.y = Math.max(point_a.y, point_b.y)
     max.z = Math.max(point_a.z, point_b.z)
     const center = min.add(max.subtract(min).scale(0.5))
-    const distance = Vector3.Distance(point_a, point_b)
+    const distance = Vector3.Distance(point_a, point_b) - rooms_depth
+
     const direction = point_a.subtract(point_b).normalize()
     const material = new StandardMaterial('corridor_material', this._scene)
     const corridorMesh = MeshBuilder.CreateBox(
@@ -264,16 +261,6 @@ export class DungeonGenerator extends TransformNode {
     corridorMesh.parent = this
     material.diffuseColor = new Color3(0, 1, 0)
     corridorMesh.material = material
-
-    const line = MeshBuilder.CreateLines(
-      `min_spanning_tree`,
-      {
-        points: [point_a, point_b],
-      },
-      this._scene,
-    )
-    line.color = new Color3(0, 1, 0)
-    line.parent = this
   }
 
   generateRooms() {
@@ -287,8 +274,5 @@ export class DungeonGenerator extends TransformNode {
       leafOperation: this.generateRoom.bind(this),
       branchesOperation: this.generateCorridor.bind(this),
     })
-
-    // const material = new StandardMaterial('container_marterial', this._scene)
-    // material.wireframe = true
   }
 }

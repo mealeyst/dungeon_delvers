@@ -1,12 +1,12 @@
 import { Vector3 } from '@babylonjs/core'
 
 export class Cube {
-  x: number
-  y: number
-  z: number
-  width: number
-  depth: number
-  height: number
+  _x: number
+  _y: number
+  _z: number
+  _width: number
+  _depth: number
+  _height: number
 
   constructor(
     x: number,
@@ -16,35 +16,35 @@ export class Cube {
     length: number,
     height: number,
   ) {
-    this.x = x
-    this.y = y
-    this.z = z
-    this.width = width
-    this.depth = length
-    this.height = height
+    this._x = x
+    this._y = y
+    this._z = z
+    this._width = width
+    this._depth = length
+    this._height = height
   }
 
   get center(): Vector3 {
     return new Vector3(
-      this.x + this.width / 2,
-      this.y + this.height / 2,
-      this.z + this.depth / 2,
+      this._x + this._width / 2,
+      this._y + this._height / 2,
+      this._z + this._depth / 2,
     )
   }
 
   get surface(): number {
-    return this.width * this.depth
+    return this._width * this._depth
   }
 
   get back(): number {
-    return this.z + this.depth
+    return this._z + this._depth
   }
 
   get down(): number {
-    return this.y + this.depth
+    return this._y + this._depth
   }
 
   get right(): number {
-    return this.x + this.width
+    return this._x + this._width
   }
 }
