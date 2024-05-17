@@ -25,11 +25,7 @@ export class Cube {
   }
 
   get center(): Vector3 {
-    return new Vector3(
-      this._x + this._width / 2,
-      this._y + this._height / 2,
-      this._z + this._depth / 2,
-    )
+    return new Vector3(this._x, this._y, this._z)
   }
 
   get surface(): number {

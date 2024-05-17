@@ -28,7 +28,7 @@ import { PlayerInput } from './core/inputController'
 import { MainMenu } from './gui/mainMenu'
 import { CharacterSelect } from './gui/characterSelect/characterSelect'
 import { CharacterModels, CharacterModelsProps } from './race/race'
-import { RaceType } from '../content/race'
+import { RaceType } from './core/race'
 
 export enum GAME_STATE {
   MENU = 0,
@@ -102,7 +102,7 @@ export class Game {
 
   private async _main(): Promise<void> {
     // await this._goToMenu()
-    await this._goToGame()
+    await this._goToMenu()
     // run the main render loop
     this._engine.runRenderLoop(() => {
       switch (this._state) {
@@ -326,6 +326,7 @@ export class Game {
         characters.mesh(key as keyof CharacterModelsProps).isVisible = false
       }
       characters.mesh('m_human').isVisible = true
+
       return {
         mesh: characters.mesh('m_human'),
         animations: characters.animations('m_human'),

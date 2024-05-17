@@ -17,7 +17,7 @@ import {
   TextBlock,
 } from '@babylonjs/gui'
 import CharacterCreateScene from '../../../../public/assets/models/character_create_scene.glb'
-import { RaceType, Races } from '../../../content/race'
+import { RaceType, Races } from '../../core/race'
 import { Attributes } from '../../core/attribute'
 import { CharacterModels, CharacterProps } from '../../race/race'
 import { raceSelect } from './raceSelect'

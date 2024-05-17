@@ -1,25 +1,17 @@
 import { Actor } from './actor'
-import {
-  ATTRIBUTES,
-  Constitution,
-  Dexterity,
-  Intellect,
-  Might,
-  Perception,
-  Resolve,
-} from './attribute'
+import { ATTRIBUTES, Attributes } from './attribute'
 
 test('Actor', () => {
   const actor = new Actor(
     'test',
-    {
-      [ATTRIBUTES.CON]: new Constitution(14),
-      [ATTRIBUTES.DEX]: new Dexterity(16),
-      [ATTRIBUTES.INT]: new Intellect(9),
-      [ATTRIBUTES.MIG]: new Might(11),
-      [ATTRIBUTES.PER]: new Perception(15),
-      [ATTRIBUTES.RES]: new Resolve(10),
-    },
+    new Attributes({
+      [ATTRIBUTES.CON]: 14,
+      [ATTRIBUTES.DEX]: 16,
+      [ATTRIBUTES.INT]: 9,
+      [ATTRIBUTES.MIG]: 11,
+      [ATTRIBUTES.PER]: 15,
+      [ATTRIBUTES.RES]: 10,
+    }),
     {
       accuracy: 46, // 47
       deflection: 37, // 37
@@ -28,7 +20,6 @@ test('Actor', () => {
       reflex: 53, // 54
       willpower: 30, // 30
     },
-    'test.png',
   )
   expect(actor.stats).toEqual({
     accuracy: 47,

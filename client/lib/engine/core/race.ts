@@ -1,7 +1,9 @@
-import { ATTRIBUTES, Attributes } from '../engine/core/attribute'
-import racesData from './race.json'
+import { ATTRIBUTES, Attributes } from './attribute'
+import racesData from '../../content/race.json'
 
-export type RaceType = 'dwarf' | 'goblin' | 'human' | 'orc' | 'elf' | 'half-orc'
+//export type RaceType = 'dwarf' | 'goblin' | 'human' | 'orc' | 'elf' | 'half-orc'
+export type RaceType = (typeof racesData)[number]['race']
+racesData[0].race
 
 export class Race {
   private _attributes: Attributes
@@ -25,12 +27,12 @@ export class Races {
       (accumulator, { race, attributes: attributeValues, description }) => {
         accumulator[race as RaceType] = new Race(
           new Attributes({
-            constitution: attributeValues[ATTRIBUTES.CON],
-            dexterity: attributeValues[ATTRIBUTES.DEX],
-            intellect: attributeValues[ATTRIBUTES.INT],
-            might: attributeValues[ATTRIBUTES.MIG],
-            perception: attributeValues[ATTRIBUTES.PER],
-            resolve: attributeValues[ATTRIBUTES.RES],
+            [ATTRIBUTES.CON]: attributeValues[ATTRIBUTES.CON],
+            [ATTRIBUTES.DEX]: attributeValues[ATTRIBUTES.DEX],
+            [ATTRIBUTES.INT]: attributeValues[ATTRIBUTES.INT],
+            [ATTRIBUTES.MIG]: attributeValues[ATTRIBUTES.MIG],
+            [ATTRIBUTES.PER]: attributeValues[ATTRIBUTES.PER],
+            [ATTRIBUTES.RES]: attributeValues[ATTRIBUTES.RES],
           }),
           description,
         )

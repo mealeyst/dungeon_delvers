@@ -73,12 +73,12 @@ export class Resolve extends Attribute {
 }
 
 export type attributeProps = {
-  constitution: number
-  dexterity: number
-  intellect: number
-  might: number
-  perception: number
-  resolve: number
+  [ATTRIBUTES.CON]: number
+  [ATTRIBUTES.DEX]: number
+  [ATTRIBUTES.INT]: number
+  [ATTRIBUTES.MIG]: number
+  [ATTRIBUTES.PER]: number
+  [ATTRIBUTES.RES]: number
 }
 
 export class Attributes {
@@ -91,12 +91,12 @@ export class Attributes {
     [ATTRIBUTES.RES]: new Resolve(10),
   }
   constructor({
-    constitution,
-    dexterity,
-    intellect,
-    might,
-    perception,
-    resolve,
+    [ATTRIBUTES.CON]: constitution,
+    [ATTRIBUTES.DEX]: dexterity,
+    [ATTRIBUTES.INT]: intellect,
+    [ATTRIBUTES.MIG]: might,
+    [ATTRIBUTES.PER]: perception,
+    [ATTRIBUTES.RES]: resolve,
   }: attributeProps) {
     this._attributes[ATTRIBUTES.CON] = new Constitution(constitution)
     this._attributes[ATTRIBUTES.DEX] = new Dexterity(dexterity)
@@ -107,12 +107,12 @@ export class Attributes {
   }
 
   setAttributes({
-    constitution,
-    dexterity,
-    intellect,
-    might,
-    perception,
-    resolve,
+    [ATTRIBUTES.CON]: constitution,
+    [ATTRIBUTES.DEX]: dexterity,
+    [ATTRIBUTES.INT]: intellect,
+    [ATTRIBUTES.MIG]: might,
+    [ATTRIBUTES.PER]: perception,
+    [ATTRIBUTES.RES]: resolve,
   }: attributeProps) {
     this._attributes[ATTRIBUTES.CON] = new Constitution(constitution)
     this._attributes[ATTRIBUTES.DEX] = new Dexterity(dexterity)

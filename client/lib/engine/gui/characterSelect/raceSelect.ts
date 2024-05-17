@@ -1,5 +1,5 @@
 import { Control, Grid } from '@babylonjs/gui'
-import { RaceType } from '../../../content/race'
+import { RaceType } from '../../core/race'
 import { uiButton } from './uiButton'
 
 export const raceSelect = (

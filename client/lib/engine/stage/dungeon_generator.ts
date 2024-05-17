@@ -1,6 +1,8 @@
 import {
+  CSG,
   Color3,
   InspectableType,
+  Mesh,
   MeshBuilder,
   Scene,
   StandardMaterial,
@@ -41,6 +43,7 @@ export class DungeonGenerator extends TransformNode {
   private _minRoomHeight = 3
   private _gutter = 10
   private _rooms: Record<string, Room> = {}
+  private _meshes: Mesh[] = []
   private _container: Container[] = []
   public inspectableCustomProperties: any
   constructor(name = 'dungeon', scene: Scene, options?: DungeonArgs) {
@@ -218,33 +221,68 @@ export class DungeonGenerator extends TransformNode {
     roomMesh.position.x = room.x
     roomMesh.position.y = room.y
     roomMesh.position.z = room.z
+    this._meshes.push(roomMesh)
     roomMesh.parent = this
     material.diffuseColor = new Color3(1, 0, 0)
     roomMesh.material = material
   }
 
   generateCorridor(branch_a: Container, branch_b: Container) {
-    const point_a = new Vector3(branch_a._x, branch_a._y, branch_a._z)
-    const point_b = new Vector3(branch_b._x, branch_b._y, branch_b._z)
+    const direction = branch_a.center.subtract(branch_b.center).normalize()
     const room_a =
       this._rooms[`room_x${branch_a._x}_y${branch_a._y}_z${branch_a._z}`]
+    const room_a_depth = room_a ? room_a.depth : 0
     const room_b =
       this._rooms[`room_x${branch_b._x}_y${branch_b._y}_z${branch_b._z}`]
-    const rooms_depth =
-      (room_a ? room_a.depth / 2 : 0) + (room_b ? room_b.depth / 2 : 0)
+    const room_b_depth = room_b ? room_b.depth : 0
+    const rooms_depth = room_a_depth + room_b_depth
+    const point_a = new Vector3(
+      direction._x !== 0
+        ? direction._x > 0
+          ? branch_a.center._x + room_a_depth
+          : branch_a.center._x - room_a_depth
+        : branch_a.center._x,
+      direction._y !== 0
+        ? direction._y > 0
+          ? branch_a.center._y - room_a_depth
+          : branch_a.center._y + room_a_depth
+        : branch_a.center._y,
+      direction._z !== 0
+        ? direction._z > 0
+          ? branch_a.center._z - room_a_depth
+          : branch_a.center._z + room_a_depth
+        : branch_a.center._z,
+    )
+
+    const point_b = new Vector3(
+      direction._x !== 0
+        ? direction._x > 0
+          ? branch_b.center._x + room_b_depth
+          : branch_b.center._x - room_b_depth
+        : branch_b.center._x,
+      direction._y !== 0
+        ? direction._y > 0
+          ? branch_b.center._y - room_b_depth
+          : branch_b.center._y + room_b_depth
+        : branch_b.center._y,
+      direction._z !== 0
+        ? direction._z > 0
+          ? branch_b.center._z - room_b_depth
+          : branch_b.center._z + room_b_depth
+        : branch_b.center._z,
+    )
 
     const max = new Vector3()
     const min = new Vector3()
-    min.x = Math.min(point_a.x, point_b.x)
-    min.y = Math.min(point_a.y, point_b.y)
-    min.z = Math.min(point_a.z, point_b.z)
-    max.x = Math.max(point_a.x, point_b.x)
-    max.y = Math.max(point_a.y, point_b.y)
-    max.z = Math.max(point_a.z, point_b.z)
+    min.x = Math.min(branch_a.center._x, branch_b.center._x)
+    min.y = Math.min(branch_a.center._y, branch_b.center._y)
+    min.z = Math.min(branch_a.center._z, branch_b.center._z)
+    max.x = Math.max(branch_a.center._x, branch_b.center._x)
+    max.y = Math.max(branch_a.center._y, branch_b.center._y)
+    max.z = Math.max(branch_a.center._z, branch_b.center._z)
     const center = min.add(max.subtract(min).scale(0.5))
-    const distance = Vector3.Distance(point_a, point_b) - rooms_depth
+    const distance = Vector3.Distance(point_a, point_b)
 
-    const direction = point_a.subtract(point_b).normalize()
     const material = new StandardMaterial('corridor_material', this._scene)
     const corridorMesh = MeshBuilder.CreateBox(
       'corridor',
@@ -258,21 +296,23 @@ export class DungeonGenerator extends TransformNode {
     corridorMesh.position.x = center.x
     corridorMesh.position.y = center.y
     corridorMesh.position.z = center.z
+    this._meshes.push(corridorMesh)
     corridorMesh.parent = this
     material.diffuseColor = new Color3(0, 1, 0)
     corridorMesh.material = material
   }
 
   generateRooms() {
-    console.log('Generating Dungeon')
-    let bsp = new BinarySpacePartition({
-      iterations: this._iterations,
-      height: this._mapHeight,
-      depth: this._mapDepth,
-      width: this._mapWidth,
-      minRoomSize: this._minRoomSize,
-      leafOperation: this.generateRoom.bind(this),
-      branchesOperation: this.generateCorridor.bind(this),
-    })
+    const room = new Room('room_1', 'room_a', this._scene)
+    room.position = new Vector3(5, 0, 0)
+    // let bsp = new BinarySpacePartition({
+    //   iterations: this._iterations,
+    //   height: this._mapHeight,
+    //   depth: this._mapDepth,
+    //   width: this._mapWidth,
+    //   minRoomSize: this._minRoomSize,
+    //   leafOperation: this.generateRoom.bind(this),
+    //   branchesOperation: this.generateCorridor.bind(this),
+    // })
   }
 }
