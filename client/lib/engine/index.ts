@@ -26,7 +26,7 @@ import { Player } from './player/player'
 
 import { PlayerInput } from './core/inputController'
 import { MainMenu } from './gui/mainMenu'
-import { CharacterCreation } from './gui/characterSelect/characterCreation'
+import { CharacterCreation } from './gui/characterCreation/characterCreation'
 import { CharacterModels, CharacterModelsProps } from './race/race'
 
 export enum GAME_STATE {
