@@ -26,16 +26,16 @@ import { Player } from './player/player'
 
 import { PlayerInput } from './core/inputController'
 import { MainMenu } from './gui/mainMenu'
-import { CharacterSelect } from './gui/characterSelect/characterSelect'
+import { CharacterCreation } from './gui/characterSelect/characterCreation'
 import { CharacterModels, CharacterModelsProps } from './race/race'
-import { RaceType } from './core/race'
 
 export enum GAME_STATE {
-  MENU = 0,
-  PLAYING = 1,
-  LOADING = 2,
-  CUTSCENE = 3,
-  LOSE = 4,
+  MAIN_MENU = 0,
+  LOADING = 1,
+  CHARACTER_SELECT = 2,
+  PLAYING = 3,
+  CHARACTER_CREATION_RACE = 4,
+  CHARACTER_CREATION_CLASS = 5,
 }
 export class Game {
   // General Entire Application
@@ -106,7 +106,7 @@ export class Game {
     // run the main render loop
     this._engine.runRenderLoop(() => {
       switch (this._state) {
-        case GAME_STATE.MENU:
+        case GAME_STATE.MAIN_MENU:
           this._scene.render()
           break
         case GAME_STATE.PLAYING:
@@ -115,10 +115,13 @@ export class Game {
         case GAME_STATE.LOADING:
           this._scene.render()
           break
-        case GAME_STATE.CUTSCENE:
+        case GAME_STATE.CHARACTER_SELECT:
           this._scene.render()
           break
-        case GAME_STATE.LOSE:
+        case GAME_STATE.CHARACTER_CREATION_RACE:
+          this._scene.render()
+          break
+        case GAME_STATE.CHARACTER_CREATION_CLASS:
           this._scene.render()
           break
       }
@@ -131,13 +134,13 @@ export class Game {
   }
 
   private async _goToMenu() {
-    // const mainMenu = new MainMenu(this._engine, this._scene)
-    const characterSelect = new CharacterSelect(
-      this._canvas,
-      this._engine,
-      this._scene,
-    )
-    this._scene = characterSelect.scene
+    const mainMenu = new MainMenu(this._canvas, this._engine, this._scene)
+    // const characterSelect = new CharacterCreation(
+    //   this._canvas,
+    //   this._engine,
+    //   this._scene,
+    // )
+    this._scene = mainMenu.scene
   }
 
   private async _goToCutScene(): Promise<void> {
@@ -173,8 +176,6 @@ export class Game {
     await this._cutScene.whenReadyAsync()
     this._engine.hideLoadingUI()
     this._scene.dispose()
-    this._state = GAME_STATE.CUTSCENE
-    this._scene = this._cutScene
 
     //--START LOADING AND SETTING UP THE GAME DURING THIS SCENE--
     var finishedLoading = false
@@ -284,7 +285,6 @@ export class Game {
     //lastly set the current state to the lose state and set the scene to the lose scene
     this._scene.dispose()
     this._scene = scene
-    this._state = GAME_STATE.LOSE
   }
 
   private _createCanvas() {

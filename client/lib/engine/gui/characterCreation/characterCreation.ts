@@ -17,7 +17,7 @@ import {
   TextBlock,
 } from '@babylonjs/gui'
 import CharacterCreateScene from '../../../../public/assets/models/character_create_scene.glb'
-import { RaceType, Races } from '../../core/race'
+import { RaceName, Races } from '../../core/races'
 import { Attributes } from '../../core/attribute'
 import { CharacterModels, CharacterProps } from '../../race/race'
 import { raceSelect } from './raceSelect'
@@ -41,9 +41,9 @@ type CharactersCreationSettings = {
   m_orc: CharacterCreationSettings
 }
 
-export class CharacterSelect extends FullScreenMenu {
+export class CharacterCreation extends FullScreenMenu {
   private _characters: CharactersCreationSettings
-  private _selectedRace: RaceType
+  private _selectedRace: RaceName
   private _selectedGender: 'm' | 'f'
   private _races = new Races()
   private _descriptionText: TextBlock
@@ -68,7 +68,7 @@ export class CharacterSelect extends FullScreenMenu {
     characterNameInput.width = '400px'
     characterNameInput.height = '40px'
     characterNameInput.color = 'white'
-    const raceGrid = raceSelect(this._menuId, (race: RaceType) =>
+    const raceGrid = raceSelect(this._menuId, (race: RaceName) =>
       this._setRace(race),
     )
     const genderGrid = genderSelect(this._menuId, (gender: 'm' | 'f') =>
@@ -169,6 +169,8 @@ export class CharacterSelect extends FullScreenMenu {
       if (this._autoRotate) {
         alpha += 0.025
         this.camera.rotationOffset = (18 * alpha) % 360
+      } else {
+        this.camera.rotationOffset = 0
       }
     })
     this.camera.attachControl(true)
@@ -195,7 +197,7 @@ export class CharacterSelect extends FullScreenMenu {
     this._setModelVisibility()
   }
 
-  private _setRace(race: RaceType) {
+  private _setRace(race: RaceName) {
     this._selectedRace = race
     this._descriptionText.text = this._races.description(race)
     const attibutes = this._races.attributes(race)

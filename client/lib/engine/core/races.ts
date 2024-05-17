@@ -1,16 +1,19 @@
 import { ATTRIBUTES, Attributes } from './attribute'
-import racesData from '../../content/race.json'
+import { races } from '../../content/races'
 
-//export type RaceType = 'dwarf' | 'goblin' | 'human' | 'orc' | 'elf' | 'half-orc'
-export type RaceType = (typeof racesData)[number]['race']
-racesData[0].race
+export type RaceName = (typeof races)[number]['race']
 
 export class Race {
+  private _name: RaceName
   private _attributes: Attributes
   private _description: string
-  constructor(attributes: Attributes, description: string) {
+  constructor(name: RaceName, attributes: Attributes, description: string) {
+    this._name = name
     this._attributes = attributes
     this._description = description
+  }
+  get name() {
+    return this._name
   }
   get attributes() {
     return this._attributes
@@ -21,11 +24,12 @@ export class Race {
 }
 
 export class Races {
-  private _races: Record<RaceType, Race>
+  private _races: Record<RaceName, Race>
   constructor() {
-    this._races = racesData.reduce(
+    this._races = races.reduce(
       (accumulator, { race, attributes: attributeValues, description }) => {
-        accumulator[race as RaceType] = new Race(
+        accumulator[race as RaceName] = new Race(
+          race,
           new Attributes({
             [ATTRIBUTES.CON]: attributeValues[ATTRIBUTES.CON],
             [ATTRIBUTES.DEX]: attributeValues[ATTRIBUTES.DEX],
@@ -38,13 +42,16 @@ export class Races {
         )
         return accumulator
       },
-      {} as Record<RaceType, Race>,
+      {} as Record<RaceName, Race>,
     )
   }
-  attributes(race: RaceType) {
+  race(race: RaceName) {
+    return this._races[race]
+  }
+  attributes(race: RaceName) {
     return this._races[race].attributes
   }
-  description(race: RaceType) {
+  description(race: RaceName) {
     return this._races[race].description
   }
 }

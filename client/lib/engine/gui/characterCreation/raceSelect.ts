@@ -1,10 +1,10 @@
 import { Control, Grid } from '@babylonjs/gui'
-import { RaceType } from '../../core/race'
+import { RaceName } from '../../core/races'
 import { uiButton } from './uiButton'
 
 export const raceSelect = (
   menuId: string,
-  raceSelectCallback: (race: RaceType) => void,
+  raceSelectCallback: (race: RaceName) => void,
 ) => {
   const humanButton = uiButton(`${menuId}__race_human`, 'Human')
   const dwarfButton = uiButton(`${menuId}__race_dwarf`, 'Dwarf')
