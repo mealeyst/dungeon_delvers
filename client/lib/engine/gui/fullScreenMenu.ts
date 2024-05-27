@@ -2,11 +2,8 @@ import {
   Color4,
   Engine,
   FollowCamera,
-  FreeCamera,
   HemisphericLight,
-  MeshBuilder,
   Scene,
-  SceneLoader,
   Vector3,
 } from '@babylonjs/core'
 import { AdvancedDynamicTexture, Control, StackPanel } from '@babylonjs/gui'

@@ -1,3 +1,4 @@
+import { io } from "socket.io-client";
 import {
   AbstractMesh,
   AnimationGroup,
@@ -26,12 +27,13 @@ import { Player } from './player/player'
 
 import { PlayerInput } from './core/inputController'
 import { MainMenu } from './gui/mainMenu'
+import { CharacterSelect } from './gui/characterSelect'
 import { CharacterCreation } from './gui/characterCreation/characterCreation'
 import { CharacterModels, CharacterModelsProps } from './race/race'
 
 export enum GAME_STATE {
   MAIN_MENU = 0,
-  LOADING = 1,
+  SERVER_SELECT = 1,
   CHARACTER_SELECT = 2,
   PLAYING = 3,
   CHARACTER_CREATION_RACE = 4,
@@ -101,7 +103,9 @@ export class Game {
   }
 
   private async _main(): Promise<void> {
-    // await this._goToMenu()
+    const socket = io('http://localhost:4000')
+
+
     await this._goToMenu()
     // run the main render loop
     this._engine.runRenderLoop(() => {
@@ -112,7 +116,7 @@ export class Game {
         case GAME_STATE.PLAYING:
           this._scene.render()
           break
-        case GAME_STATE.LOADING:
+        case GAME_STATE.SERVER_SELECT:
           this._scene.render()
           break
         case GAME_STATE.CHARACTER_SELECT:
@@ -134,54 +138,13 @@ export class Game {
   }
 
   private async _goToMenu() {
-    const mainMenu = new MainMenu(this._canvas, this._engine, this._scene)
+    const mainMenu = new MainMenu(this._canvas, this._engine, this._scene, this.goToCharacterSelect.bind(this))
     // const characterSelect = new CharacterCreation(
     //   this._canvas,
     //   this._engine,
     //   this._scene,
     // )
     this._scene = mainMenu.scene
-  }
-
-  private async _goToCutScene(): Promise<void> {
-    this._engine.displayLoadingUI()
-    //--SETUP SCENE--
-    //dont detect any inputs from this ui while the game is loading
-    this._scene.detachControl()
-    this._cutScene = new Scene(this._engine)
-    let camera = new FreeCamera('camera1', new Vector3(0, 0, 0), this._cutScene)
-    camera.setTarget(Vector3.Zero())
-    this._cutScene.clearColor = new Color4(0, 0, 0, 1)
-
-    //--GUI--
-    const cutScene = AdvancedDynamicTexture.CreateFullscreenUI('cutscene')
-
-    //--PROGRESS DIALOGUE--
-    const next = Button.CreateSimpleButton('next', 'NEXT')
-    next.color = 'white'
-    next.thickness = 0
-    next.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM
-    next.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT
-    next.width = '64px'
-    next.height = '64px'
-    next.top = '-3%'
-    next.left = '-12%'
-    cutScene.addControl(next)
-
-    next.onPointerUpObservable.add(() => {
-      this._goToGame()
-    })
-
-    //--WHEN SCENE IS FINISHED LOADING--
-    await this._cutScene.whenReadyAsync()
-    this._engine.hideLoadingUI()
-    this._scene.dispose()
-
-    //--START LOADING AND SETTING UP THE GAME DURING THIS SCENE--
-    var finishedLoading = false
-    await this._setUpGame().then(res => {
-      finishedLoading = true
-    })
   }
 
   private async _setUpGame() {
@@ -192,6 +155,16 @@ export class Game {
     this._stage = stage
 
     await this._loadCharacterAssets(scene) //character
+  }
+
+  private async goToCharacterSelect() {
+    const characterSelect = new CharacterSelect(this._canvas, this._engine, this._scene, this.goToCharacterCreation.bind(this )) 
+    this._scene = characterSelect.scene
+  }
+
+  private async goToCharacterCreation() {
+    const characterCreation = new CharacterCreation(this._canvas, this._engine, this._scene)
+    this._scene = characterCreation.scene
   }
 
   private async _goToGame() {

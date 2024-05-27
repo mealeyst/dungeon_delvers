@@ -4,7 +4,8 @@
   "description": "The Node backend server for Dungeon Delvers",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:dev": "nodemon server.ts",
+    "test": "jest --config ./jest.config.json"
   },
   "keywords": [
     "Node",
@@ -14,5 +15,16 @@
     "Socket.io"
   ],
   "author": "Shawn Mealey",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.0",
+    "ts-jest": "^29.1.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
 }

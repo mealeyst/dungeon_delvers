@@ -2,7 +2,8 @@
   "name": "dungeon_delvers",
   "workspaces": [
     "client",
-    "server"
+    "server",
+    "auth"
   ],
   "version": "0.0.1",
   "description": "Online 3D Dungeon Crawler made with BabylonJS",
@@ -38,6 +39,7 @@
     "@typescript-eslint/eslint-plugin": "^5.60.0",
     "@typescript-eslint/parser": "^5.60.0",
     "babel-jest": "^29.5.0",
+    "buffer": "^6.0.3",
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.1.0",
