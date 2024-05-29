@@ -9,7 +9,7 @@ import {
   TransformNode,
   Vector3,
 } from '@babylonjs/core'
-import { Container } from '../stage/container'
+import { Container } from './container'
 import { Room } from '../../content/stage/room'
 import { random } from '../core/random'
 import { BinarySpacePartition } from '../core/binarySpacePartition'
