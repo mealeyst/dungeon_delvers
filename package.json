@@ -9,7 +9,6 @@
   "version": "0.0.1",
   "description": "Online 3D Dungeon Crawler made with BabylonJS",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "build": "npm run build --workspace=client",
     "clean": "npm run clean --workspace=client",

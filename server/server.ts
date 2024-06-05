@@ -1,26 +1,109 @@
+import express from "express";
+import { type Request, type Response } from "express";
+import { createServer } from "node:http";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import passport from "passport";
+import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
+import bodyParser from "body-parser";
 import { Server } from "socket.io";
+import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+
+declare global {
+  namespace Express {
+    interface User {
+      id: number;
+      username: string;
+    }
+  }
+}
 
 dotenv.config();
 const port = process.env.PORT ? parseInt(process.env.PORT) : 4000;
+const jwtSecret = process.env.JWT_SECRET || 'Mys3cr3t'
 
-const io = new Server({
-  cors: {
-    origin: "*",
+const app = express();
+const httpServer = createServer(app);
+
+app.use(bodyParser.json());
+
+app.get(
+  "/self",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    if (req.user) {
+      res.send(req.user);
+    } else {
+      res.status(401).end();
+    }
   },
+);
+
+app.post("/login", (req, res) => {
+  if (req.body.username === "john" && req.body.password === "changeit") {
+    console.log("authentication OK");
+
+    const user = {
+      id: 1,
+      username: "john",
+    };
+
+    const token = jwt.sign(
+      {
+        data: user,
+      },
+      jwtSecret,
+      {
+        issuer: "accounts.examplesoft.com",
+        audience: "yoursite.net",
+        expiresIn: "1h",
+      },
+    );
+
+    res.json({ token });
+  } else {
+    console.log("wrong credentials");
+    res.status(401).end();
+  }
 });
-console.log(`listening on port ${port}`);
+
+const jwtDecodeOptions = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: jwtSecret,
+  issuer: "accounts.examplesoft.com",
+  audience: "yoursite.net",
+};
+
+passport.use(
+  new JwtStrategy(jwtDecodeOptions, (payload, done) => {
+    return done(null, payload.data);
+  }),
+);
+
+const io = new Server(httpServer);
+
+io.engine.use(
+  (req: { _query: Record<string, string> }, res: Response, next: Function) => {
+    const isHandshake = req._query.sid === undefined;
+    if (isHandshake) {
+      passport.authenticate("jwt", { session: false })(req, res, next);
+    } else {
+      next();
+    }
+  },
+);
 
 io.on("connection", (socket) => {
-  console.log(`socket ${socket.id} connected`);
+  const req = socket.request as Request & { user: Express.User };
 
-  // send an event to the client
-  socket.emit("welcome", "hello from the server!");
+  socket.join(`user:${req.user.id}`);
 
-  // upon disconnection
-  socket.on("disconnect", (reason) => {
-    console.log(`socket ${socket.id} disconnected due to ${reason}`);
+  socket.on("whoami", (cb) => {
+    cb(req.user.username);
   });
 });
 
-io.listen(port);
+httpServer.listen(port, () => {
+  console.log(`application is running at: http://localhost:${port}`);
+});
