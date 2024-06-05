@@ -1,0 +1,23 @@
+{
+  "name": "db_migrations",
+  "version": "0.0.1",
+  "description": "Simple workspace to perform database migrations",
+  "main": "index.ts",
+  "scripts": {
+    "migrate": "node-pg-migrate --tsconfig=\"./tsconfig.json\""
+  },
+  "keywords": [
+    "PostgresSQL",
+    "Migrations",
+    "Node"
+  ],
+  "author": "Shawn Mealey",
+  "license": "ISC",
+  "dependencies": {
+    "pg": "^8.12.0",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "node-pg-migrate": "^7.4.0"
+  }
+}
