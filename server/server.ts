@@ -1,14 +1,13 @@
-import express from "express";
-import { type Request, type Response } from "express";
 import { createServer } from "node:http";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-import passport from "passport";
-import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import bodyParser from "body-parser";
 import { Server } from "socket.io";
-import jwt from "jsonwebtoken";
+import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
+import { type Request, type Response } from "express";
+import bodyParser from "body-parser";
+import cors from 'cors';
 import dotenv from "dotenv";
+import express from "express";
+import jwt from "jsonwebtoken";
+import passport from "passport";
 
 declare global {
   namespace Express {
@@ -25,7 +24,7 @@ const jwtSecret = process.env.JWT_SECRET || 'Mys3cr3t'
 
 const app = express();
 const httpServer = createServer(app);
-
+app.use(cors())
 app.use(bodyParser.json());
 
 app.get(

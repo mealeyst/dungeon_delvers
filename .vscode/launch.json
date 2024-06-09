@@ -6,17 +6,24 @@
   "configurations": [
     {
       "command": "npm run start:dev",
-      "name": "Run npm Auth dev",
+      "name": "Launch Auth",
       "request": "launch",
       "type": "node-terminal",
       "cwd": "${workspaceRoot}/auth",
     },
     {
       "command": "npm run start:dev",
-      "name": "Launch Dev Server",
+      "name": "Launch Server",
       "request": "launch",
       "type": "node-terminal",
       "cwd": "${workspaceRoot}/server",
+    },
+    {
+      "command": "npm run start",
+      "name": "Launch Client",
+      "request": "launch",
+      "type": "node-terminal",
+      "cwd": "${workspaceRoot}/client",
     }
   ]
 }
