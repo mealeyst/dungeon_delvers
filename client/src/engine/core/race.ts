@@ -1,9 +1,7 @@
 import { ATTRIBUTES, Attributes } from './attribute'
-import racesData from '../../content/race.json'
-import data from '../../content/race.json' with { type: "json", const: true };
+import { races } from '../../content/race'
 
-//export type RaceType = 'dwarf' | 'goblin' | 'human' | 'orc' | 'elf' | 'half-orc'
-export type RaceType = (typeof data)[number]['race']
+export type RaceType = (typeof races)[number]['race']
 
 export class Race {
   private _attributes: Attributes
@@ -23,7 +21,7 @@ export class Race {
 export class Races {
   private _races: Record<RaceType, Race>
   constructor() {
-    this._races = racesData.reduce(
+    this._races = races.reduce(
       (accumulator, { race, attributes: attributeValues, description }) => {
         accumulator[race as RaceType] = new Race(
           new Attributes({

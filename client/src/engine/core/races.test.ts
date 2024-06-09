@@ -1,5 +1,5 @@
 import { Race, Races } from './races'
-import { races } from '../../content/races'
+import { races } from '../../content/race'
 import { ATTRIBUTES, Attributes } from './attribute'
 
 describe('Race class', () => {
