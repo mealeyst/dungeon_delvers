@@ -26,18 +26,20 @@ import { Stage } from './stage/stage'
 import { Player } from './player/player'
 
 import { PlayerInput } from './core/inputController'
-import { MainMenu } from './gui/mainMenu'
+import { Login } from './gui/mainMenu'
 import { CharacterSelect } from './gui/characterSelect'
 import { CharacterCreation } from './gui/characterCreation/characterCreation'
 import { CharacterModels, CharacterModelsProps } from './race/race'
 
 export enum GAME_STATE {
-  MAIN_MENU = 0,
-  SERVER_SELECT = 1,
-  CHARACTER_SELECT = 2,
-  PLAYING = 3,
-  CHARACTER_CREATION_RACE = 4,
-  CHARACTER_CREATION_CLASS = 5,
+  LOGIN = 0,
+  SIGN_UP = 1,
+  SERVER_SELECT = 2,
+  CHARACTER_SELECT = 3,
+  LOADING = 4,
+  PLAYING = 5,
+  CHARACTER_CREATION_RACE = 6,
+  CHARACTER_CREATION_CLASS = 7,
 }
 export class Game {
   // General Entire Application
@@ -103,14 +105,26 @@ export class Game {
   }
 
   private async _main(): Promise<void> {
-    const socket = io('http://localhost:4000')
-
-
-    await this._goToMenu()
+    const token = localStorage.getItem('token');
+    if (!token) {
+      await this._goToLogin()
+    }
+    const res = await fetch('http://localhost:4000/self', {
+      mode: 'cors',
+      headers: {
+        authorization: `bearer ${token}`
+      }
+    });
+    console.log(res)
+    if (res.status === 200) {
+      await this._goToCharacterSelect()
+    } else {
+      await this._goToLogin()
+    }
     // run the main render loop
     this._engine.runRenderLoop(() => {
       switch (this._state) {
-        case GAME_STATE.MAIN_MENU:
+        case GAME_STATE.LOGIN:
           this._scene.render()
           break
         case GAME_STATE.PLAYING:
@@ -137,13 +151,8 @@ export class Game {
     })
   }
 
-  private async _goToMenu() {
-    const mainMenu = new MainMenu(this._canvas, this._engine, this._scene, this.goToCharacterSelect.bind(this))
-    // const characterSelect = new CharacterCreation(
-    //   this._canvas,
-    //   this._engine,
-    //   this._scene,
-    // )
+  private async _goToLogin() {
+    const mainMenu = new Login(this._canvas, this._engine, this._scene, this._goToCharacterSelect.bind(this))
     this._scene = mainMenu.scene
   }
 
@@ -157,8 +166,8 @@ export class Game {
     await this._loadCharacterAssets(scene) //character
   }
 
-  private async goToCharacterSelect() {
-    const characterSelect = new CharacterSelect(this._canvas, this._engine, this._scene, this.goToCharacterCreation.bind(this )) 
+  private async _goToCharacterSelect() {
+    const characterSelect = new CharacterSelect(this._canvas, this._engine, this._scene, this.goToCharacterCreation.bind(this))
     this._scene = characterSelect.scene
   }
 
@@ -249,7 +258,7 @@ export class Game {
     guiMenu.addControl(mainBtn)
     //this handles interactions with the start button attached to the scene
     mainBtn.onPointerUpObservable.add(() => {
-      this._goToMenu()
+      this._goToLogin()
     })
 
     //--SCENE FINISHED LOADING--
