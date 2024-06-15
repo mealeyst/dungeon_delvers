@@ -5,12 +5,14 @@ import {
   Mesh,
   Scene,
   SceneLoader,
+  TransformNode,
 } from '@babylonjs/core'
 import Characters from '../../../public/assets/models/characters.glb'
 
 export type CharacterProps = {
   mesh: AbstractMesh
   animations: Record<string, AnimationGroup>
+  node?: TransformNode
 }
 
 export type CharacterModelsProps = {

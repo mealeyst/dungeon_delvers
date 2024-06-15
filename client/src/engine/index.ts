@@ -8,10 +8,14 @@ import {
   Engine,
   EngineFactory,
   FreeCamera,
+  GroundMesh,
+  HavokPlugin,
   HemisphericLight,
   Matrix,
   Mesh,
   MeshBuilder,
+  PhysicsAggregate,
+  PhysicsShapeType,
   PointLight,
   Quaternion,
   Scene,
@@ -25,11 +29,9 @@ import '@babylonjs/loaders/glTF'
 import { Stage } from './stage/stage'
 import { Player } from './player/player'
 
-import { PlayerInput } from './core/inputController'
 import { Login } from './gui/mainMenu'
 import { CharacterSelect } from './gui/characterSelect'
 import { CharacterCreation } from './gui/characterCreation/characterCreation'
-import { CharacterModels, CharacterModelsProps } from './race/race'
 
 export enum GAME_STATE {
   LOGIN = 0,
@@ -41,6 +43,7 @@ export enum GAME_STATE {
   CHARACTER_CREATION_RACE = 6,
   CHARACTER_CREATION_CLASS = 7,
 }
+
 export class Game {
   // General Entire Application
   private _scene: Scene
@@ -52,14 +55,13 @@ export class Game {
     mesh: AbstractMesh | Mesh
     animations: Record<string, AnimationGroup>
   } //TODO: update this type to NOT by any
-  private _input: PlayerInput
   private _stage: Stage
   private _player: Player
 
   //Scene - related
-  private _state: number = 2
+  private _state: number = 3
   private _gamescene: Scene
-  private _cutScene: Scene
+  private _havokInstance: HavokPhysicsWithBindings
 
   constructor() {
     this._canvas = this._createCanvas()
@@ -101,26 +103,31 @@ export class Game {
         }
       }
     })
+    this._havokInstance = await this.getInitializedHavok()
     await this._main()
   }
 
+  private async getInitializedHavok() {
+    return await HavokPhysics();
+  }
+
   private async _main(): Promise<void> {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      await this._goToLogin()
-    }
-    const res = await fetch('http://localhost:4000/self', {
-      mode: 'cors',
-      headers: {
-        authorization: `bearer ${token}`
-      }
-    });
-    console.log(res)
-    if (res.status === 200) {
-      await this._goToCharacterSelect()
-    } else {
-      await this._goToLogin()
-    }
+    // const token = localStorage.getItem('token');
+    // if (!token) {
+    //   await this._goToLogin()
+    // }
+    // const res = await fetch('http://localhost:4000/self', {
+    //   mode: 'cors',
+    //   headers: {
+    //     authorization: `bearer ${token}`
+    //   }
+    // });
+    // if (res.status === 200) {
+    //   await this._goToCharacterSelect()
+    // } else {
+    //   await this._goToLogin()
+    // }
+    this._goToGame()
     // run the main render loop
     this._engine.runRenderLoop(() => {
       switch (this._state) {
@@ -160,18 +167,16 @@ export class Game {
     let scene = new Scene(this._engine)
     this._gamescene = scene
 
-    const stage = new Stage(scene)
-    this._stage = stage
-
-    await this._loadCharacterAssets(scene) //character
+    // const stage = new Stage(scene)
+    // this._stage = stage
   }
 
   private async _goToCharacterSelect() {
-    const characterSelect = new CharacterSelect(this._canvas, this._engine, this._scene, this.goToCharacterCreation.bind(this))
+    const characterSelect = new CharacterSelect(this._canvas, this._engine, this._scene, this._goToCharacterCreation.bind(this))
     this._scene = characterSelect.scene
   }
 
-  private async goToCharacterCreation() {
+  private async _goToCharacterCreation() {
     const characterCreation = new CharacterCreation(this._canvas, this._engine, this._scene)
     this._scene = characterCreation.scene
   }
@@ -181,45 +186,17 @@ export class Game {
     this._scene.detachControl()
     // TODO: only here for debugging purposes
     await this._setUpGame()
-    this._engine.displayLoadingUI()
     let scene = this._gamescene ? this._gamescene : new Scene(this._engine)
+    var hk = new HavokPlugin(true, this._havokInstance);
+    // enable physics in the scene with a gravity
+    scene.enablePhysics(new Vector3(0, -9.8, 0), hk);
     scene.clearColor = new Color4(
       0.01568627450980392,
       0.01568627450980392,
       0.20392156862745098,
     ) // a color that fit the overall color scheme better
-    let camera: FreeCamera = new FreeCamera(
-      'Camera',
-      new Vector3(0, 150, 0),
-      scene,
-    )
-    camera.setTarget(Vector3.Zero())
-    camera.rotation._y = 0
-    camera.attachControl(this._canvas)
-
-    //--GUI--
-    const playerUI = AdvancedDynamicTexture.CreateFullscreenUI('UI')
-    //dont detect any inputs from this ui while the game is loading
-    scene.detachControl()
-
-    //create a simple button
-    const loseBtn = Button.CreateSimpleButton('lose', 'LOSE')
-    loseBtn.width = 0.2
-    loseBtn.height = '40px'
-    loseBtn.color = 'white'
-    loseBtn.top = '-14px'
-    loseBtn.thickness = 0
-    loseBtn.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM
-    playerUI.addControl(loseBtn)
-
-    //this handles interactions with the start button attached to the scene
-    loseBtn.onPointerDownObservable.add(() => {
-      this._goToLose()
-      scene.detachControl() //observables disabled
-    })
-
-    //--INPUT--
-    this._input = new PlayerInput(scene) //detect keyboard/mobile inputs
+    const ground = MeshBuilder.CreateGround("ground", { height: 10, width: 10 });
+    new Player(scene)
 
     //primitive character and setting
     await this._initializeGameAsync(scene)
@@ -230,6 +207,7 @@ export class Game {
     if (mesh) {
       mesh.position = new Vector3(0, 3, 0)
     }
+    new PhysicsAggregate(ground, PhysicsShapeType.BOX, { mass: 0 }, scene);
     //get rid of start scene, switch to gamescene and change states
     this._scene.dispose()
     this._state = GAME_STATE.PLAYING
@@ -283,42 +261,6 @@ export class Game {
     return canvas
   }
 
-  private async _loadCharacterAssets(scene: Scene) {
-    async function loadCharacter() {
-      const outer = MeshBuilder.CreateBox(
-        'outer',
-        { width: 2, depth: 1, height: 3 },
-        scene,
-      )
-      outer.isVisible = false
-      outer.isPickable = false
-      outer.checkCollisions = true
-
-      //move origin of box collider to the bottom of the mesh (to match player mesh)
-      outer.bakeTransformIntoVertices(Matrix.Translation(0, 3, 0))
-
-      //for collisions
-      outer.ellipsoid = new Vector3(1, 1.5, 1)
-      outer.ellipsoidOffset = new Vector3(0, 1.5, 0)
-
-      outer.rotationQuaternion = new Quaternion(0, 1, 0, 0)
-
-      const characters = await CharacterModels.loadCharacterMeshes(scene)
-      for (const key in characters.characters) {
-        characters.mesh(key as keyof CharacterModelsProps).isVisible = false
-      }
-      characters.mesh('m_human').isVisible = true
-
-      return {
-        mesh: characters.mesh('m_human'),
-        animations: characters.animations('m_human'),
-      }
-    }
-    return loadCharacter().then(assets => {
-      this.assets = assets
-    })
-  }
-
   private async _initializeGameAsync(scene: Scene): Promise<void> {
     //temporary light to light the entire scene
     const light0 = new HemisphericLight(
@@ -326,18 +268,6 @@ export class Game {
       new Vector3(0, 1, 0),
       scene,
     )
-
-    const light = new PointLight('sparklight', new Vector3(0, 0, 0), scene)
-    light.diffuse = new Color3(
-      0.08627450980392157,
-      0.10980392156862745,
-      0.15294117647058825,
-    )
-    light.intensity = 35
-    light.radius = 1
-
-    const shadowGenerator = new ShadowGenerator(1024, light)
-    shadowGenerator.darkness = 0.4
 
     //Create the player
     // this._player = new Player(this.assets, scene, this._input)
