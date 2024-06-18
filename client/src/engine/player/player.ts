@@ -12,7 +12,6 @@ import {
 } from '@babylonjs/core'
 import { InputManager } from '../core/inputManager'
 import { CharacterModels } from '../race/race'
-import { ThinSprite } from '@babylonjs/core/Sprites/thinSprite'
 
 const SELECTED_CHARACTER = 'm_human'
 
@@ -23,7 +22,7 @@ export class Player {
   private _parent: any
   private _scene: Scene
   private _input: InputManager
-  private forwardSpeed: number = 0.03
+  private forwardSpeed: number = 0.05
   private backwardSpeed: number = this.forwardSpeed * 0.5
   private turnSpeed: number = 0.1
   constructor(scene: Scene) {
@@ -38,20 +37,26 @@ export class Player {
   async load() {
     const result = await CharacterModels.loadCharacterMeshes(this._scene)
     Object.entries(result.characters).forEach(([key, value]) => {
-      value.mesh.isVisible = key === SELECTED_CHARACTER
+      value.mesh.isVisible = false
     })
-    this._mesh = result.characters[SELECTED_CHARACTER].mesh
+    const parent = MeshBuilder.CreateCapsule('parent', { height: 1 }, this._scene)
+    this._mesh = result.characters[SELECTED_CHARACTER].mesh.clone('player', parent) as AbstractMesh
+    this._mesh.isVisible = true
+    this._mesh.scaling = new Vector3(0.01, 0.01, 0.01)
+    this._mesh.rotation.y = Math.PI
+    // this._mesh = MeshBuilder.CreateCapsule('player', { height: 1 }, this._scene)
     // this._mesh = MeshBuilder.CreateCapsule('player', { height: 1 }, this._scene)
     this._mesh.checkCollisions = true
     this._parent = this._mesh.parent
     const playerCamera = new FollowCamera(
       'playerCamera',
-      new Vector3(0, 10, -10),
+      new Vector3(0, 10, 5),
       this._scene,
       this._mesh,
     )
+    playerCamera.rotationOffset = 180
 
-    this._mesh.position.y = 10
+    this._mesh.position.y = 1
     // new PhysicsAggregate(this._mesh, PhysicsShapeType.BOX, { mass: 1, restitution: 0.1 }, this._scene);
     // this._animations = result.characters[SELECTED_CHARACTER].animations
     this._scene.activeCamera = playerCamera
@@ -78,12 +83,12 @@ export class Player {
       keydown = true;
     }
     if (this._input.inputMap["a"]) {
-      this._mesh.rotate(Vector3.Forward(), -this.turnSpeed);
+      this._mesh.rotate(Vector3.Up(), -this.turnSpeed);
 
       keydown = true;
     }
     if (this._input.inputMap["d"]) {
-      this._mesh.rotate(Vector3.Forward(), this.turnSpeed);
+      this._mesh.rotate(Vector3.Up(), this.turnSpeed);
 
       keydown = true;
     }

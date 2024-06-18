@@ -3,23 +3,14 @@ import {
   AbstractMesh,
   AnimationGroup,
   ArcRotateCamera,
-  Color3,
   Color4,
   Engine,
   EngineFactory,
   FreeCamera,
-  GroundMesh,
-  HavokPlugin,
   HemisphericLight,
-  Matrix,
   Mesh,
   MeshBuilder,
-  PhysicsAggregate,
-  PhysicsShapeType,
-  PointLight,
-  Quaternion,
   Scene,
-  ShadowGenerator,
   Vector3,
 } from '@babylonjs/core'
 import { AdvancedDynamicTexture, Button, Control } from '@babylonjs/gui'
@@ -61,7 +52,6 @@ export class Game {
   //Scene - related
   private _state: number = 3
   private _gamescene: Scene
-  private _havokInstance: HavokPhysicsWithBindings
 
   constructor() {
     this._canvas = this._createCanvas()
@@ -103,12 +93,7 @@ export class Game {
         }
       }
     })
-    this._havokInstance = await this.getInitializedHavok()
     await this._main()
-  }
-
-  private async getInitializedHavok() {
-    return await HavokPhysics();
   }
 
   private async _main(): Promise<void> {
@@ -187,9 +172,9 @@ export class Game {
     // TODO: only here for debugging purposes
     await this._setUpGame()
     let scene = this._gamescene ? this._gamescene : new Scene(this._engine)
-    var hk = new HavokPlugin(true, this._havokInstance);
+    // var hk = new HavokPlugin(true, this._havokInstance);
     // enable physics in the scene with a gravity
-    scene.enablePhysics(new Vector3(0, -9.8, 0), hk);
+    // scene.enablePhysics(new Vector3(0, -9.8, 0), hk);
     scene.clearColor = new Color4(
       0.01568627450980392,
       0.01568627450980392,
@@ -207,7 +192,6 @@ export class Game {
     if (mesh) {
       mesh.position = new Vector3(0, 3, 0)
     }
-    new PhysicsAggregate(ground, PhysicsShapeType.BOX, { mass: 0 }, scene);
     //get rid of start scene, switch to gamescene and change states
     this._scene.dispose()
     this._state = GAME_STATE.PLAYING
