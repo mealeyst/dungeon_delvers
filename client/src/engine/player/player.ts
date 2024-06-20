@@ -1,45 +1,39 @@
 import {
   AbstractMesh,
   AnimationGroup,
+  Color3,
   FollowCamera,
-  Mesh,
   MeshBuilder,
-  PhysicsAggregate,
-  PhysicsShapeType,
+  Ray,
+  RayHelper,
   Scene,
-  SceneLoader,
   Vector3,
 } from '@babylonjs/core'
 import { InputManager } from '../core/inputManager'
 
-const SELECTED_CHARACTER = 'm_human'
-
 export class Player {
-  private _animations: Record<string, AnimationGroup>
-  private _canvas: HTMLCanvasElement
   private _mesh: AbstractMesh
-  private _parent: any
   private _scene: Scene
   private _input: InputManager
-  private forwardSpeed: number = 0.08
-  private backwardSpeed: number = this.forwardSpeed * 0.5
-  private turnSpeed: number = 0.1
+  private _forwardSpeed: number = 0.08
+  private _backwardSpeed: number = this._forwardSpeed * 0.5
+  private _turnSpeed: number = 0.2
+  private _rays: { ray: Ray, helper: RayHelper }[] = []
+
   constructor(scene: Scene) {
-    this._canvas = scene.getEngine().getRenderingCanvas() as HTMLCanvasElement
     this._scene = scene
     this._input = new InputManager(scene)
+    for (let i = 0; i < 4; i++) {
+      const ray = new Ray(Vector3.Zero(), Vector3.Zero(), 2)
+      const helper = new RayHelper(ray)
+      this._rays.push({ ray, helper })
+    }
     this.load()
     this._scene.onBeforeRenderObservable.add(() => {
       this._beforeRenderUpdate()
     })
   }
   async load() {
-    // const result = await CharacterModels.loadCharacterMeshes(this._scene)
-    // Object.entries(result.characters).forEach(([key, value]) => {
-    //   console.log(key, SELECTED_CHARACTER, key === SELECTED_CHARACTER)
-    //   value.mesh.isVisible = key === SELECTED_CHARACTER
-    // })
-    // this._mesh = result.characters[SELECTED_CHARACTER].mesh
     this._mesh = MeshBuilder.CreateCapsule('player', {
       height: 2.5,
       radius: 0.5,
@@ -52,44 +46,63 @@ export class Player {
     )
     playerCamera.rotationOffset = 180
     this._mesh.rotation.y = 0
-    this._mesh.position.y = 1.25
-    // new PhysicsAggregate(this._mesh, PhysicsShapeType.BOX, { mass: 1, restitution: 0.1 }, this._scene);
-    // this._animations = result.characters[SELECTED_CHARACTER].animations
+    this._mesh.position.y = 1.25 // Move capsule up to be on the ground
+    this._rays.forEach(({ helper }, rayIndex) => {
+      console.log(`rayVector ${rayIndex}:`, `Is Even? ${rayIndex % 2 === 0}`, `Is Less than 2? ${rayIndex <= 1}`, new Vector3(
+        rayIndex <= 1 ? -1 : 1,
+        -0.98,
+        rayIndex % 2 === 0 ? 0.7 : -0.7,
+      ))
+      helper.attachToMesh(
+        this._mesh,
+        new Vector3(
+          rayIndex <= 1 ? -1 : 1,
+          -0.98,
+          rayIndex % 2 === 0 ? 0.7 : -0.7,
+        ),
+        new Vector3(0, 0, rayIndex % 2 === 0 ? 0.25 : -0.25),
+        1.25
+      )
+      helper.show(
+        this._scene,
+        new Color3(
+          rayIndex <= 1 ? 0 : 1,
+          rayIndex % 2 === 0 ? 0 : 1,
+          0
+        )
+      )
+    });
     this._scene.activeCamera = playerCamera
+    playerCamera.attachControl()
+
   }
 
   private _beforeRenderUpdate() {
     this._update()
   }
   private _update() {
-    var keydown = false
     //Manage the movements of the character (e.g. position, direction)
     if (this._input.inputMap['w']) {
       this._mesh.moveWithCollisions(
-        this._mesh.forward.scaleInPlace(this.forwardSpeed),
+        this._mesh.forward.scaleInPlace(this._forwardSpeed),
       )
-      keydown = true
     }
     if (this._input.inputMap['s']) {
       this._mesh.moveWithCollisions(
-        this._mesh.forward.scaleInPlace(-this.backwardSpeed),
+        this._mesh.forward.scaleInPlace(-this._backwardSpeed),
       )
 
-      keydown = true
     }
     if (this._input.inputMap['a']) {
-      this._mesh.rotate(Vector3.Up(), -this.turnSpeed)
+      this._mesh.rotate(Vector3.Up(), -this._turnSpeed)
 
-      keydown = true
     }
     if (this._input.inputMap['d']) {
-      this._mesh.rotate(Vector3.Up(), this.turnSpeed)
+      this._mesh.rotate(Vector3.Up(), this._turnSpeed)
 
-      keydown = true
     }
     if (this._input.inputMap[' ']) {
       this._mesh.moveWithCollisions(new Vector3(0, 0.1, 0))
-      keydown = true
     }
   }
 }
