@@ -23,6 +23,7 @@ import { Player } from './player/player'
 import { Login } from './gui/mainMenu'
 import { CharacterSelect } from './gui/characterSelect'
 import { CharacterCreation } from './gui/characterCreation/characterCreation'
+import { random } from './core/random'
 
 export enum GAME_STATE {
   LOGIN = 0,
@@ -195,6 +196,11 @@ export class Game {
       0.20392156862745098,
     ) // a color that fit the overall color scheme better
     const ground = MeshBuilder.CreateGround('ground', { height: 40, width: 40 })
+    for (let i = 0; i < random(1, 10); i++) {
+      const size = random(1, 3)
+      const box = MeshBuilder.CreateBox('box', { size })
+      box.position = new Vector3(random(-20, 20), (size / 2), random(-20, 20))
+    }
     new Player(scene)
 
     //primitive character and setting
