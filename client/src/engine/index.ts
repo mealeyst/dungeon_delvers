@@ -1,4 +1,4 @@
-import { io } from "socket.io-client";
+import { io } from 'socket.io-client'
 import {
   AbstractMesh,
   AnimationGroup,
@@ -144,7 +144,12 @@ export class Game {
   }
 
   private async _goToLogin() {
-    const mainMenu = new Login(this._canvas, this._engine, this._scene, this._goToCharacterSelect.bind(this))
+    const mainMenu = new Login(
+      this._canvas,
+      this._engine,
+      this._scene,
+      this._goToCharacterSelect.bind(this),
+    )
     this._scene = mainMenu.scene
   }
 
@@ -157,12 +162,21 @@ export class Game {
   }
 
   private async _goToCharacterSelect() {
-    const characterSelect = new CharacterSelect(this._canvas, this._engine, this._scene, this._goToCharacterCreation.bind(this))
+    const characterSelect = new CharacterSelect(
+      this._canvas,
+      this._engine,
+      this._scene,
+      this._goToCharacterCreation.bind(this),
+    )
     this._scene = characterSelect.scene
   }
 
   private async _goToCharacterCreation() {
-    const characterCreation = new CharacterCreation(this._canvas, this._engine, this._scene)
+    const characterCreation = new CharacterCreation(
+      this._canvas,
+      this._engine,
+      this._scene,
+    )
     this._scene = characterCreation.scene
   }
 
@@ -180,7 +194,7 @@ export class Game {
       0.01568627450980392,
       0.20392156862745098,
     ) // a color that fit the overall color scheme better
-    const ground = MeshBuilder.CreateGround("ground", { height: 10, width: 10 });
+    const ground = MeshBuilder.CreateGround('ground', { height: 40, width: 40 })
     new Player(scene)
 
     //primitive character and setting

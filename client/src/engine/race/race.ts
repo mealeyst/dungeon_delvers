@@ -104,7 +104,6 @@ export class CharacterModels {
   public static async loadCharacterMeshes(
     scene: Scene,
   ): Promise<CharacterModels> {
-    console.log('loading characters')
     const characters_result = await SceneLoader.ImportMeshAsync(
       null,
       '',

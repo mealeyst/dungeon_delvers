@@ -11,7 +11,6 @@ import {
   Vector3,
 } from '@babylonjs/core'
 import { InputManager } from '../core/inputManager'
-import { CharacterModels } from '../race/race'
 
 const SELECTED_CHARACTER = 'm_human'
 
@@ -22,7 +21,7 @@ export class Player {
   private _parent: any
   private _scene: Scene
   private _input: InputManager
-  private forwardSpeed: number = 0.05
+  private forwardSpeed: number = 0.08
   private backwardSpeed: number = this.forwardSpeed * 0.5
   private turnSpeed: number = 0.1
   constructor(scene: Scene) {
@@ -35,19 +34,16 @@ export class Player {
     })
   }
   async load() {
-    const result = await CharacterModels.loadCharacterMeshes(this._scene)
-    Object.entries(result.characters).forEach(([key, value]) => {
-      value.mesh.isVisible = false
+    // const result = await CharacterModels.loadCharacterMeshes(this._scene)
+    // Object.entries(result.characters).forEach(([key, value]) => {
+    //   console.log(key, SELECTED_CHARACTER, key === SELECTED_CHARACTER)
+    //   value.mesh.isVisible = key === SELECTED_CHARACTER
+    // })
+    // this._mesh = result.characters[SELECTED_CHARACTER].mesh
+    this._mesh = MeshBuilder.CreateCapsule('player', {
+      height: 2.5,
+      radius: 0.5,
     })
-    const parent = MeshBuilder.CreateCapsule('parent', { height: 1 }, this._scene)
-    this._mesh = result.characters[SELECTED_CHARACTER].mesh.clone('player', parent) as AbstractMesh
-    this._mesh.isVisible = true
-    this._mesh.scaling = new Vector3(0.01, 0.01, 0.01)
-    this._mesh.rotation.y = Math.PI
-    // this._mesh = MeshBuilder.CreateCapsule('player', { height: 1 }, this._scene)
-    // this._mesh = MeshBuilder.CreateCapsule('player', { height: 1 }, this._scene)
-    this._mesh.checkCollisions = true
-    this._parent = this._mesh.parent
     const playerCamera = new FollowCamera(
       'playerCamera',
       new Vector3(0, 10, 5),
@@ -55,8 +51,8 @@ export class Player {
       this._mesh,
     )
     playerCamera.rotationOffset = 180
-
-    this._mesh.position.y = 1
+    this._mesh.rotation.y = 0
+    this._mesh.position.y = 1.25
     // new PhysicsAggregate(this._mesh, PhysicsShapeType.BOX, { mass: 1, restitution: 0.1 }, this._scene);
     // this._animations = result.characters[SELECTED_CHARACTER].animations
     this._scene.activeCamera = playerCamera
@@ -66,31 +62,34 @@ export class Player {
     this._update()
   }
   private _update() {
-
-    var keydown = false;
+    var keydown = false
     //Manage the movements of the character (e.g. position, direction)
-    if (this._input.inputMap["w"]) {
+    if (this._input.inputMap['w']) {
       this._mesh.moveWithCollisions(
-        this._mesh.forward.scaleInPlace(this.forwardSpeed)
-      );
-      keydown = true;
+        this._mesh.forward.scaleInPlace(this.forwardSpeed),
+      )
+      keydown = true
     }
-    if (this._input.inputMap["s"]) {
+    if (this._input.inputMap['s']) {
       this._mesh.moveWithCollisions(
-        this._mesh.forward.scaleInPlace(-this.backwardSpeed)
-      );
+        this._mesh.forward.scaleInPlace(-this.backwardSpeed),
+      )
 
-      keydown = true;
+      keydown = true
     }
-    if (this._input.inputMap["a"]) {
-      this._mesh.rotate(Vector3.Up(), -this.turnSpeed);
+    if (this._input.inputMap['a']) {
+      this._mesh.rotate(Vector3.Up(), -this.turnSpeed)
 
-      keydown = true;
+      keydown = true
     }
-    if (this._input.inputMap["d"]) {
-      this._mesh.rotate(Vector3.Up(), this.turnSpeed);
+    if (this._input.inputMap['d']) {
+      this._mesh.rotate(Vector3.Up(), this.turnSpeed)
 
-      keydown = true;
+      keydown = true
+    }
+    if (this._input.inputMap[' ']) {
+      this._mesh.moveWithCollisions(new Vector3(0, 0.1, 0))
+      keydown = true
     }
   }
 }
