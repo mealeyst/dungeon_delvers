@@ -7,11 +7,15 @@ import {
   Engine,
   EngineFactory,
   FreeCamera,
+  GroundMesh,
   HemisphericLight,
   Mesh,
   MeshBuilder,
   Scene,
+  StandardMaterial,
   Vector3,
+  VertexBuffer,
+  VertexData,
 } from '@babylonjs/core'
 import { AdvancedDynamicTexture, Button } from '@babylonjs/gui'
 import '@babylonjs/inspector'

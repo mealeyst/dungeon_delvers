@@ -22,16 +22,12 @@ export class Player extends TransformNode {
   private _turnSpeed: number = 0.2
   private _rays: { ray: Ray; helper: RayHelper }[] = []
   private _grounded: boolean = true
+  private _angle: number = 0
 
   constructor(scene: Scene) {
     super('player', scene)
     this._scene = scene
     this._input = new InputManager(scene)
-    for (let i = 0; i < 4; i++) {
-      const ray = new Ray(Vector3.Zero(), Vector3.Zero(), 2)
-      const helper = new RayHelper(ray)
-      this._rays.push({ ray, helper })
-    }
     this.load()
     this._scene.onBeforeRenderObservable.add(() => {
       this._beforeRenderUpdate()
@@ -42,13 +38,8 @@ export class Player extends TransformNode {
       height: 2.5,
       radius: 0.5,
     })
-    let height = 0
-    const heightOffset = 1.25
-    const ground = this._scene.getMeshByName('ground_0_0')
-    if (ground) {
-      height = (ground as GroundMesh).getHeightAtCoordinates(0, 0)
-      console.log('height', height)
-    }
+    this._mesh.checkCollisions = true
+    this._mesh.position.y = this._groundPlayer(this._mesh.position)
     const playerCamera = new FollowCamera(
       'playerCamera',
       new Vector3(0, 10, 5),
@@ -57,7 +48,6 @@ export class Player extends TransformNode {
     )
     playerCamera.rotationOffset = 180
     this._mesh.rotation.y = 0
-    this._mesh.position.y = height + heightOffset// Move capsule up to be on the ground
     this._rays.forEach(({ helper }, rayIndex) => {
       helper.attachToMesh(
         this._mesh,
@@ -79,23 +69,34 @@ export class Player extends TransformNode {
       )
     })
     this._scene.activeCamera = playerCamera
-    playerCamera.attachControl()
-  }
 
+  }
+  private _groundPlayer(vec: Vector3) {
+    let y = 0
+    this._scene.getTransformNodeByName('ground')?.getChildMeshes().forEach((mesh) => {
+      const ground = mesh as GroundMesh
+      const height = ground.getHeightAtCoordinates(vec.x, vec.z)
+      if (height > 0) {
+        y = height + 1.25
+      }
+    })
+    return y
+  }
   private _beforeRenderUpdate() {
+    // this._mesh.position.x = 20 * Math.cos(this._angle)
+    // this._mesh.position.z = 10 * Math.sin(this._angle)
+    // this._angle += 0.01 * this._scene.getAnimationRatio();
+    // this._mesh.position.y = this._groundPlayer(this._mesh.position)
     this._update()
   }
   private _update() {
     //Manage the movements of the character (e.g. position, direction)
     if (this._input.inputMap['w']) {
-      this._mesh.moveWithCollisions(
-        this._mesh.forward.scaleInPlace(this._forwardSpeed),
-      )
+      const updatedMesh = this._mesh.moveWithCollisions(this._mesh.forward.scale(this._forwardSpeed))
+      updatedMesh.position.y = this._groundPlayer(updatedMesh.position);
     }
     if (this._input.inputMap['s']) {
-      this._mesh.moveWithCollisions(
-        this._mesh.forward.scaleInPlace(-this._backwardSpeed),
-      )
+      this._mesh.moveWithCollisions(this._mesh.forward.scaleInPlace(-this._backwardSpeed))
     }
     if (this._input.inputMap['a']) {
       this._mesh.rotate(Vector3.Up(), -this._turnSpeed)
