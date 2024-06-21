@@ -199,7 +199,7 @@ export class Game {
       0.01568627450980392,
       0.20392156862745098,
     ) // a color that fit the overall color scheme better
-    new TerrainChunkManager(scene)
+    new TerrainChunkManager('ground', scene)
     new Sky('sky', scene)
     new Player(scene)
 

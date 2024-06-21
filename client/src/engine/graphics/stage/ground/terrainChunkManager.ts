@@ -1,4 +1,4 @@
-import { Scene, Vector2, Vector3 } from "@babylonjs/core";
+import { Scene, TransformNode, Vector2, Vector3 } from "@babylonjs/core";
 import NoiseGenerator from "../../../core/noise";
 import HeightGenerator from "./heightGenerator";
 
@@ -9,7 +9,7 @@ interface Chunk {
   edges: string[];
 }
 
-export class TerrainChunkManager {
+export class TerrainChunkManager extends TransformNode {
 
   chunks: Record<string, Chunk> | {};
 
@@ -28,7 +28,8 @@ export class TerrainChunkManager {
   private _scale = 125.0;
   private _seed = 1;
 
-  constructor(scene: Scene) {
+  constructor(name: string, scene: Scene) {
+    super(name, scene);
     this.scene = scene;
     this.chunkSize = 50;
     this.chunks = {};
@@ -55,40 +56,6 @@ export class TerrainChunkManager {
     }
   };
 
-  // private initializeGui = () => {
-  //   const noiseRollup = this.gui.addFolder("Terrain.Noise");
-  //   noiseRollup
-  //     .add(this.guiParams.noise, "noiseType", ["simplex", "perlin", "random"])
-  //     .onChange(this.setNoise)
-  //     .setValue("random");
-  //   noiseRollup
-  //     .add(this.guiParams.noise, "scale", 64.0, 1024.0)
-  //     .onChange(this.setNoise);
-  //   noiseRollup
-  //     .add(this.guiParams.noise, "octaves", 1, 20)
-  //     .onChange(this.setNoise);
-  //   noiseRollup
-  //     .add(this.guiParams.noise, "persistence", 0.01, 2.0)
-  //     .onChange(this.setNoise);
-  //   noiseRollup
-  //     .add(this.guiParams.noise, "lacunarity", 0.01, 4.0)
-  //     .onChange(this.setNoise);
-  //   noiseRollup
-  //     .add(this.guiParams.noise, "exponentiation", 0.1, 10.0)
-  //     .onChange(this.setNoise);
-  //   noiseRollup
-  //     .add(this.guiParams.noise, "height", 0, 256)
-  //     .onChange(this.setNoise);
-
-  //   const heightmapRollup = this.gui.addFolder("Terrain.Heightmap");
-  //   heightmapRollup
-  //     .add(this.guiParams.heightmap, "height", 0, 128)
-  //     .onChange(this.setNoise);
-
-  //   const terrainRollup = this.gui.addFolder("Terrain");
-  //   terrainRollup.add(this.guiParams.mesh, "wireframe").onChange(() => {});
-  // };
-
   static key = (x: number, z: number) => {
     return `${x}.${z}`;
   };
@@ -102,7 +69,7 @@ export class TerrainChunkManager {
         scale: 1,
         width: this.chunkSize,
         height: this.chunkSize,
-        subdivisions: 100,
+        subdivisions: 50,
         heightGenerators: [
           new HeightGenerator(this.noise, offset, 100000, 100000 + 1),
         ],

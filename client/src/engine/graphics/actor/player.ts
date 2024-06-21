@@ -3,6 +3,7 @@ import {
   AnimationGroup,
   Color3,
   FollowCamera,
+  GroundMesh,
   MeshBuilder,
   Ray,
   RayHelper,
@@ -41,6 +42,13 @@ export class Player extends TransformNode {
       height: 2.5,
       radius: 0.5,
     })
+    let height = 0
+    const heightOffset = 1.25
+    const ground = this._scene.getMeshByName('ground_0_0')
+    if (ground) {
+      height = (ground as GroundMesh).getHeightAtCoordinates(0, 0)
+      console.log('height', height)
+    }
     const playerCamera = new FollowCamera(
       'playerCamera',
       new Vector3(0, 10, 5),
@@ -49,7 +57,7 @@ export class Player extends TransformNode {
     )
     playerCamera.rotationOffset = 180
     this._mesh.rotation.y = 0
-    this._mesh.position.y = 1.25 // Move capsule up to be on the ground
+    this._mesh.position.y = height + heightOffset// Move capsule up to be on the ground
     this._rays.forEach(({ helper }, rayIndex) => {
       helper.attachToMesh(
         this._mesh,
