@@ -8,18 +8,11 @@ import {
   Vector3,
 } from '@babylonjs/core'
 import { FullScreenMenu } from '../fullScreenMenu'
-import {
-  Button,
-  Control,
-  Grid,
-  InputText,
-  StackPanel,
-  TextBlock,
-} from '@babylonjs/gui'
+import { Control, InputText, StackPanel, TextBlock } from '@babylonjs/gui'
 import CharacterCreateScene from '../../../../public/assets/models/character_create_scene.glb'
 import { RaceName, Races } from '../../core/races'
 import { Attributes } from '../../core/attribute'
-import { CharacterModels, CharacterProps } from '../../race/race'
+import { CharacterModels, CharacterProps } from '../../graphics/race/race'
 import { raceSelect } from './raceSelect'
 import { genderSelect } from './genderSelect'
 import { AttributeSelect } from './attributeSelect'

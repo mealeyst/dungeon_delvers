@@ -10,7 +10,7 @@ import {
   TransformNode,
   Vector3,
 } from '@babylonjs/core'
-import { InputManager } from '../core/inputManager'
+import { InputManager } from '../../core/inputManager'
 
 export class Player extends TransformNode {
   private _mesh: AbstractMesh
@@ -19,7 +19,7 @@ export class Player extends TransformNode {
   private _forwardSpeed: number = 0.08
   private _backwardSpeed: number = this._forwardSpeed * 0.5
   private _turnSpeed: number = 0.2
-  private _rays: { ray: Ray, helper: RayHelper }[] = []
+  private _rays: { ray: Ray; helper: RayHelper }[] = []
   private _grounded: boolean = true
 
   constructor(scene: Scene) {
@@ -58,21 +58,20 @@ export class Player extends TransformNode {
           -0.98,
           rayIndex % 2 === 0 ? 0.7 : -0.7,
         ),
-        new Vector3(rayIndex <= 1 ? -0.45 : 0.45, -0.2, rayIndex % 2 === 0 ? 0.25 : -0.25),
-        1.25
+        new Vector3(
+          rayIndex <= 1 ? -0.45 : 0.45,
+          -0.2,
+          rayIndex % 2 === 0 ? 0.25 : -0.25,
+        ),
+        1.25,
       )
       helper.show(
         this._scene,
-        new Color3(
-          rayIndex <= 1 ? 0 : 1,
-          rayIndex % 2 === 0 ? 0 : 1,
-          0
-        )
+        new Color3(rayIndex <= 1 ? 0 : 1, rayIndex % 2 === 0 ? 0 : 1, 0),
       )
-    });
+    })
     this._scene.activeCamera = playerCamera
     playerCamera.attachControl()
-
   }
 
   private _beforeRenderUpdate() {
@@ -80,12 +79,6 @@ export class Player extends TransformNode {
   }
   private _update() {
     //Manage the movements of the character (e.g. position, direction)
-    this._rays.forEach(({ ray }) => {
-      const pick = this._scene.pickWithRay(ray)
-      if (pick && pick.hit) {
-        this._grounded = true
-      }
-    })
     if (this._input.inputMap['w']) {
       this._mesh.moveWithCollisions(
         this._mesh.forward.scaleInPlace(this._forwardSpeed),
@@ -95,15 +88,12 @@ export class Player extends TransformNode {
       this._mesh.moveWithCollisions(
         this._mesh.forward.scaleInPlace(-this._backwardSpeed),
       )
-
     }
     if (this._input.inputMap['a']) {
       this._mesh.rotate(Vector3.Up(), -this._turnSpeed)
-
     }
     if (this._input.inputMap['d']) {
       this._mesh.rotate(Vector3.Up(), this._turnSpeed)
-
     }
     if (this._input.inputMap[' ']) {
       this._grounded = false

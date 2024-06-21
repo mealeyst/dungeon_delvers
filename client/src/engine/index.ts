@@ -1,8 +1,8 @@
-import { io } from 'socket.io-client'
 import {
   AbstractMesh,
   AnimationGroup,
   ArcRotateCamera,
+  AssetsManager,
   Color4,
   Engine,
   EngineFactory,
@@ -13,17 +13,19 @@ import {
   Scene,
   Vector3,
 } from '@babylonjs/core'
-import { AdvancedDynamicTexture, Button, Control } from '@babylonjs/gui'
+import { AdvancedDynamicTexture, Button } from '@babylonjs/gui'
 import '@babylonjs/inspector'
 import '@babylonjs/loaders/glTF'
 
-import { Stage } from './stage/stage'
-import { Player } from './player/player'
+import { Stage } from './graphics/stage/stage'
+import { Player } from './graphics/actor/player'
 
 import { Login } from './gui/mainMenu'
 import { CharacterSelect } from './gui/characterSelect'
 import { CharacterCreation } from './gui/characterCreation/characterCreation'
 import { random } from './core/random'
+import Sky from './graphics/stage/sky'
+import { TerrainChunkManager } from './graphics/stage/ground/terrainChunkManager'
 
 export enum GAME_STATE {
   LOGIN = 0,
@@ -41,6 +43,7 @@ export class Game {
   private _scene: Scene
   private _canvas: HTMLCanvasElement
   private _engine: Engine
+  private _assetManager: AssetsManager
 
   //Game State Related
   public assets: {
@@ -67,6 +70,7 @@ export class Game {
       undefined,
     )) as Engine
     this._scene = new Scene(this._engine)
+    this._assetManager = new AssetsManager(this._scene)
 
     const camera: ArcRotateCamera = new ArcRotateCamera(
       'Camera',
@@ -195,12 +199,8 @@ export class Game {
       0.01568627450980392,
       0.20392156862745098,
     ) // a color that fit the overall color scheme better
-    const ground = MeshBuilder.CreateGround('ground', { height: 40, width: 40 })
-    for (let i = 0; i < random(1, 10); i++) {
-      const size = random(1, 3)
-      const box = MeshBuilder.CreateBox('box', { size })
-      box.position = new Vector3(random(-20, 20), (size / 2), random(-20, 20))
-    }
+    new TerrainChunkManager(scene)
+    new Sky('sky', scene)
     new Player(scene)
 
     //primitive character and setting

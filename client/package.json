@@ -30,10 +30,13 @@
     "@babylonjs/gui": "^7.10.2",
     "@babylonjs/inspector": "^7.10.2",
     "@babylonjs/loaders": "^7.10.2",
+    "@babylonjs/materials": "^7.12.0",
     "@parcel/types": "^2.9.2",
+    "alea": "^1.0.1",
     "delaunay-triangulate": "^1.1.6",
     "earcut": "^2.2.4",
     "parcel": "^2.9.2",
+    "simplex-noise": "^4.0.1",
     "socket.io-client": "^4.7.5"
   },
   "devDependencies": {
