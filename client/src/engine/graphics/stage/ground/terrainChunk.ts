@@ -37,7 +37,7 @@ class TerrainChunk {
     this.scene = scene;
     this.chunkParams = chunkParams;
     this.chunk = MeshBuilder.CreateGround(
-      "ground",
+      `ground_${chunkParams.offset.x}_${chunkParams.offset.z}`,
       {
         width: this.chunkParams.width,
         height: this.chunkParams.height,
