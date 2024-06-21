@@ -83,10 +83,6 @@ export class Player extends TransformNode {
     return y
   }
   private _beforeRenderUpdate() {
-    // this._mesh.position.x = 20 * Math.cos(this._angle)
-    // this._mesh.position.z = 10 * Math.sin(this._angle)
-    // this._angle += 0.01 * this._scene.getAnimationRatio();
-    // this._mesh.position.y = this._groundPlayer(this._mesh.position)
     this._update()
   }
   private _update() {
@@ -96,7 +92,8 @@ export class Player extends TransformNode {
       updatedMesh.position.y = this._groundPlayer(updatedMesh.position);
     }
     if (this._input.inputMap['s']) {
-      this._mesh.moveWithCollisions(this._mesh.forward.scaleInPlace(-this._backwardSpeed))
+      const updatedMesh = this._mesh.moveWithCollisions(this._mesh.forward.scale(-this._backwardSpeed))
+      updatedMesh.position.y = this._groundPlayer(updatedMesh.position);
     }
     if (this._input.inputMap['a']) {
       this._mesh.rotate(Vector3.Up(), -this._turnSpeed)
