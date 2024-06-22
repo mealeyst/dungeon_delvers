@@ -3,19 +3,18 @@ import {
   AnimationGroup,
   ArcRotateCamera,
   AssetsManager,
+  Color3,
   Color4,
   Engine,
   EngineFactory,
   FreeCamera,
-  GroundMesh,
   HemisphericLight,
   Mesh,
-  MeshBuilder,
   Scene,
+  SceneLoader,
   StandardMaterial,
+  Texture,
   Vector3,
-  VertexBuffer,
-  VertexData,
 } from '@babylonjs/core'
 import { AdvancedDynamicTexture, Button } from '@babylonjs/gui'
 import '@babylonjs/inspector'
@@ -30,6 +29,9 @@ import { CharacterCreation } from './gui/characterCreation/characterCreation'
 import { random } from './core/random'
 import Sky from './graphics/stage/sky'
 import { TerrainChunkManager } from './graphics/stage/ground/terrainChunkManager'
+import test_level from '../../public/assets/zones/test_scene.glb'
+import cement from '../../public/assets/textures/polished-concrete-11811-in-architextures.jpg'
+import tile from '../../public/assets/textures/demountable-ceiling-tile-stack-9606-in-architextures.jpg'
 
 export enum GAME_STATE {
   LOGIN = 0,
@@ -203,7 +205,32 @@ export class Game {
       0.01568627450980392,
       0.20392156862745098,
     ) // a color that fit the overall color scheme better
-    new TerrainChunkManager('ground', scene)
+    // new TerrainChunkManager('ground', scene)
+    const testLevel = await SceneLoader.ImportMeshAsync(
+      null,
+      '',
+      test_level,
+      scene,
+    )
+    testLevel.meshes.forEach((mesh) => {
+      mesh.checkCollisions = true
+    })
+    const buildingMaterial = new StandardMaterial('building_material', scene)
+    buildingMaterial.diffuseTexture = new Texture(cement)
+    const building = scene.getMeshByName('Building')
+    const wall = scene.getMeshByName('Wall')
+    const ground = scene.getMeshByName('Ground')
+    if( building && wall) {
+      building.material = buildingMaterial
+      wall.material = buildingMaterial
+    }
+    if (ground) {
+      const groundMaterial = new StandardMaterial('ground_material', scene)
+      groundMaterial.diffuseTexture = new Texture(tile)
+      groundMaterial.diffuseTexture.uScale = 20.0;
+      groundMaterial.diffuseTexture.vScale = 20.0;
+      ground.material = groundMaterial
+    }
     new Sky('sky', scene)
     new Player(scene)
 

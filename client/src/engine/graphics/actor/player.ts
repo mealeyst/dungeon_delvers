@@ -31,15 +31,17 @@ export class Player extends TransformNode {
     this.load()
     this._scene.onBeforeRenderObservable.add(() => {
       this._beforeRenderUpdate()
+      this._mesh.moveWithCollisions(new Vector3(0, -0.1, 0))
     })
   }
   async load() {
     this._mesh = MeshBuilder.CreateCapsule('player', {
-      height: 2.5,
-      radius: 0.5,
+      height: 1.77,
+      radius: 0.25,
     })
     this._mesh.checkCollisions = true
-    this._mesh.position.y = this._groundPlayer(this._mesh.position)
+    this._mesh.position.y = 0.985
+    this._mesh.rotate(Vector3.Up(), Math.PI)
     const playerCamera = new FollowCamera(
       'playerCamera',
       new Vector3(0, 10, 5),
@@ -71,17 +73,18 @@ export class Player extends TransformNode {
     this._scene.activeCamera = playerCamera
 
   }
-  private _groundPlayer(vec: Vector3) {
-    let y = 0
-    this._scene.getTransformNodeByName('ground')?.getChildMeshes().forEach((mesh) => {
-      const ground = mesh as GroundMesh
-      const height = ground.getHeightAtCoordinates(vec.x, vec.z)
-      if (height > 0) {
-        y = height + 1.25
-      }
-    })
-    return y
-  }
+  // private _groundPlayer(vec: Vector3) {
+  //   let y = 0
+  //   console.log(this._scene.getMeshByName('Ground'))
+  //   this._scene.getTransformNodeByName('ground')?.getChildMeshes().forEach((mesh) => {
+  //     const ground = mesh as GroundMesh
+  //     const height = ground.getHeightAtCoordinates(vec.x, vec.z)
+  //     if (height > 0) {
+  //       y = height + 0.885
+  //     }
+  //   })
+  //   return y
+  // }
   private _beforeRenderUpdate() {
     this._update()
   }
@@ -89,11 +92,11 @@ export class Player extends TransformNode {
     //Manage the movements of the character (e.g. position, direction)
     if (this._input.inputMap['w']) {
       const updatedMesh = this._mesh.moveWithCollisions(this._mesh.forward.scale(this._forwardSpeed))
-      updatedMesh.position.y = this._groundPlayer(updatedMesh.position);
+      // updatedMesh.position.y = this._groundPlayer(updatedMesh.position);
     }
     if (this._input.inputMap['s']) {
       const updatedMesh = this._mesh.moveWithCollisions(this._mesh.forward.scale(-this._backwardSpeed))
-      updatedMesh.position.y = this._groundPlayer(updatedMesh.position);
+      // updatedMesh.position.y = this._groundPlayer(updatedMesh.position);
     }
     if (this._input.inputMap['a']) {
       this._mesh.rotate(Vector3.Up(), -this._turnSpeed)
@@ -103,7 +106,7 @@ export class Player extends TransformNode {
     }
     if (this._input.inputMap[' ']) {
       this._grounded = false
-      this._mesh.moveWithCollisions(new Vector3(0, 0.1, 0))
+      this._mesh.moveWithCollisions(new Vector3(0, 0.8, 0))
     }
   }
 }
