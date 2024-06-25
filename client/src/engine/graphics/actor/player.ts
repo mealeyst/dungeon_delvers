@@ -8,6 +8,8 @@ import {
   Ray,
   RayHelper,
   Scene,
+  SceneLoader,
+  StandardMaterial,
   TransformNode,
   Vector3,
 } from '@babylonjs/core'
@@ -35,9 +37,28 @@ export class Player extends TransformNode {
     })
   }
   async load() {
+    SceneLoader.ImportMesh("", "public/assets/models/", "Vincent.babylon", this._scene, (meshes, particleSystems, skeletons) => {
+      let player = meshes[0];
+      let skeleton = skeletons[0];
+      player.skeleton = skeleton;
+
+      skeleton.enableBlending(0.1);
+      //if the skeleton does not have any animation ranges then set them as below
+      // setAnimationRanges(skeleton);
+
+      let sm = <StandardMaterial>player.material;
+      if (sm.diffuseTexture != null) {
+        sm.backFaceCulling = true;
+        sm.ambientColor = new Color3(1, 1, 1);
+      }
+
+
+      player.position = new Vector3(0, 12, 0);
+      player.checkCollisions = true;
+    })
     this._mesh = MeshBuilder.CreateCapsule('player', {
       height: 1.77,
-      radius: 0.25,
+      radius: 0.35,
     })
     this._mesh.checkCollisions = true
     this._mesh.position.y = 0.985
