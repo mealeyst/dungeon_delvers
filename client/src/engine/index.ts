@@ -21,7 +21,7 @@ import '@babylonjs/inspector'
 import '@babylonjs/loaders/glTF'
 
 import { Stage } from './graphics/stage/stage'
-import { Player } from './graphics/actor/player'
+import { Actor } from './graphics/actor/actor'
 
 import { Login } from './gui/mainMenu'
 import { CharacterSelect } from './gui/characterSelect'
@@ -57,7 +57,7 @@ export class Game {
     animations: Record<string, AnimationGroup>
   } //TODO: update this type to NOT by any
   private _stage: Stage
-  private _player: Player
+  private _player: Actor
 
   //Scene - related
   private _state: number = 3
@@ -232,7 +232,7 @@ export class Game {
       ground.material = groundMaterial
     }
     new Sky('sky', scene)
-    new Player(scene)
+    new Actor(scene)
 
     //primitive character and setting
     await this._initializeGameAsync(scene)

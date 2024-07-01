@@ -13,7 +13,7 @@ import {
 } from '@babylonjs/core'
 import { InputManager } from '../../core/inputManager'
 
-export class Player extends TransformNode {
+export class Actor extends TransformNode {
   private _mesh: AbstractMesh
   public _scene: Scene
   private _input: InputManager
