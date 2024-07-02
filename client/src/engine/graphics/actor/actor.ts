@@ -1,4 +1,4 @@
-import { ArcRotateCamera, Mesh, Scene, Skeleton, Vector3, Node } from '@babylonjs/core'
+import { ArcRotateCamera, Mesh, Scene, Skeleton, Vector3, Node, Nullable } from '@babylonjs/core'
 import { DefaultActions } from './defaultActions'
 
 export class Actor {
@@ -34,7 +34,7 @@ export class Actor {
     this._camera = camera;
     this._scene = scene;
     try {
-      this.avatar(avatar)
+      this.setAvatar(avatar)
     } catch (error) {
       console.error("Error: Could not set avatar")
     }
@@ -52,7 +52,7 @@ export class Actor {
     return this._root(tn.parent);
   }
 
-  private _findSkel(n: Node): Skeleton {
+  private _findSkel(n: Node): Nullable<Skeleton> {
     let root = this._root(n)
 
     if (root instanceof Mesh && root.skeleton) return root.skeleton
@@ -70,8 +70,7 @@ export class Actor {
     })
 
     //return the skeleton of the first child mesh
-    const skeleton =  ms[0].skeleton
-
+    return ms[0].skeleton
 
   }
 
@@ -80,7 +79,10 @@ export class Actor {
     if (root instanceof Mesh) {
       this._avatar = root;
     }
-    this._skeleton = this._findSkel(avatar);
+    const skeleton = this._findSkel(avatar);
+    if (skeleton) {
+      this._skeleton = skeleton;
+    }
   }
   /**
    * The av will step up a stair only if it is closer to the ground than the indicated value.
