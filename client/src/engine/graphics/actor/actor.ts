@@ -1,150 +1,149 @@
-import { ArcRotateCamera, Mesh, Scene, Skeleton, Vector3, Node, Nullable } from '@babylonjs/core'
-import { DefaultActions } from './defaultActions'
+import {
+  AbstractMesh,
+  AnimationGroup,
+  ArcRotateCamera,
+  Color3,
+  FollowCamera,
+  GroundMesh,
+  Mesh,
+  MeshBuilder,
+  Ray,
+  RayHelper,
+  Scene,
+  SceneLoader,
+  StandardMaterial,
+  TransformNode,
+  Vector3,
+} from '@babylonjs/core'
+import { InputManager } from '../../core/inputManager'
 
-export class Actor {
-  private _avatar: Mesh
+export class Actor extends TransformNode {
+  private _mesh: AbstractMesh
+  public _scene: Scene
+  private _input: InputManager
+  private _forwardSpeed: number = 0.08
+  private _backwardSpeed: number = this._forwardSpeed * 0.5
+  private _turnSpeed: number = Math.PI / 10
+  private _rays: { ray: Ray; helper: RayHelper }[] = []
+  private _grounded: boolean = true
+  private _angle: number = 0
   private _camera: ArcRotateCamera
-  private _scene: Scene
-  private _skeleton: Skeleton
+  private _ray: Ray
 
-  private _hasCamera: boolean = true;
-
-  private _gravity: number = 9.8;
-  //slopeLimit in degrees
-  private _minSlopeLimit: number = 30;
-  private _maxSlopeLimit: number = 45;
-  //slopeLimit in radians
-  private _sl1: number = Math.PI * this._minSlopeLimit / 180;
-  private _sl2: number = Math.PI * this._maxSlopeLimit / 180;
-
-  //The av will step up a stair only if it is closer to the ground than the indicated value.
-  private _stepOffset: number = 0.25;
-  //toal amount by which the av has moved up
-  private _vMoveTot: number = 0;
-  //position of av when it started moving up
-  private _vMovStartPos: Vector3 = Vector3.Zero();
-
-
-
-  private _cameraElastic: boolean = true;
-  private _cameraTarget: Vector3 = Vector3.Zero();
-
-  private _actions = new DefaultActions();
-  constructor(avatar: Mesh, camera: ArcRotateCamera, scene: Scene, actions: DefaultActions) {
-    this._camera = camera;
-    this._scene = scene;
-    try {
-      this.setAvatar(avatar)
-    } catch (error) {
-      console.error("Error: Could not set avatar")
-    }
-  } 
-  public setSlopeLimit(minSlopeLimit: number, maxSlopeLimit: number) {
-    this._minSlopeLimit = minSlopeLimit;
-    this._maxSlopeLimit = maxSlopeLimit;
-
-    this._sl1 = Math.PI * this._minSlopeLimit / 180;
-    this._sl2 = Math.PI * this._maxSlopeLimit / 180;
-  }
-
-  private _root(tn: Node): Node {
-    if (tn.parent == null) return tn;
-    return this._root(tn.parent);
-  }
-
-  private _findSkel(n: Node): Nullable<Skeleton> {
-    let root = this._root(n)
-
-    if (root instanceof Mesh && root.skeleton) return root.skeleton
-
-    //find all child meshes which have skeletons
-    let ms = root.getChildMeshes(
-      false,
-      (cm) => {
-      if (cm instanceof Mesh) {
-        if (cm.skeleton) {
-         return true
-        }
-      }
-      return false
+  constructor(scene: Scene) {
+    super('player', scene)
+    this._scene = scene
+    this._input = new InputManager(scene)
+    this.load()
+    this._scene.onBeforeRenderObservable.add(() => {
+      this._beforeRenderUpdate()
+      this._mesh.moveWithCollisions(new Vector3(0, -0.1, 0))
     })
+  }
+  async load() {
+    SceneLoader.ImportMesh("", "public/assets/models/", "Vincent.babylon", this._scene, (meshes, particleSystems, skeletons) => {
+      let player = meshes[0];
+      let skeleton = skeletons[0];
+      player.skeleton = skeleton;
 
-    //return the skeleton of the first child mesh
-    return ms[0].skeleton
+      skeleton.enableBlending(0.1);
+      //if the skeleton does not have any animation ranges then set them as below
+      // setAnimationRanges(skeleton);
+
+      let sm = <StandardMaterial>player.material;
+      if (sm.diffuseTexture != null) {
+        sm.backFaceCulling = true;
+        sm.ambientColor = new Color3(1, 1, 1);
+      }
+
+
+      player.position = new Vector3(0, 40, 0);
+      player.checkCollisions = true;
+    })
+    this._mesh = MeshBuilder.CreateCapsule('player', {
+      height: 1.77,
+      radius: 0.35,
+    })
+    this._mesh.position.y = 0.985
+    this._mesh.position.z = 20
+    this._ray = new Ray(this._mesh.position, new Vector3(0, 0, -1), 1)
+    const rayHelper = new RayHelper(this._ray)
+    rayHelper.show(this._scene, new Color3(1, 0, 0))
+    this._mesh.checkCollisions = true
+    this._mesh.rotate(Vector3.Up(), Math.PI)
+    this._camera = new ArcRotateCamera(
+      'playerCamera',
+      Math.PI / 2,
+      // 0,
+      Math.PI / 2.5,
+      5,
+      this._mesh.position,
+    )
+    this._camera.checkCollisions = true
+    this._mesh.rotation.y = 0
+    this._rays.forEach(({ helper }, rayIndex) => {
+      helper.attachToMesh(
+        this._mesh,
+        new Vector3(
+          rayIndex <= 1 ? -1 : 1,
+          -0.98,
+          rayIndex % 2 === 0 ? 0.7 : -0.7,
+        ),
+        new Vector3(
+          rayIndex <= 1 ? -0.45 : 0.45,
+          -0.2,
+          rayIndex % 2 === 0 ? 0.25 : -0.25,
+        ),
+        1.25,
+      )
+      helper.show(
+        this._scene,
+        new Color3(rayIndex <= 1 ? 0 : 1, rayIndex % 2 === 0 ? 0 : 1, 0),
+      )
+    })
+    this._scene.activeCamera = this._camera
 
   }
-
-  public setAvatar(avatar: Mesh) {
-    const root = this._root(avatar);
-    if (root instanceof Mesh) {
-      this._avatar = root;
+  // private _groundPlayer(vec: Vector3) {
+  //   let y = 0
+  //   console.log(this._scene.getMeshByName('Ground'))
+  //   this._scene.getTransformNodeByName('ground')?.getChildMeshes().forEach((mesh) => {
+  //     const ground = mesh as GroundMesh
+  //     const height = ground.getHeightAtCoordinates(vec.x, vec.z)
+  //     if (height > 0) {
+  //       y = height + 0.885
+  //     }
+  //   })
+  //   return y
+  // }
+  private _beforeRenderUpdate() {
+    this._update()
+  }
+  private _update() {
+    const deltaTime = this._scene.getEngine().getDeltaTime() / 100
+    const turnAngle = this._turnSpeed * deltaTime
+    //Manage the movements of the character (e.g. position, direction)
+    if (this._input.inputMap['w']) {
+      const updatedMesh = this._mesh.moveWithCollisions(this._mesh.forward.scale(this._forwardSpeed))
+      // updatedMesh.position.y = this._groundPlayer(updatedMesh.position);
     }
-    const skeleton = this._findSkel(avatar);
-    if (skeleton) {
-      this._skeleton = skeleton;
+    if (this._input.inputMap['s']) {
+      const updatedMesh = this._mesh.moveWithCollisions(this._mesh.forward.scale(-this._backwardSpeed))
+      // updatedMesh.position.y = this._groundPlayer(updatedMesh.position);
     }
-  }
-  /**
-   * The av will step up a stair only if it is closer to the ground than the indicated value.
-   * Default value is 0.25 m
-   */
-  set stepOffset(stepOffset: number) {
-    this._stepOffset = stepOffset;
-  }
+    if (this._input.inputMap['a']) {
+      this._mesh.rotate(Vector3.Up(), -turnAngle)
+      this._camera.alpha += turnAngle;
+    }
+    if (this._input.inputMap['d']) {
+      this._mesh.rotate(Vector3.Up(), turnAngle)
 
-  set walkSpeed(walkSpeed: number) {
-    this._actions.walk.speed = walkSpeed;
+      this._camera.alpha -= turnAngle;
+    }
+    if (this._input.inputMap[' ']) {
+      this._grounded = false
+      this._mesh.moveWithCollisions(new Vector3(0, 0.8, 0))
+    }
+    this._ray.direction = this._mesh.forward
   }
-
-  set runSpeed(runSpeed: number) {
-    this._actions.run.speed = runSpeed;
-  }
-
-  set backSpeed(backwardSpeed: number) {
-    this._actions.walkBack.speed = backwardSpeed;
-  }
-
-  set backFaseSpeed(backwardSpeed: number) {
-    this._actions.walkBackFast.speed = backwardSpeed;
-  }
-
-  set jumpSpeed(jumpSpeed: number) {
-    this._actions.idleJump.speed = jumpSpeed;
-    this._actions.runJump.speed = jumpSpeed;
-  }
-
-  set leftSpeed(leftSpeed: number) {
-    this._actions.strafeLeft.speed = leftSpeed;
-  }
-  
-  set leftFastSpeed(leftSpeed: number) {
-    this._actions.strafeLeftFast.speed = leftSpeed;
-  }
-
-  set rightSpeed(rightSpeed: number) {
-    this._actions.strafeRight.speed = rightSpeed;
-  }
-
-  set rightFastSpeed(rightSpeed: number) {
-    this._actions.strafeRightFast.speed = rightSpeed;
-  }
-
-  set turnSpeed(turnSpeed: number) {
-    this._actions.turnLeft.speed = turnSpeed * Math.PI / 180;
-    this._actions.turnRight.speed = turnSpeed * Math.PI / 180;
-  }
-
-  set turnFastSpeed(turnSpeed: number) {
-    this._actions.turnLeftFast.speed = turnSpeed * Math.PI / 180;
-    this._actions.turnRightFast.speed = turnSpeed * Math.PI / 180;
-  }
-
-  set gravity(gravity: number) {
-    this._gravity = gravity;
-  }
-
-  set animationGroups(animationGroup: Actions) {
-    this
-  }
-
 }
