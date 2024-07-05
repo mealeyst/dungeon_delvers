@@ -24,11 +24,12 @@ export class Actor extends TransformNode {
   private _forwardSpeed: number = 0.08
   private _backwardSpeed: number = this._forwardSpeed * 0.5
   private _turnSpeed: number = Math.PI / 10
-  private _rays: { ray: Ray; helper: RayHelper }[] = []
+  private _height: number = 1.77
   private _grounded: boolean = true
   private _angle: number = 0
   private _camera: ArcRotateCamera
-  private _ray: Ray
+  private _frontRay: Ray
+  private _bottomRay: Ray
 
   constructor(scene: Scene) {
     super('player', scene)
@@ -61,14 +62,18 @@ export class Actor extends TransformNode {
       player.checkCollisions = true;
     })
     this._mesh = MeshBuilder.CreateCapsule('player', {
-      height: 1.77,
+      height: this._height,
       radius: 0.35,
     })
     this._mesh.position.y = 0.985
     this._mesh.position.z = 20
-    this._ray = new Ray(this._mesh.position, new Vector3(0, 0, -1), 1)
-    const rayHelper = new RayHelper(this._ray)
-    rayHelper.show(this._scene, new Color3(1, 0, 0))
+    this._frontRay = new Ray(this._mesh.position, new Vector3(0, 0, -1), 1)
+    const frontRayHelper = new RayHelper(this._frontRay)
+    frontRayHelper.show(this._scene, new Color3(1, 0, 0))
+
+    this._bottomRay = new Ray(this._mesh.position, new Vector3(0, -1, 0), 0.886)
+    const bottomRayHelper = new RayHelper(this._bottomRay)
+    bottomRayHelper.show(this._scene, new Color3(0, 1, 0))
     this._mesh.checkCollisions = true
     this._mesh.rotate(Vector3.Up(), Math.PI)
     this._camera = new ArcRotateCamera(
@@ -81,27 +86,8 @@ export class Actor extends TransformNode {
     )
     this._camera.checkCollisions = true
     this._mesh.rotation.y = 0
-    this._rays.forEach(({ helper }, rayIndex) => {
-      helper.attachToMesh(
-        this._mesh,
-        new Vector3(
-          rayIndex <= 1 ? -1 : 1,
-          -0.98,
-          rayIndex % 2 === 0 ? 0.7 : -0.7,
-        ),
-        new Vector3(
-          rayIndex <= 1 ? -0.45 : 0.45,
-          -0.2,
-          rayIndex % 2 === 0 ? 0.25 : -0.25,
-        ),
-        1.25,
-      )
-      helper.show(
-        this._scene,
-        new Color3(rayIndex <= 1 ? 0 : 1, rayIndex % 2 === 0 ? 0 : 1, 0),
-      )
-    })
     this._scene.activeCamera = this._camera
+    this._camera.attachControl()
 
   }
   // private _groundPlayer(vec: Vector3) {
@@ -117,6 +103,11 @@ export class Actor extends TransformNode {
   //   return y
   // }
   private _beforeRenderUpdate() {
+    const pick = this._scene.pickWithRay(this._bottomRay)
+    if (pick?.hit) {
+      console.log('hit')
+      this._grounded = true
+    }
     this._update()
   }
   private _update() {
@@ -140,10 +131,10 @@ export class Actor extends TransformNode {
 
       this._camera.alpha -= turnAngle;
     }
-    if (this._input.inputMap[' ']) {
+    if (this._input.inputMap[' '] && this._grounded) {
       this._grounded = false
       this._mesh.moveWithCollisions(new Vector3(0, 0.8, 0))
     }
-    this._ray.direction = this._mesh.forward
+    this._frontRay.direction = this._mesh.forward
   }
 }
