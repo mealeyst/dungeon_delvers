@@ -16,6 +16,7 @@ import {
   Vector3,
 } from '@babylonjs/core'
 import { InputManager } from '../../core/inputManager'
+import { AdvancedDynamicTexture, TextBlock } from '@babylonjs/gui'
 
 export class Actor extends TransformNode {
   private _mesh: AbstractMesh
@@ -29,7 +30,8 @@ export class Actor extends TransformNode {
   private _angle: number = 0
   private _camera: ArcRotateCamera
   private _ray: Ray
-
+  private _gravity: Vector3 = new Vector3(0, -0.9, 0)
+  private _label: AdvancedDynamicTexture
   constructor(scene: Scene) {
     super('player', scene)
     this._scene = scene
@@ -79,6 +81,19 @@ export class Actor extends TransformNode {
       5,
       this._mesh.position,
     )
+    var plane = MeshBuilder.CreatePlane("name_tag", { size: 2 });
+    plane.parent = this._mesh;
+    plane.position.y = 1;
+    this._label = AdvancedDynamicTexture.CreateForMesh(plane);
+    var labelButton = new TextBlock("hero", "Hero");
+    labelButton.width = 1;
+    labelButton.height = 0.4;
+    labelButton.color = "cyan";
+    labelButton.fontSize = 50;
+    labelButton.onPointerUpObservable.add(function () {
+      alert("you did it!");
+    });
+    this._label.addControl(labelButton);
     this._camera.checkCollisions = true
     this._mesh.rotation.y = 0
     this._rays.forEach(({ helper }, rayIndex) => {
@@ -102,6 +117,7 @@ export class Actor extends TransformNode {
       )
     })
     this._scene.activeCamera = this._camera
+    this._camera.attachControl(this._scene.getEngine().getRenderingCanvas(), true)
 
   }
   // private _groundPlayer(vec: Vector3) {
@@ -125,11 +141,9 @@ export class Actor extends TransformNode {
     //Manage the movements of the character (e.g. position, direction)
     if (this._input.inputMap['w']) {
       const updatedMesh = this._mesh.moveWithCollisions(this._mesh.forward.scale(this._forwardSpeed))
-      // updatedMesh.position.y = this._groundPlayer(updatedMesh.position);
     }
     if (this._input.inputMap['s']) {
-      const updatedMesh = this._mesh.moveWithCollisions(this._mesh.forward.scale(-this._backwardSpeed))
-      // updatedMesh.position.y = this._groundPlayer(updatedMesh.position);
+      this._mesh.moveWithCollisions(this._mesh.forward.scale(-this._backwardSpeed))
     }
     if (this._input.inputMap['a']) {
       this._mesh.rotate(Vector3.Up(), -turnAngle)
@@ -140,7 +154,7 @@ export class Actor extends TransformNode {
 
       this._camera.alpha -= turnAngle;
     }
-    if (this._input.inputMap[' ']) {
+    if (this._input.inputMap[' '] && this._grounded) {
       this._grounded = false
       this._mesh.moveWithCollisions(new Vector3(0, 0.8, 0))
     }
