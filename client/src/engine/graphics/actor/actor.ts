@@ -93,9 +93,6 @@ export class Actor extends TransformNode {
     )
     this._mesh.material = new StandardMaterial('playerMaterial', this._scene)
     this._mesh.material.diffuseColor = new Color3(1, 0, 0)
-    this._mesh.visibility = 0.5
-    const ground = this._scene.getMeshByName('Ground')
-    if(ground) { ground.visibility = 0.5 }
     var plane = MeshBuilder.CreatePlane("name_tag", { size: 2 });
     plane.parent = this._mesh;
     plane.position.y = 1;
