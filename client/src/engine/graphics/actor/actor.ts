@@ -1,8 +1,9 @@
 import {
+  Animation,
   AbstractMesh,
-  AnimationGroup,
   ArcRotateCamera,
   Color3,
+  Color4,
   FollowCamera,
   GroundMesh,
   Mesh,
@@ -16,6 +17,7 @@ import {
   Vector3,
 } from '@babylonjs/core'
 import { InputManager } from '../../core/inputManager'
+import { AdvancedDynamicTexture, TextBlock } from '@babylonjs/gui'
 
 export class Actor extends TransformNode {
   private _mesh: AbstractMesh
@@ -30,7 +32,11 @@ export class Actor extends TransformNode {
   private _camera: ArcRotateCamera
   private _frontRay: Ray
   private _bottomRay: Ray
+  private _selected: boolean = false
 
+  private _gravity: Vector3 = new Vector3(0, -0.9, 0)
+  private _labelTexture: AdvancedDynamicTexture
+  private _labelText: TextBlock
   constructor(scene: Scene) {
     super('player', scene)
     this._scene = scene
@@ -67,11 +73,12 @@ export class Actor extends TransformNode {
     })
     this._mesh.position.y = 0.985
     this._mesh.position.z = 20
+    this._mesh.isPickable = false
     this._frontRay = new Ray(this._mesh.position, new Vector3(0, 0, -1), 1)
     const frontRayHelper = new RayHelper(this._frontRay)
     frontRayHelper.show(this._scene, new Color3(1, 0, 0))
 
-    this._bottomRay = new Ray(this._mesh.position, new Vector3(0, -1, 0), 0.886)
+    this._bottomRay = new Ray(this._mesh.position, new Vector3(0, -1, 0), this._height/2 + 0.2)
     const bottomRayHelper = new RayHelper(this._bottomRay)
     bottomRayHelper.show(this._scene, new Color3(0, 1, 0))
     this._mesh.checkCollisions = true
@@ -84,28 +91,33 @@ export class Actor extends TransformNode {
       5,
       this._mesh.position,
     )
+    this._mesh.material = new StandardMaterial('playerMaterial', this._scene)
+    this._mesh.material.diffuseColor = new Color3(1, 0, 0)
+    this._mesh.visibility = 0.5
+    const ground = this._scene.getMeshByName('Ground')
+    if(ground) { ground.visibility = 0.5 }
+    var plane = MeshBuilder.CreatePlane("name_tag", { size: 2 });
+    plane.parent = this._mesh;
+    plane.position.y = 1;
+    plane.billboardMode = Mesh.BILLBOARDMODE_ALL;
+    this._labelTexture = AdvancedDynamicTexture.CreateForMesh(plane);
+    this._labelText = new TextBlock("hero", "Hero");
+    this._labelText.width = 1;
+    this._labelText.height = 0.4;
+    this._labelText.fontSize = 50;
+    this._labelText.color = new Color3(0, 1, 1).toHexString();
+    this._labelTexture.addControl(this._labelText);
     this._camera.checkCollisions = true
     this._mesh.rotation.y = 0
     this._scene.activeCamera = this._camera
     this._camera.attachControl()
 
   }
-  // private _groundPlayer(vec: Vector3) {
-  //   let y = 0
-  //   console.log(this._scene.getMeshByName('Ground'))
-  //   this._scene.getTransformNodeByName('ground')?.getChildMeshes().forEach((mesh) => {
-  //     const ground = mesh as GroundMesh
-  //     const height = ground.getHeightAtCoordinates(vec.x, vec.z)
-  //     if (height > 0) {
-  //       y = height + 0.885
-  //     }
-  //   })
-  //   return y
-  // }
+
   private _beforeRenderUpdate() {
     const pick = this._scene.pickWithRay(this._bottomRay)
     if (pick?.hit) {
-      console.log('hit')
+      console.log(pick.pickedMesh?.name)
       this._grounded = true
     }
     this._update()
@@ -116,11 +128,9 @@ export class Actor extends TransformNode {
     //Manage the movements of the character (e.g. position, direction)
     if (this._input.inputMap['w']) {
       const updatedMesh = this._mesh.moveWithCollisions(this._mesh.forward.scale(this._forwardSpeed))
-      // updatedMesh.position.y = this._groundPlayer(updatedMesh.position);
     }
     if (this._input.inputMap['s']) {
-      const updatedMesh = this._mesh.moveWithCollisions(this._mesh.forward.scale(-this._backwardSpeed))
-      // updatedMesh.position.y = this._groundPlayer(updatedMesh.position);
+      this._mesh.moveWithCollisions(this._mesh.forward.scale(-this._backwardSpeed))
     }
     if (this._input.inputMap['a']) {
       this._mesh.rotate(Vector3.Up(), -turnAngle)
