@@ -18,25 +18,28 @@ import {
 } from '@babylonjs/core'
 import { InputManager } from '../../core/inputManager'
 import { AdvancedDynamicTexture, TextBlock } from '@babylonjs/gui'
+import { clamp } from '../../core/math'
 
 export class Actor extends TransformNode {
   private _mesh: AbstractMesh
   public _scene: Scene
   private _input: InputManager
   private _forwardSpeed: number = 0.08
+  private _forwardSpeedMultiplier: number = 0.001
   private _backwardSpeed: number = this._forwardSpeed * 0.5
   private _turnSpeed: number = Math.PI / 10
-  private _height: number = 1.77
+  private _height: number = 1.8
   private _grounded: boolean = true
   private _angle: number = 0
   private _camera: ArcRotateCamera
   private _frontRay: Ray
   private _bottomRay: Ray
   private _selected: boolean = false
-
-  private _gravity: Vector3 = new Vector3(0, -0.9, 0)
+  private _jumpTime: number = 0
+  private _gravity: Vector3 = new Vector3(0, -9.8, 0)
   private _labelTexture: AdvancedDynamicTexture
   private _labelText: TextBlock
+  private _startPosition: Vector3
   constructor(scene: Scene) {
     super('player', scene)
     this._scene = scene
@@ -104,7 +107,6 @@ export class Actor extends TransformNode {
     this._labelText.fontSize = 50;
     this._labelText.color = new Color3(0, 1, 1).toHexString();
     this._labelTexture.addControl(this._labelText);
-    this._camera.checkCollisions = true
     this._mesh.rotation.y = 0
     this._scene.activeCamera = this._camera
     this._camera.attachControl()
@@ -112,11 +114,6 @@ export class Actor extends TransformNode {
   }
 
   private _beforeRenderUpdate() {
-    const pick = this._scene.pickWithRay(this._bottomRay)
-    if (pick?.hit) {
-      console.log(pick.pickedMesh?.name)
-      this._grounded = true
-    }
     this._update()
   }
   private _update() {
@@ -124,7 +121,7 @@ export class Actor extends TransformNode {
     const turnAngle = this._turnSpeed * deltaTime
     //Manage the movements of the character (e.g. position, direction)
     if (this._input.inputMap['w']) {
-      const updatedMesh = this._mesh.moveWithCollisions(this._mesh.forward.scale(this._forwardSpeed))
+      this._mesh.moveWithCollisions(this._mesh.forward.scale(this._forwardSpeed))
     }
     if (this._input.inputMap['s']) {
       this._mesh.moveWithCollisions(this._mesh.forward.scale(-this._backwardSpeed))
@@ -139,9 +136,33 @@ export class Actor extends TransformNode {
       this._camera.alpha -= turnAngle;
     }
     if (this._input.inputMap[' '] && this._grounded) {
-      this._grounded = false
-      this._mesh.moveWithCollisions(new Vector3(0, 0.8, 0))
+      this._startPosition = this._mesh.position.clone()
+      this._doJump(deltaTime)
     }
     this._frontRay.direction = this._mesh.forward
+  }
+
+  private _doJump(deltaTime: number) {
+    this._grounded = false
+    this._jumpTime = this._jumpTime + (deltaTime / 10);
+    let jumpDist = this._calcJumpDist(this._forwardSpeed, deltaTime);
+    this._mesh.moveWithCollisions(new Vector3(0, jumpDist, 0))
+    setTimeout(() => { this._endJump() }, 550)
+  }
+
+  private _calcJumpDist(speed: number, dt: number): number {
+    //up velocity at the begining of the last frame (v=u+at)
+    let js: number = speed + this._gravity.y * this._jumpTime;
+    //distance travelled up since last frame to this frame (s=ut+1/2*at^2)
+    let jumpDist: number = js * (dt/10) -   this._gravity.y * (dt/10)^2;
+    return jumpDist;
+  }
+  
+  private _endJump() {
+    const pick = this._scene.pickWithRay(this._bottomRay)
+    if (pick?.hit) {
+      this._grounded = true
+    }
+    this._jumpTime = 0;
   }
 }
