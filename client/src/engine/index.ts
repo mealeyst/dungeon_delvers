@@ -30,6 +30,7 @@ import { random } from './core/random'
 import Sky from './graphics/stage/sky'
 import { TerrainChunkManager } from './graphics/stage/ground/terrainChunkManager'
 import test_level from '../../public/assets/zones/rook_tower_06_25_2024.glb'
+import rat from '../../public/assets/models/low_poly_rat.glb'
 import cement from '../../public/assets/textures/polished-concrete-11811-in-architextures.jpg'
 import tile from '../../public/assets/textures/demountable-ceiling-tile-stack-9606-in-architextures.jpg'
 
@@ -212,9 +213,14 @@ export class Game {
       test_level,
       scene,
     )
-    testLevel.meshes.forEach((mesh) => {
+    testLevel.meshes.forEach(mesh => {
       mesh.checkCollisions = true
     })
+    const ratMeshes = await SceneLoader.ImportMeshAsync(null, '', rat, scene)
+    ratMeshes.meshes.forEach(mesh => {
+      mesh.checkCollisions = true
+    })
+    ratMeshes.meshes[0].position = new Vector3(0, 2, 15)
     const buildingMaterial = new StandardMaterial('building_material', scene)
     buildingMaterial.diffuseTexture = new Texture(cement)
     // const building = scene.getMeshByName('Building')
@@ -227,12 +233,13 @@ export class Game {
     if (ground) {
       const groundMaterial = new StandardMaterial('ground_material', scene)
       groundMaterial.diffuseTexture = new Texture(tile)
-      groundMaterial.diffuseTexture.uScale = 20.0;
-      groundMaterial.diffuseTexture.vScale = 20.0;
+      groundMaterial.diffuseTexture.uScale = 20.0
+      groundMaterial.diffuseTexture.vScale = 20.0
       ground.material = groundMaterial
     }
     new Sky('sky', scene)
-    new Actor(scene)
+    new Actor(scene, 'Hero', new Vector3(0, 0, 20))
+    new Actor(scene, 'Villain', new Vector3(0, 2, 10), true)
 
     //primitive character and setting
     await this._initializeGameAsync(scene)

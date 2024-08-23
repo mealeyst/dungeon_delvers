@@ -1,7 +1,7 @@
 import { Vector2 } from "@babylonjs/core";
 
-import NoiseGenerator from "../../../core/noise";
-import { sat } from "../../../core/math";
+import NoiseGenerator from "../../../../../lib/noise";
+import { sat } from "../../../../../lib/math";
 
 class HeightGenerator {
   private position: Vector2;
