@@ -1,4 +1,4 @@
-import { Actor } from '../actor'
+import { Actor, DefenseStats } from './actor'
 
 export type ActionResultArgs = {
   succeeded: boolean
@@ -12,8 +12,9 @@ export type ActionArgs = {
   cost?: number
   description: string
   name: string
-  range?: number
   onPerform: () => ActionResult
+  range?: number
+  target: Actor | null
 }
 
 export class ActionResult {
@@ -57,6 +58,7 @@ export const NOT_DONE = (alternative: Action) =>
 
 export class Action {
   private _actor: Actor
+  private _target: Actor | null = null
   private _cooldown: number
   private _cost: number
   private _description: string
@@ -67,6 +69,7 @@ export class Action {
   constructor({
     name,
     actor,
+    target,
     description,
     cost = 0,
     cooldown = 0,
@@ -74,6 +77,7 @@ export class Action {
     onPerform,
   }: ActionArgs) {
     this._actor = actor
+    this._target = target
     this._name = name
     this._description = description
     this._cost = cost

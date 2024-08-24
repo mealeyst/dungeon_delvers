@@ -1,4 +1,4 @@
-import { random, randomChoice } from './random'
+import { random, randomChoice } from '../src/engine/core/random'
 import { Container } from '../stage/container'
 import { TreeNode, Axis, Branch } from '../stage/tree_node'
 

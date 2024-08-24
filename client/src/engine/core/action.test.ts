@@ -1,7 +1,8 @@
-import { Actor } from '../actor'
-import { ATTRIBUTES, Attributes } from '../attribute'
+import { Actor } from './actor'
+import { ATTRIBUTES, Attributes } from './attribute'
 import { Action, ActionResult, SUCCEEDED, FAILED, NOT_DONE } from './action'
-
+import { MonsterType } from '../../content/monsters'
+import { actions } from '../../content/actions'
 const actor = new Actor(
   'hero',
   new Attributes({
@@ -13,44 +14,51 @@ const actor = new Actor(
     [ATTRIBUTES.RES]: 10,
   }),
   {
-    accuracy: 46, // 47
-    deflection: 37, // 37
-    fortitude: 41, // 42
-    health: 117, // 118
-    reflex: 53, // 54
-    willpower: 30, // 30
+    accuracy: 46,
+    deflection: 37,
+    fortitude: 41,
+    health: 117,
+    reflex: 53,
+    willpower: 30,
   },
+  MonsterType.Humanoid,
+)
+
+const target = new Actor(
+  'bat',
+  new Attributes({
+    [ATTRIBUTES.CON]: 10,
+    [ATTRIBUTES.DEX]: 10,
+    [ATTRIBUTES.INT]: 4,
+    [ATTRIBUTES.MIG]: 10,
+    [ATTRIBUTES.PER]: 15,
+    [ATTRIBUTES.RES]: 10,
+  }),
+  {
+    accuracy: 47,
+    deflection: 37,
+    fortitude: 42,
+    health: 118,
+    reflex: 54,
+    willpower: 30,
+  },
+  MonsterType.Beast,
 )
 
 const idle = new Action({
-  name: 'Idle',
   actor,
-  description: '%t does nothing.',
-  cost: 0,
-  cooldown: 0,
-  onPerform: () => {
-    return new ActionResult({ done: false, succeeded: false })
-  },
-})
-
-const firebolt = new Action({
-  name: 'Firebolt',
-  actor,
-  description: '%t hurls a mote of fire!',
-  cost: 1,
-  cooldown: 2,
-  range: 3,
-  onPerform: () => {
-    return new ActionResult({ succeeded: true, done: true })
-  },
+  target: actor,
+  name: 'idle',
+  description: 'Do nothing',
+  onPerform: () => SUCCEEDED,
 })
 
 describe('Action', () => {
   it('should create an instance', () => {
-    expect(firebolt).toBeTruthy()
+    expect(actions.firebolt).toBeTruthy()
   })
   it('should allow for the action to be performed', () => {
-    expect(firebolt.perform()).toEqual(SUCCEEDED)
+    expect(actions.firebolt(actor, target).perform()).toEqual(SUCCEEDED)
   })
 })
 
