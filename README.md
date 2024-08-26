@@ -23,9 +23,17 @@ http://localhost:1234/
 
 - Full 3D world brought to you by the wonderful team over at
   [BabylonJS](https://www.babylonjs.com/)
-- Dungeon generated with Binary-Space Partitioning thanks in large part to
-  [halftheopposite](https://github.com/halftheopposite) and his work on
-  [bsp-dungeon-generator](https://github.com/halftheopposite/bsp-dungeon-generator/tree/main)
+- A full fleged browser based MMO
+  - The following races planned as a proof of concept:
+    - Human
+    - Dwarf
+    - Orc
+    - Goblin
+  - The following Arctypes as a proof of concept:
+    - Fighter
+    - Scout
+    - Mage
+    - Healer
 
 ## Licenses
 
