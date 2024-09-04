@@ -1,0 +1,10 @@
+import { ATTRIBUTES } from '../attributes'
+
+export const BASE_ATTRIBUTES = {
+  [ATTRIBUTES.CON]: 12,
+  [ATTRIBUTES.DEX]: 8,
+  [ATTRIBUTES.INT]: 6,
+  [ATTRIBUTES.MIG]: 12,
+  [ATTRIBUTES.PER]: 10,
+  [ATTRIBUTES.RES]: 12,
+}

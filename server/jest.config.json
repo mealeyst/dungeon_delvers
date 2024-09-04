@@ -1,7 +1,0 @@
-{
-  "preset": "ts-jest",
-  "testRegex": "((\\.|/*.)(spec))\\.js?$",
-  "transform": {
-    ".ts": "ts-jest"
-  }
-}

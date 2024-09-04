@@ -2,10 +2,10 @@
   "name": "@dungeon_delvers/server",
   "version": "0.0.1",
   "description": "The Node backend server for Dungeon Delvers",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start:dev": "nodemon server.ts",
-    "test": "jest --config ./jest.config.json"
+    "test": "jest --config ./jest.config.js"
   },
   "keywords": [
     "Node",
