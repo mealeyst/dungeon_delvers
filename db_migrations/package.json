@@ -7,17 +7,18 @@
     "migrate": "node-pg-migrate --tsconfig=\"./tsconfig.json\""
   },
   "keywords": [
-    "PostgresSQL",
+    "MySQL",
     "Migrations",
     "Node"
   ],
   "author": "Shawn Mealey",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.4.5",
+    "eslint": "^9.10.0",
+    "node-pg-migrate": "^7.6.1",
     "pg": "^8.12.0",
-    "ts-node": "^10.9.2"
-  },
-  "devDependencies": {
-    "node-pg-migrate": "^7.4.0"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
   }
 }

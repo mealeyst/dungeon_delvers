@@ -11,6 +11,14 @@ import eventHandlers, {
 import { ARCHTYPES } from './class/class'
 import { ATTRIBUTES } from './attributes'
 import { STATS } from './stats'
+import { client } from '../database'
+
+jest.mock('../database', () => ({
+  client: {
+    connect: jest.fn(),
+    query: jest.fn(),
+  },
+}))
 
 const characterArgs: CharacterCreationArgs = {
   name: 'Test Character',
@@ -52,8 +60,11 @@ const characterResult = {
   },
 }
 describe('Character', () => {
-  it('should create a character with the correct stats and attributes', () => {
-    const character = create(characterArgs)
+  beforeAll(() => {
+    client.connect()
+  })
+  it('should create a character with the correct stats and attributes', async () => {
+    const character = await create(characterArgs)
     expect(character.attributes[ATTRIBUTES.CON]).toEqual(
       characterResult.attributes[ATTRIBUTES.CON],
     )
@@ -109,6 +120,7 @@ describe('Character', () => {
       characterResult.stats[STATS.WILLPOWER],
     )
     expect(character.currentHealth).toEqual(characterResult.currentHealth)
+    expect(client.query).toHaveBeenCalled()
   })
 })
 
@@ -139,6 +151,7 @@ describe('Character eventHandler', () => {
   test('create should be called', done => {
     clientSocket.emit('character:create', characterArgs, (args: Character) => {
       expect(args).toEqual(characterResult)
+      expect(client.query).toHaveBeenCalled()
       done()
     })
   })

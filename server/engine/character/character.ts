@@ -1,4 +1,5 @@
 import { Server, Socket } from 'socket.io'
+import { client } from '../database'
 import { ARCHTYPES } from './class/class'
 import * as FIGHTER from './class/fighter'
 import * as HEALER from './class/healer'
@@ -78,7 +79,7 @@ export type Character = {
   currentHealth: number
 }
 
-export const create = ({
+export const create = async ({
   name,
   archtype,
   attributes: inAttributes,
@@ -177,6 +178,21 @@ export const create = ({
   }
   const currentHealth = stats[STATS.HEALTH] // Set current health to max health on creation
 
+  await client.query({
+    text: 'INSERT INTO player_character (name, class, con, dex, int, mig, per, res, current_health) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+    values: [
+      name,
+      archtype,
+      attributes[ATTRIBUTES.CON],
+      attributes[ATTRIBUTES.DEX],
+      attributes[ATTRIBUTES.INT],
+      attributes[ATTRIBUTES.MIG],
+      attributes[ATTRIBUTES.PER],
+      attributes[ATTRIBUTES.RES],
+      currentHealth,
+    ],
+  })
+
   return {
     name,
     attributes,
@@ -186,7 +202,10 @@ export const create = ({
 }
 
 export default (_io: Server, socket: Socket) => {
-  socket.on('character:create', (args: CharacterCreationArgs, callback) => {
-    callback(create(args))
-  })
+  socket.on(
+    'character:create',
+    async (args: CharacterCreationArgs, callback) => {
+      callback(await create(args))
+    },
+  )
 }

@@ -1,4 +1,7 @@
 const path = require('path')
+const dotenv = require('dotenv')
+
+dotenv.config()
 
 module.exports = {
   rootDir: path.join(__dirname, '..'),
